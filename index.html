@@ -4810,33 +4810,52 @@ html[data-theme="light"] #ovHelp .view-help-sitrep .help-item-head{
 }
 
 
-/* ============================================================================
-   TUNGSTEN · iPHONE SHELL
-   ----------------------------------------------------------------------------
-   This is the phone's own layout system, not a patch on the desktop one. The
-   markup above uses none of the desktop scaffolding (.app/.side/.main/.wrap/
-   .mbar/*-workspace/eq-cols/split), so those rules never match and there is
-   nothing to override. What IS inherited on purpose is the component layer —
-   cards, chips, stat tiles, rings, pills, rows — because that's the look.
 
-   Design rules for this file:
-     · one scroller: the page. No pane owns its own scroll.
-     · nothing has a fixed height. Boxes grow to their content.
-     · type comes down so labels fit on one line, rather than boxes growing.
-     · no backdrop-filter, no wide shadow blurs — they cost a frame on iOS.
+/* ============================================================================
+   TUNGSTEN · PHONE APP
+   ----------------------------------------------------------------------------
+   Not a responsive version of the desktop app. A phone app that happens to
+   share its engine and its look.
+
+   What that means concretely, and why each earlier attempt failed:
+
+     · Onboarding is FULL SCREEN, not a bottom sheet. A sheet left 20% of the
+       screen dead above it — that was the "empty space above".
+     · FIVE tabs, not nine. Nine put 43% of the nav off-screen. The rest live
+       behind "Más", which is the iOS convention, not a demotion.
+     · Screens are task-first. Today is the daily loop — ring, then the habit
+       checklist you actually tap — not a grid of read-only stat tiles.
+     · ONE alignment grid. Every row in the app is
+           [16px gutter][28px icon][12px gap][text ……][trailing][16px gutter]
+       so nothing can look subtly off against anything else.
+     · Every control is Safari-safe: appearance reset, layout on an inner
+       wrapper, icons with intrinsic size, no color-mix().
    ========================================================================= */
 
 :root{
-  --fs-xs:10.5px; --fs-sm:11.5px; --fs:13.5px; --fs-md:14px; --fs-lg:15px;
-  --fs-xl:18px; --fs-2xl:22px;
-  --gap:9px; --gap-sm:6px;
-  --r:13px; --r-sm:10px;
+  /* type — DM Sans for UI, Plex Mono for data, Instrument Serif for display */
+  --fs-cap:10.5px;   /* mono caps, group headers */
+  --fs-sm:12px;      /* secondary line */
+  --fs:14px;         /* body / row title */
+  --fs-md:15px;
+  --fs-lg:17px;      /* screen subtitle */
+  --fs-title:28px;   /* large title */
+  --fs-hero:40px;    /* the one number that matters */
+
+  /* rhythm */
+  --gutter:16px;     /* the single horizontal grid */
+  --row-ico:28px;
+  --row-gap:12px;
+  --gap:10px;
+  --gap-sm:7px;
+
+  --r:14px;          /* grouped list radius */
+  --r-sm:10px;
+
   --safe-t:env(safe-area-inset-top,0px);
   --safe-b:env(safe-area-inset-bottom,0px);
-  --tbar-h:50px;
-  --tabs-h:54px;
+  --tabs-h:52px;
   --tabs-total:calc(var(--tabs-h) + var(--safe-b));
-  --pad:12px;
 }
 
 html{-webkit-text-size-adjust:100%; text-size-adjust:100%}
@@ -4844,618 +4863,321 @@ html,body{height:auto; min-height:100%}
 body{
   margin:0; background:var(--bg); color:var(--txt);
   font-family:var(--sans); font-size:var(--fs); line-height:1.45;
-  overscroll-behavior-y:none;
-  -webkit-font-smoothing:antialiased;
+  overscroll-behavior-y:none; -webkit-font-smoothing:antialiased;
 }
 *{-webkit-tap-highlight-color:transparent}
 button,a,label,summary,[data-act]{touch-action:manipulation}
 .hidden-stub{display:none!important}
 
-/* ---------------------------------------------------------------- 1 · SHELL */
+/* ---- Safari-safe control primitives (see round 06) ---- */
+button,input[type=button],input[type=submit],input[type=reset]{
+  -webkit-appearance:none; appearance:none;
+  font-family:inherit; font-size:inherit; line-height:inherit;
+  color:inherit; text-align:inherit; border-radius:0;
+}
+button,input,select,textarea{min-width:0; max-width:100%}
+svg{display:block; flex:none}
+.w-in{display:flex; align-items:center; gap:var(--row-gap); width:100%; min-width:0; text-align:left}
+
+/* ============================ 1 · APP CHROME ============================ */
 .tbar{
   position:sticky; top:0; z-index:60;
-  display:flex; align-items:center; gap:8px;
-  padding:calc(var(--safe-t) + 7px) var(--pad) 7px;
-  background:var(--bg); border-bottom:1px solid var(--line);
+  display:flex; align-items:center; gap:10px;
+  padding:calc(var(--safe-t) + 8px) var(--gutter) 8px;
+  background:var(--bg);
 }
-.tbar-brand{
-  display:flex; align-items:center; gap:9px; flex:1; min-width:0;
-  border:0; background:none; padding:0; color:inherit; text-align:left;
-}
+.tbar-brand{display:flex; align-items:center; gap:9px; flex:1; min-width:0; border:0; background:none; padding:0; color:inherit}
 .tbar-mark{
-  width:30px; height:30px; flex:none; display:grid; place-items:center;
-  border-radius:9px; background:var(--hotbg); color:var(--hot);
+  flex:none; width:28px; height:28px;
+  display:flex; align-items:center; justify-content:center;
+  border-radius:8px; background:var(--hotbg); color:var(--hot);
 }
-.tbar-mark svg{width:17px; height:17px}
-.tbar-id{display:flex; flex-direction:column; min-width:0; line-height:1.15}
-.tbar-id b{font-size:14px; font-weight:600; letter-spacing:-.01em}
-.tbar-id span{font-family:var(--mono); font-size:9.5px; letter-spacing:.13em; color:var(--faint)}
-.tbar-a{display:flex; align-items:center; gap:5px; flex:none}
+.tbar-mark svg{width:16px; height:16px}
+.tbar-id{display:flex; flex-direction:column; min-width:0; line-height:1.2}
+.tbar-id b{font-size:13px; font-weight:600; letter-spacing:-.01em}
+.tbar-id span{font-family:var(--mono); font-size:9.5px; letter-spacing:.12em; color:var(--faint)}
+.tbar-a{display:flex; align-items:center; gap:6px; flex:none}
 
 .screen{display:block}
-.pagewrap{padding:12px var(--pad) calc(var(--tabs-total) + 20px)}
-
+.pagewrap{padding:0 0 calc(var(--tabs-total) + 16px)}
 .view{display:none}
-.view.on{display:block; animation:vin .18s var(--ease)}
-@keyframes vin{from{opacity:0; transform:translateY(4px)} to{opacity:1; transform:none}}
+.view.on{display:block}
 
-/* ------------------------------------------------------------- 2 · TAB BAR */
-.tabs{
-  position:fixed; left:0; right:0; bottom:0; z-index:120;
-  display:flex; align-items:stretch; gap:1px;
-  padding:3px 6px calc(3px + var(--safe-b));
-  background:var(--bg); border-top:1px solid var(--line2);
-  overflow-x:auto; overflow-y:hidden;
-  scrollbar-width:none; scroll-snap-type:x proximity;
-  overscroll-behavior-x:contain;
-}
-.tabs::-webkit-scrollbar{display:none}
-.tabs::before{
-  content:''; position:absolute; left:0; right:0; top:-18px; height:18px;
-  pointer-events:none; background:linear-gradient(to top,var(--bg),transparent);
-}
-.tabs button{
-  flex:0 0 auto; min-width:56px; min-height:44px; scroll-snap-align:center;
-  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px;
-  padding:4px 7px; border:0; border-radius:10px; background:none;
-  color:var(--faint); font-family:var(--sans); font-size:9.5px; font-weight:500;
-  line-height:1.1; white-space:nowrap;
-}
-.tabs button svg{width:19px; height:19px; stroke-width:1.7}
-.tabs button.on{color:var(--hot); background:var(--hotbg)}
-.tabs button.on svg{color:var(--hot)}
-.tabs button:active{opacity:.55}
-.tabs .nav-g,.tabs .nav-count{display:none}
-
-/* --------------------------------------------------------- 3 · VIEW HEADER */
-.vh{display:flex; flex-direction:column; gap:7px; margin-bottom:11px}
-.vh-t{display:flex; flex-direction:column; gap:1px; min-width:0}
+/* ---- large title, iOS style ---- */
+.vh{padding:4px var(--gutter) 12px}
+.vh-t{display:block; min-width:0}
 .vh-eyebrow{
-  font-family:var(--mono); font-size:9.5px; letter-spacing:.16em;
-  color:var(--hot); text-transform:uppercase;
+  display:block; margin-bottom:3px;
+  font-family:var(--mono); font-size:var(--fs-cap); letter-spacing:.16em;
+  text-transform:uppercase; color:var(--hot);
 }
-.vh h1{margin:0; font-size:20px; font-weight:650; letter-spacing:-.02em; line-height:1.2}
+.vh h1{margin:0; font-size:var(--fs-title); font-weight:680; letter-spacing:-.03em; line-height:1.28}
 .vh-a{
-  display:flex; flex-wrap:nowrap; align-items:center; gap:5px;
-  overflow-x:auto; scrollbar-width:none; padding-bottom:1px;
-  -webkit-mask-image:linear-gradient(to right,#000 calc(100% - 20px),transparent);
-  mask-image:linear-gradient(to right,#000 calc(100% - 20px),transparent);
+  display:flex; flex-wrap:nowrap; align-items:center; gap:6px;
+  margin-top:11px; overflow-x:auto; scrollbar-width:none;
+  -webkit-mask-image:linear-gradient(to right,#000 calc(100% - 22px),transparent);
+  mask-image:linear-gradient(to right,#000 calc(100% - 22px),transparent);
 }
 .vh-a::-webkit-scrollbar{display:none}
 .vh-a>*{flex:0 0 auto}
 
-/* ------------------------------------------------------------ 4 · SECTIONS */
-.sect{display:flex; flex-direction:column; gap:var(--gap-sm); margin-bottom:14px}
-.sect>*{min-width:0}
-.sect-h{
-  display:flex; align-items:center; gap:6px; min-width:0;
-  font-family:var(--mono); font-size:10px; letter-spacing:.14em;
-  text-transform:uppercase; color:var(--faint);
-  padding-bottom:1px;
+/* ============================ 2 · TAB BAR =============================== */
+.tabs{
+  position:fixed; left:0; right:0; bottom:0; z-index:120;
+  display:flex; align-items:stretch;
+  padding:4px 4px calc(4px + var(--safe-b));
+  background:var(--bg); border-top:1px solid var(--line);
 }
-.sect-h b{font-weight:600; color:var(--label); letter-spacing:.14em}
-.sect-h .push{margin-left:auto}
-.sect-h .note{letter-spacing:0; text-transform:none; font-family:var(--sans)}
-.sect-ico{display:inline-flex; color:var(--hot)}
-.sect-ico svg{width:14px; height:14px}
+.tabs::before{
+  content:''; position:absolute; left:0; right:0; top:-20px; height:20px;
+  pointer-events:none; background:linear-gradient(to top,var(--bg),transparent);
+}
+.tabs button{
+  flex:1 1 0; min-width:0; min-height:44px;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px;
+  padding:3px 2px; border:0; border-radius:9px; background:none;
+  color:var(--faint); font-family:var(--sans); font-size:9.5px; font-weight:550;
+  line-height:1.1; letter-spacing:-.01em;
+}
+.tabs button svg{width:21px; height:21px; stroke-width:1.8}
+.tabs button span{max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.tabs button.on{color:var(--hot)}
+.tabs button:active{opacity:.5}
+.tabs .nav-g,.tabs .nav-count{display:none}
 
-/* --------------------------------------------------------- 5 · CONTAINERS  */
-.card{
-  position:relative;   /* absolutely-positioned badges anchor here, not to the
-                          page — .fin-badge was landing 114px above its card */
+/* ============================ 3 · GROUPED LISTS =========================
+   The iOS idiom, and the one alignment grid for the whole app. */
+.sect{margin:0 0 20px}
+.sect-h{
+  display:flex; align-items:baseline; gap:8px;
+  padding:0 var(--gutter) 7px; min-width:0;
+  font-family:var(--mono); font-size:var(--fs-cap); letter-spacing:.15em;
+  text-transform:uppercase; color:var(--faint);
+}
+.sect-h b{font-weight:600; color:var(--faint); letter-spacing:.15em}
+.sect-h .push{margin-left:auto}
+.sect-h .note{font-family:var(--sans); letter-spacing:0; text-transform:none; font-size:11.5px}
+.sect-ico{align-self:center; color:var(--hot)}
+.sect-ico svg{width:13px; height:13px}
+
+/* inset card: the container every list and panel sits in */
+.card,.list{
+  position:relative; margin:0 var(--gutter);
   border:1px solid var(--line); border-radius:var(--r);
   background:var(--panel); overflow:hidden;
   height:auto; max-height:none;
 }
-.card-b{position:relative}
-.card+.card{margin-top:var(--gap-sm)}
-.card-b{padding:10px; display:flex; flex-direction:column; gap:var(--gap-sm)}
+.card+.card,.list+.list{margin-top:var(--gap-sm)}
+.card-b{position:relative; padding:var(--gutter); display:flex; flex-direction:column; gap:var(--gap)}
 .card-b.flush{padding:0; gap:0}
 .card-b>*{min-width:0}
 
-.tiles{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:var(--gap-sm)}
-.tiles-2{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:var(--gap-sm)}
-.row2{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:var(--gap-sm)}
-.stackform{display:flex; flex-direction:column; gap:var(--gap-sm)}
+/* the row — used by every list in the app */
+.row{
+  display:block; width:100%; padding:11px var(--gutter);
+  border:0; background:none; color:var(--txt);
+  font-family:var(--sans); font-size:var(--fs); cursor:pointer;
+}
+.row+.row{box-shadow:inset 0 1px 0 var(--line)}
+.row:active{background:var(--panel2)}
+.row-ico{
+  flex:none; width:var(--row-ico); height:var(--row-ico);
+  display:flex; align-items:center; justify-content:center;
+  border-radius:8px; color:var(--sk-c,var(--hot)); background:rgba(255,255,255,.06);
+}
+html[data-theme="light"] .row-ico{background:rgba(16,24,40,.05)}
+.row-ico svg{width:15px; height:15px}
+.row-c{flex:1 1 auto; min-width:0; display:flex; flex-direction:column; gap:1px; text-align:left}
+.row-c b{font-size:var(--fs); font-weight:550; line-height:1.35; overflow-wrap:anywhere}
+.row-c span{font-size:var(--fs-sm); line-height:1.35; color:var(--faint); overflow-wrap:anywhere}
+.row-t{flex:none; display:flex; align-items:center; gap:8px; color:var(--faint); font-size:var(--fs-sm)}
+.row-chev{flex:none; color:var(--line3)}
+.row-chev svg{width:15px; height:15px}
 
-/* horizontal rails: ticker, tag filters, goal title strips */
+/* the tick used by every toggleable row */
+.row-tick{
+  flex:none; width:26px; height:26px;
+  display:flex; align-items:center; justify-content:center;
+  border-radius:99px; border:1.5px solid var(--line2); color:transparent;
+}
+.row-tick svg{width:14px; height:14px}
+.row.on .row-tick{background:var(--sk-c,var(--ok)); border-color:var(--sk-c,var(--ok)); color:#fff}
+.row.on .row-c b{color:var(--txt)}
+
+/* ============================ 4 · HERO ================================== */
+.hero{
+  display:flex; flex-direction:column; align-items:center; gap:3px;
+  padding:6px var(--gutter) 20px;
+}
+.hero-ring{position:relative; width:168px; height:168px; display:flex; align-items:center; justify-content:center}
+/* the ring's circles are styled by class in dualRingSVG(); without these they
+   fall back to SVG defaults (fill:black, no stroke) and read as a flat disc */
+.hero-ring svg{width:100%; height:100%; transform:rotate(-90deg)}
+.hero-ring circle{fill:none; stroke-linecap:round}
+.hero-ring .trk{stroke:var(--line2)}
+.hero-ring .val{stroke:url(#gHot); transition:stroke-dashoffset .7s var(--ease)}
+.hero-ring .val-bonus{stroke:url(#gCool); transition:stroke-dashoffset .7s var(--ease)}
+.hero-ring.sealed .val{stroke:url(#gOk)}
+.hero-n{
+  position:absolute; inset:0;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1px;
+}
+.hero-n b{
+  font-family:var(--mono); font-size:var(--fs-hero); font-weight:600;
+  line-height:1.26; height:auto; letter-spacing:-.03em; color:var(--txt);
+}
+.hero-n span{font-family:var(--mono); font-size:var(--fs-cap); letter-spacing:.14em; color:var(--faint)}
+.hero-l{margin-top:9px; font-size:var(--fs-md); font-weight:550; text-align:center; line-height:1.35}
+.hero-s{margin-top:2px; font-size:var(--fs-sm); color:var(--faint); text-align:center; line-height:1.4; padding:0 8px}
+
+/* ============================ 5 · CONTROLS ============================== */
+.btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:7px;
+  min-height:38px; padding:9px 14px;
+  border:1px solid var(--line2); border-radius:10px;
+  background:var(--panel2); color:var(--txt);
+  font-size:13px; font-weight:550; white-space:nowrap; cursor:pointer;
+}
+.btn.sm{min-height:32px; padding:6px 11px; font-size:12px; border-radius:9px}
+.btn svg{width:14px; height:14px}
+.btn.pri{background:var(--hot); border-color:var(--hot); color:var(--hot-ink)}
+.btn.ghost{background:transparent}
+.btn.danger{background:var(--bad); border-color:var(--bad); color:#fff}
+.btn:disabled{opacity:.4}
+.btn:active{opacity:.6}
+.btn-wide{width:100%}
+
+.iconbtn{
+  flex:none; display:flex; align-items:center; justify-content:center;
+  width:34px; height:34px;
+  border:1px solid var(--line2); border-radius:10px;
+  background:var(--panel2); color:var(--dim); font-size:13px; cursor:pointer;
+}
+.iconbtn.ghost{background:transparent; border-color:transparent; width:30px; height:30px}
+.iconbtn svg{width:15px; height:15px}
+.iconbtn:active{opacity:.55}
+
+.in{
+  width:100%; min-height:42px; padding:10px 12px;
+  border:1px solid var(--line2); border-radius:10px;
+  background:var(--bg2); color:var(--txt);
+  font-family:var(--sans); font-size:16px; line-height:1.35;
+}
+select.in{
+  appearance:none; -webkit-appearance:none; padding-right:30px;
+  background-image:linear-gradient(45deg,transparent 50%,var(--faint) 50%),linear-gradient(135deg,var(--faint) 50%,transparent 50%);
+  background-position:calc(100% - 16px) 50%,calc(100% - 11px) 50%;
+  background-size:5px 5px,5px 5px; background-repeat:no-repeat;
+}
+textarea.in{min-height:80px; resize:vertical}
+.fld{display:flex; flex-direction:column; gap:5px}
+.fld label{font-family:var(--mono); font-size:var(--fs-cap); letter-spacing:.14em; color:var(--faint); text-transform:uppercase}
+.drop{border:1px dashed var(--line3); border-radius:var(--r-sm); padding:16px 12px; text-align:center; font-size:12px; color:var(--faint)}
+
+.addrow{display:flex; gap:8px; align-items:stretch}
+.addrow .in{flex:1; min-width:0}
+.addbtn{flex:none; width:44px; padding:0; justify-content:center; font-size:20px}
+
+/* stat tiles — kept, but they are supporting cast now, never the hero */
+.tiles{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:var(--gap-sm); padding:0 var(--gutter)}
+.tiles-2{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:var(--gap-sm); padding:0 var(--gutter)}
+.stat{
+  padding:11px; border:1px solid var(--line); border-radius:var(--r-sm);
+  background:var(--panel); height:auto; box-shadow:none;
+}
+.stat .l{
+  display:block; font-family:var(--mono); font-size:9.5px!important; letter-spacing:.13em;
+  text-transform:uppercase; color:var(--faint); line-height:1.35!important; height:auto!important;
+}
+.stat .v{
+  display:block; margin-top:4px; font-family:var(--mono);
+  font-size:19px!important; font-weight:600; line-height:1.25!important; height:auto!important;
+  letter-spacing:-.02em; white-space:nowrap;
+}
+.stat .s{display:block; margin-top:2px; font-size:11px!important; line-height:1.35!important; height:auto!important; color:var(--faint)}
+
 .rail{
-  display:flex; align-items:center; gap:6px;
-  overflow-x:auto; overflow-y:hidden; scrollbar-width:none;
-  padding-bottom:2px;
-  -webkit-mask-image:linear-gradient(to right,#000 calc(100% - 20px),transparent);
-  mask-image:linear-gradient(to right,#000 calc(100% - 20px),transparent);
+  display:flex; align-items:center; gap:7px;
+  padding:0 var(--gutter) 2px; overflow-x:auto; scrollbar-width:none;
+  -webkit-mask-image:linear-gradient(to right,#000 calc(100% - 22px),transparent);
+  mask-image:linear-gradient(to right,#000 calc(100% - 22px),transparent);
 }
 .rail::-webkit-scrollbar{display:none}
 .rail>*{flex:0 0 auto}
 
-.quotebar{display:flex; align-items:stretch; gap:6px}
-.quotebar .qstrip{flex:1; min-width:0; height:auto; text-align:left}
-
-.addrow{display:flex; gap:6px; align-items:stretch}
-.addrow .in{flex:1; min-width:0}
-.addbtn{flex:none; width:42px; padding:0; justify-content:center; font-size:19px; line-height:1}
-
-.daybar{display:flex; align-items:center; gap:6px}
-.daybar .daybar-date{flex:1; min-width:0; text-align:center}
-.daybar-meta{display:flex; align-items:center; gap:6px; flex-wrap:wrap}
-
-.navrow{display:flex; align-items:center; justify-content:space-between; gap:6px}
-.navrow-l{
-  flex:1; min-width:0; text-align:center; font-size:12.5px;
-  font-weight:600; color:var(--label);
-}
-
-.filters{display:flex; flex-direction:column; gap:5px}
-
-/* ------------------------------------------------------------ 6 · CONTROLS */
-.btn{
-  display:inline-flex; align-items:center; justify-content:center; gap:6px;
-  min-height:36px; height:auto; padding:7px 11px;
-  border:1px solid var(--line2); border-radius:9px;
-  background:var(--panel2); color:var(--txt);
-  font-family:var(--sans); font-size:12.5px; font-weight:550;
-  white-space:nowrap; cursor:pointer;
-}
-.btn.sm{min-height:30px; padding:5px 9px; font-size:11.5px; border-radius:8px}
-.btn svg{width:13px; height:13px; flex:none}
-.btn.pri{background:var(--hot); border-color:var(--hot); color:var(--hot-ink)}
-.btn.ghost{background:transparent}
-.btn.danger{background:var(--bad); border-color:var(--bad); color:#fff}
-.btn:disabled{opacity:.42}
-.btn:active{opacity:.6}
-
-.iconbtn{
-  flex:none; display:inline-grid; place-items:center;
-  width:36px; height:36px; min-width:36px;
-  border:1px solid var(--line2); border-radius:9px;
-  background:var(--panel2); color:var(--dim);
-  font-family:var(--sans); font-size:13px; cursor:pointer;
-}
-.iconbtn.ghost{background:transparent; width:30px; height:30px; min-width:30px; font-size:11.5px}
-.iconbtn svg{width:15px; height:15px}
-.iconbtn:active{opacity:.6}
-.iconbtn:disabled{opacity:.35}
-
-/* iOS zooms the page when a focused field is under 16px. Fields keep 16px and
-   the box is tightened instead. */
-.in{
-  width:100%; min-height:40px; padding:8px 11px;
-  border:1px solid var(--line2); border-radius:9px;
-  background:var(--bg2); color:var(--txt);
-  font-family:var(--sans); font-size:16px; line-height:1.35;
-}
-select.in{appearance:none; padding-right:28px;
-  background-image:linear-gradient(45deg,transparent 50%,var(--faint) 50%),linear-gradient(135deg,var(--faint) 50%,transparent 50%);
-  background-position:calc(100% - 15px) 50%,calc(100% - 10px) 50%;
-  background-size:5px 5px,5px 5px; background-repeat:no-repeat;
-}
-textarea.in{min-height:76px; resize:vertical}
-.fld{display:flex; flex-direction:column; gap:4px}
-.fld label{font-family:var(--mono); font-size:9.5px; letter-spacing:.14em; color:var(--faint); text-transform:uppercase}
-.drop{
-  border:1px dashed var(--line3); border-radius:var(--r-sm);
-  padding:14px 10px; text-align:center; font-size:12px; color:var(--faint);
-}
-
-/* --------------------------------------------- 7 · INHERITED COMPONENT SIZING
-   The desktop rules for these still apply; only the phone dimensions and the
-   type floor are restated here. Nothing structural. */
-.stat{padding:8px 9px; border-radius:var(--r-sm); height:auto}
-.stat .l{font-size:10px!important; line-height:1.3!important; height:auto!important}
-.stat .v{font-size:17px!important; line-height:1.3!important; height:auto!important; white-space:nowrap}
-.stat .s{font-size:10.5px!important; line-height:1.3!important; height:auto!important}
-
-.chip{min-height:30px; padding:5px 9px; font-size:11.5px; height:auto}
-.chip .lv{font-size:10.5px!important}
-.pill{font-size:10px!important; height:auto!important; line-height:1.35!important}
-.note{font-size:11px; color:var(--faint)}
-.seg{display:inline-flex; flex-wrap:wrap; gap:4px}
-.seg button{min-height:32px; padding:6px 10px; font-size:11.5px; border-radius:8px}
-
-.dgroup{display:flex; flex-direction:column; gap:5px}
-.lab{font-family:var(--mono); font-size:9.5px; letter-spacing:.14em; color:var(--faint); text-transform:uppercase}
-.chips{display:flex; flex-wrap:wrap; gap:5px}
-
-.skl{height:auto!important; padding:8px 9px; border-radius:var(--r-sm)}
-.skl-h{display:flex; align-items:center; gap:7px; min-width:0}
-.skl-h b{flex:1; min-width:0; font-size:12.5px; line-height:1.3}
-.skl-h .lvl{font-size:10.5px!important; flex:none; white-space:nowrap}
-.skl-f{display:flex; justify-content:space-between; gap:8px; font-size:10.5px!important; line-height:1.3!important; height:auto!important}
-.skl .g{width:26px; height:26px; flex:none; display:grid; place-items:center; border-radius:8px}
-.skl .g svg{width:14px; height:14px}
-
-.ring{width:96px; height:96px}
-.dual-rings{display:flex; align-items:center; gap:11px; min-width:0}
-.ring-txt{flex:1; min-width:0}
-.ring-txt h4{margin:0 0 3px; font-size:13px; line-height:1.3}
-.ring-txt p{margin:0; font-size:11.5px; line-height:1.4; color:var(--faint)}
-.sparks{display:flex; flex-wrap:wrap; gap:4px; margin-top:6px}
-.ringmeta{display:flex; flex-wrap:wrap; gap:5px}
-
-.rows{display:flex; flex-direction:column}
-
-/* Log habit rows: the desktop squeezes the name between its flex siblings and
-   hard-cuts it. Name gets its own line, the separator goes, blurb wraps below. */
-.log-skill{display:flex; align-items:center; gap:9px; padding:8px 10px; height:auto; min-height:0}
-.log-skill .ls-body{flex:1 1 auto; min-width:0; display:flex; flex-wrap:wrap; gap:1px}
-.log-skill .ls-body b{
-  flex:1 1 100%; width:100%; min-width:0; max-width:none;
-  white-space:normal!important; overflow:visible!important; text-overflow:clip!important;
-  font-size:12.5px!important;
-}
-.log-skill .ls-body .ls-sep{display:none}
-.log-skill .ls-body .d{
-  flex:1 1 100%; width:100%; min-width:0;
-  white-space:normal!important; overflow:visible!important; text-overflow:clip!important;
-  font-size:11px!important; line-height:1.32!important; color:var(--faint);
-}
-.log-skill .lv{flex:0 0 auto; min-width:max-content; white-space:nowrap}
-.log-skill .g{flex:none; width:30px; height:30px; display:grid; place-items:center; border-radius:9px}
-.log-skill .g svg{width:16px; height:16px}
-.fin-badge{display:inline-flex; align-items:center; height:auto; white-space:nowrap}
-
-.qgrid{display:flex; flex-direction:column; gap:6px; height:auto!important; max-height:none!important; overflow:visible!important}
-.qstrip{height:auto!important; padding:12px 13px}
-.qstrip q{font-size:14px; line-height:1.45}
-
-.fin-total{font-size:19px; line-height:1.3; font-weight:650; white-space:nowrap}
-
-/* The desktop pins line-height == height on display numerals and headings. At
-   phone sizes the ink box of the face exceeds that and shaves descenders. One
-   floor for every text box the renderers emit, rather than per-class patches. */
-.vh h1,.stat .v,.stat .l,.stat .s,.ring .lbl b,.ring .lbl span,
-.ring-core b,.ring-core span,.fin-total,.fin-net-v,.lvup .n,.lvup .t span,
-.skl-h b,.skl-h .lvl,.skl-f,.skl-f span,.chip .lv,.qtag-count,
-.cal-day,.cal-day .dn,.cal-weekdays span,.ops-day-head b,.ops-day-head .ops-day-date,
-.ops-month-num,.ops-month-dow,.ops-hour-time,.ops-hour-time b,
-.mt-item .l,.mt-item .u,.metrics-ticker-label,.metrics-ticker-label b,
-.log-skill .ls-body b,.log-skill .ls-body .d,.log-skill .lv,
-.qc .m,.qc .m b,.qc .m span,.eyebrow,.sect-t,.pill,.lab,.wd-val,.wd-name,
-.goal-name,.gt-t,.cmd-metric-title,.cmd-metric-value,.debt-k,.debt-v,
-.launch-stats button b,.launch-stats button span,.sp-k,.sp-v,.rl,.rl-lv{
-  height:auto!important; min-height:0; line-height:1.32!important;
-}
-
-/* Type floor: nothing on a phone renders below 10.5px. */
-.eyebrow,.sect-t,.pill,.lab,.wiz-grp,.qtag-count,.fin-badge,.lv,
-.ops-month-dow,.ops-type-key span,.launch-group-lab,.wd-lab,.rl-lv,
-.mt-item .l,.mt-item .u,.skl-f,.skl-f span,.skl-h .lvl,.stat .l,
-.cal-weekdays span,.ops-hour-time,.ops-hour-time b,.note,.sub,.meta{
-  font-size:10.5px!important;
-}
-.stat .s,.qc .m,.qc .m b,.qc .m span,.ops-day-empty,.ops-hour-empty,
-.cal-day,.cal-day .dn,.ops-month-num,.wd-val{font-size:11.5px!important}
-
-/* Touch floor for the inherited controls. */
-.qc,.tag,.sug-chip,.chip,.seg button,.cal-day,.ops-month-day,
-.fin-entry .edit,.row-a,.todo .x,.sk-edit,.quote-shuffle{
-  min-height:30px; height:auto;
-}
-
-/* Anything the renderers emit that still carries a desktop column or a pinned
-   height flattens here — one place, not scattered patches. */
-.grid,.g2,.g3,.g4,.g5,.eds,.wir,.split,.split-e,.split-3,
-.cmd-kpis,.cmd-metric-board,.cal-grid,.goal .dual,.pillar-table{
-  display:grid; grid-template-columns:minmax(0,1fr); gap:var(--gap-sm);
-}
-.scroll-list,.skl-rail,.hist,.log-skills,.pond-cells,.fin-entries,.goal-list{
-  height:auto!important; max-height:none!important; overflow:visible!important;
-}
-.cal-weekdays,.cal-days{grid-template-columns:repeat(7,minmax(0,1fr)); gap:2px}
-.cal-day{min-width:0; min-height:36px; padding:2px 1px; font-size:11.5px!important; height:auto!important}
-.ops-week-grid{grid-template-rows:none!important; grid-auto-rows:auto!important; grid-template-columns:repeat(2,minmax(0,1fr)); gap:4px}
-.ops-day{min-height:0!important; height:auto!important}
-.ops-day-head{min-height:0!important; height:auto!important; padding:6px 8px}
-.ops-day-items{padding:5px 7px; min-height:0}
-.ops-month-grid{grid-template-columns:repeat(7,minmax(0,1fr))}
-.ops-month-day{min-width:0; min-height:34px; height:auto}
-
-/* ------------------------------------------------------------- 8 · SHEETS  */
+/* ============================ 6 · SHEETS ================================ */
 .ov{
   position:fixed; inset:0; z-index:200; display:none;
-  align-items:flex-end; justify-content:center;
-  padding:0; background:rgba(3,5,8,.86);
+  align-items:flex-end; justify-content:center; padding:0;
+  background:rgba(3,5,8,.86);
 }
 html[data-theme="light"] .ov{background:rgba(24,28,36,.5)}
 .ov.on{display:flex}
 body:has(> .ov.on){overflow:hidden}
 .modal{
-  width:100%; max-width:none; max-height:93dvh;
+  width:100%; max-width:none; max-height:92dvh;
   display:flex; flex-direction:column; min-height:0;
   border:1px solid var(--line2); border-bottom:0;
   border-radius:18px 18px 0 0; background:var(--panel);
-  box-shadow:0 -10px 28px -18px rgba(0,0,0,.75);
-  animation:sheet .24s var(--ease);
+  animation:sheet .26s var(--ease);
 }
 @keyframes sheet{from{transform:translateY(100%)} to{transform:none}}
 .modal::before{
-  content:''; flex:none; width:34px; height:4px; border-radius:99px;
-  background:var(--line3); margin:7px auto 1px; opacity:.85;
+  content:''; flex:none; width:36px; height:4px; border-radius:99px;
+  background:var(--line3); margin:8px auto 2px; opacity:.8;
 }
-.modal-h{
-  flex:none; display:flex; align-items:flex-start; gap:10px;
-  padding:8px 14px 10px; border-bottom:1px solid var(--line);
-}
-.modal-h h2{margin:0; font-size:15px; font-weight:650; line-height:1.3}
-.modal-h p{margin:2px 0 0; font-size:11.5px; color:var(--faint); line-height:1.35}
+.modal-h{flex:none; display:flex; align-items:flex-start; gap:10px; padding:8px var(--gutter) 12px; border-bottom:1px solid var(--line)}
+.modal-h h2{margin:0; font-size:17px; font-weight:650; line-height:1.3}
+.modal-h p{margin:3px 0 0; font-size:12px; color:var(--faint); line-height:1.4}
 .modal-h>div:first-child{flex:1; min-width:0}
 .modal-b{
   flex:1 1 auto; min-height:0; overflow-y:auto; overscroll-behavior:contain;
-  padding:12px 14px; display:flex; flex-direction:column; gap:10px;
+  padding:var(--gutter); display:flex; flex-direction:column; gap:var(--gap);
 }
 .modal-b>*{flex:0 0 auto; min-height:0}
 .modal-f{
-  flex:none; display:flex; gap:7px; flex-wrap:nowrap;
-  padding:10px 14px calc(10px + var(--safe-b));
+  flex:none; display:flex; gap:8px; padding:12px var(--gutter) calc(12px + var(--safe-b));
   border-top:1px solid var(--line); background:var(--panel2);
 }
-.modal-f .btn{flex:1 1 0; min-width:0; justify-content:center}
+.modal-f .btn{flex:1 1 0; min-width:0}
 
-/* ---------------------------------------------------- 9 · TOASTS / OVERLAYS */
+/* ---- ONBOARDING IS FULL SCREEN. Not a sheet. This is the fix for the
+        20% of dead space that sat above the setup flow. ---- */
+#ovOnboard{align-items:stretch; padding:0; background:var(--bg)}
+#ovOnboard .modal{
+  width:100%; max-width:none; height:100dvh; max-height:100dvh;
+  border:0; border-radius:0; background:var(--bg);
+  animation:fadeup .28s var(--ease);
+}
+@keyframes fadeup{from{opacity:0; transform:translateY(10px)} to{opacity:1; transform:none}}
+#ovOnboard .modal::before{display:none}
+
+/* ============================ 7 · MISC ================================== */
 .toasts{
   position:fixed; left:50%; transform:translateX(-50%); z-index:500;
-  bottom:calc(var(--tabs-total) + 10px);
-  display:flex; flex-direction:column; gap:6px; align-items:center;
-  width:calc(100% - 24px); pointer-events:none;
+  bottom:calc(var(--tabs-total) + 12px);
+  display:flex; flex-direction:column; gap:7px; align-items:center;
+  width:calc(100% - 32px); pointer-events:none;
 }
-.toasts-top{bottom:auto; top:calc(var(--safe-t) + 56px)}
-.toast{font-size:12.5px; padding:9px 12px; border-radius:10px}
-.lvup{position:fixed; z-index:400; left:50%; transform:translateX(-50%); top:calc(var(--safe-t) + 56px)}
-.tip{z-index:300}
+.toasts-top{bottom:auto; top:calc(var(--safe-t) + 58px)}
+.toast{font-size:12.5px; padding:10px 13px; border-radius:11px; box-shadow:none}
+.lvup{position:fixed; z-index:400; left:50%; transform:translateX(-50%); top:calc(var(--safe-t) + 58px)}
+.note{font-size:11.5px; color:var(--faint)}
+.pill{
+  display:inline-flex; align-items:center; height:auto;
+  font-family:var(--mono); font-size:9.5px!important; letter-spacing:.1em;
+  line-height:1.5!important; padding:3px 7px; border-radius:99px;
+  border:1px solid var(--line2); color:var(--faint);
+}
+.empty{padding:22px var(--gutter); text-align:center; font-size:12.5px; color:var(--faint); line-height:1.5}
 
-/* ------------------------------------------------------------ 10 · MOTION  */
+/* perf: no blur/large shadow anywhere on the phone */
+*{backdrop-filter:none!important; -webkit-backdrop-filter:none!important}
+.card,.list,.stat,.chip,.modal,.toast{box-shadow:none}
+
 @media (prefers-reduced-motion:reduce){
-  .view.on,.modal{animation:none!important}
+  .modal,#ovOnboard .modal{animation:none!important}
 }
-/* Landscape phone: more sheet, less chrome. */
-@media (max-height:520px){
-  .modal{max-height:98dvh}
-  .tabs button{min-height:40px; font-size:9px}
-  .tabs button svg{width:17px; height:17px}
-  :root{--tabs-h:46px}
-}
-/* Tablet and up: the phone shell simply gets more comfortable, it does not
-   turn back into the desktop layout. */
-@media (min-width:600px){
-  .pagewrap{max-width:640px; margin:0 auto; padding-left:16px; padding-right:16px}
-  .tiles{grid-template-columns:repeat(4,minmax(0,1fr))}
-  .ops-week-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
-}
-
-/* ============================================================================
-   11 · SETUP · the wizard as a phone sheet
-   The generator emits a fixed-height two-column desktop split. Here it is one
-   column that grows, inside a sheet that scrolls. Every container that the
-   desktop sizes by track or column is released once, in this block.
-   ========================================================================= */
-.modal.wiz{height:auto; max-height:94dvh; max-width:none; width:100%}
-
-.modal.wiz .wiz-steps{
-  flex:none; display:flex; gap:4px; padding:9px 14px 2px; margin:0;
-}
-.modal.wiz .wiz-steps i{flex:1 1 0; height:3px; border-radius:2px; background:var(--line2)}
-.modal.wiz .wiz-steps i.done{background:var(--hot)}
-
-/* step nav lives top-right of the sheet on every step except home */
-.modal.wiz .modal-h{border-bottom:0; padding:4px 12px 0}
-.modal.wiz.is-home .modal-h{display:none}
-.modal.wiz .wiz-head-copy{flex:1; min-width:0}
-.modal.wiz .wiz-head-copy h2{font-size:15px}
-.modal.wiz .wiz-head-nav{display:flex; gap:6px; flex:none}
-.wiz-nav-btn{
-  min-width:38px; min-height:38px; height:auto;
-  display:inline-grid; place-items:center;
-  border:1px solid var(--line2); border-radius:9px;
-  background:var(--panel2); color:var(--txt); font-size:12.5px; padding:0 10px;
-}
-.wiz-nav-btn.pri{background:var(--hot); border-color:var(--hot); color:var(--hot-ink)}
-.wiz-nav-btn svg{width:15px; height:15px}
-
-/* Block, not flex: as a flex container it kept resolving desktop heights onto
-   its children (.ring-split came out 718px around 744px of content). As blocks
-   they simply grow and the sheet scrolls. */
-.modal.wiz .modal-b{
-  display:block!important; padding:12px 14px 18px; gap:0;
-  overflow-y:auto!important; min-height:0;
-}
-.modal.wiz .modal-b>*{width:100%; max-width:100%}
-.modal.wiz .modal-b>*+*{margin-top:12px}
-
-/* ---- the split becomes a stack; nothing may shrink ---- */
-.wiz-split{
-  display:flex!important; flex-direction:column!important;
-  gap:14px; height:auto!important; max-height:none!important; min-height:0!important;
-}
-.wiz-split>*{flex:0 0 auto!important; width:100%; min-width:0; align-self:stretch}
-.wiz-left,.wiz-right,.wiz-left-top,.wiz-left-bot,.wiz-right-foot,
-.wiz-step-stack,.ring-split,.ring-stage,.ring-copy,.ring-sug,
-.launch-stage,.launch-summary,.goals-cols{
-  display:flex!important; flex-direction:column!important;
-  height:auto!important; max-height:none!important; min-height:0!important;
-  margin:0!important; padding:0!important; gap:11px;
-}
-.wiz-left>*,.wiz-right>*,.wiz-left-top>*,.wiz-left-bot>*,.wiz-right-foot>*,
-.wiz-step-stack>*,.ring-split>*,.ring-stage>*,.ring-copy>*,.ring-sug>*,
-.launch-stage>*,.launch-summary>*,.goals-cols>*{
-  flex:0 0 auto!important; width:100%; min-width:0; min-height:0; align-self:stretch;
-}
-.wiz-rule-v,.wiz-rule{
-  width:100%!important; height:1px!important; min-height:1px!important;
-  background:var(--line2)!important; align-self:stretch!important;
-}
-
-/* ---- home ---- */
-.wiz-lockup{display:flex; align-items:center; gap:10px}
-.wiz-lockup .mark{width:38px; height:38px; border-radius:11px; flex:none}
-.wiz-lockup .mark svg{width:21px; height:21px}
-.wiz-lockup .wm{display:flex; align-items:center; gap:7px; min-width:0}
-/* the home step sizes these from .modal.wiz.is-home …, so match that weight */
-.wiz-lockup .wm b,
-.modal.wiz.is-home .wiz-lockup .wm b{
-  font-size:23px; line-height:1.34; letter-spacing:-.02em; height:auto;
-}
-.modal.wiz.is-home .wiz-lockup .mark{width:38px; height:38px; border-radius:11px}
-.modal.wiz.is-home .wiz-lockup .mark svg{width:21px; height:21px}
-.wiz-lockup .wm i{font-size:9.5px; font-style:normal; letter-spacing:.14em}
-.wiz-tagline{font-size:14.5px; line-height:1.42; margin:0}
-.wiz-grp{font-family:var(--mono); font-size:10.5px; letter-spacing:.14em; color:var(--faint); text-transform:uppercase}
-.wiz-date{display:flex; flex-direction:column; gap:4px}
-.wiz-prefs{display:flex; flex-wrap:wrap; align-items:center; gap:6px}
-.wiz-prefs>*{flex:0 0 auto}
-.wiz-lang,.theme-switch{display:inline-flex; gap:3px}
-.wiz-lang button,.theme-switch button,.accent-slot>button{
-  min-height:34px; padding:5px 9px; border-radius:8px;
-  border:1px solid var(--line2); background:var(--panel2); color:var(--dim); font-size:11.5px;
-}
-.wiz-lang button.on,.theme-switch button.on{color:var(--txt); border-color:var(--line3); background:var(--raise)}
-
-/* setup paths: icon beside copy, one card per row */
-.setup-paths{display:flex!important; flex-direction:column!important; gap:7px}
-.setup-path{
-  display:flex!important; align-items:center; gap:10px;
-  width:100%; min-height:0; height:auto; padding:10px 11px;
-  border:1px solid var(--line2); border-radius:var(--r-sm); background:var(--panel2);
-  text-align:left;
-}
-.setup-path>.g,.setup-path .sp-ico{flex:none; width:34px; height:34px; border-radius:9px; display:grid; place-items:center}
-.setup-path .sp-txt{flex:1; min-width:0; display:flex; flex-direction:column; gap:2px}
-.setup-path b{font-size:13px; line-height:1.3}
-.setup-path span{font-size:11.5px; line-height:1.35; color:var(--faint)}
-.setup-path .reco{
-  flex:none; align-self:center; font-size:9px; letter-spacing:.1em;
-  padding:3px 6px; border-radius:99px; background:var(--hotbg); color:var(--hot);
-}
-
-/* quick packs: two per row, one line each */
-/* desktop lays these out as four 80px cells; two per row fits the labels */
-.wiz-pack-row,.wiz-packs,
-.modal.wiz.is-home .wiz-pack-row,.modal.wiz.is-home .wiz-packs{
-  display:grid!important; grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:6px; width:100%;
-}
-.wiz-pack,.wiz-pack-row .btn,.wiz-packs .btn{
-  width:100%; min-width:0; min-height:38px; height:auto;
-  justify-content:center; text-align:center;
-  font-size:11.5px; padding:7px 8px; white-space:nowrap;
-  overflow:hidden; text-overflow:ellipsis;
-}
-.wiz-right-meta,.wiz-hint,.wiz-meta-act{
-  display:flex; flex-wrap:wrap; align-items:center; gap:6px;
-  font-size:11px; color:var(--faint);
-}
-.wiz-ver{font-family:var(--mono); font-size:9.5px; color:var(--faint)}
-.wiz-note{font-size:11px; line-height:1.4; color:var(--faint)}
-
-/* ---- ring step ----
-   .ring-split is a flex item that still resolved to a desktop height (718px
-   around 744px of children) and .ring-copy clipped. Plain blocks that grow. */
-.ring-split,.ring-copy{
-  display:block!important; height:auto!important; max-height:none!important;
-  overflow:visible!important;
-}
-.ring-split>*,.ring-copy>*{width:100%; max-width:100%}
-.ring-split>*+*{margin-top:12px}
-/* .ring-status is absolutely positioned inside the stage — reserve its band */
-.ring-stage{
-  display:block!important; position:relative;
-  height:auto!important; padding:0 0 34px!important;
-}
-.ring-wheel{
-  position:relative; display:block;
-  width:min(100%,260px); aspect-ratio:1;
-  margin:0 auto!important; flex:none!important;
-}
-.ring-slot{width:42px!important; height:42px!important}
-.ring-slot .rs-crear{font-size:9px!important; line-height:1.1!important; height:auto!important}
-.ring-core b,.modal.wiz .ring-core b{
-  font-size:29px!important; line-height:1.32!important; height:auto!important;
-}
-.ring-core span{font-size:10.5px!important; line-height:1.3!important; height:auto!important}
-.ring-sug-grid,.sk-grid,.wiz-fit-grid{
-  display:grid!important; grid-template-columns:repeat(2,minmax(0,1fr));
-  grid-auto-rows:auto!important; align-items:start!important;
-  gap:6px; height:auto!important; max-height:none!important; width:100%;
-}
-.sug-chip,.sk-pick{
-  align-self:start; height:auto!important; min-height:44px; width:100%;
-  display:flex!important; align-items:center; gap:8px; padding:7px 9px;
-  border:1px solid var(--line2); border-radius:var(--r-sm); background:var(--panel2);
-  text-align:left;
-}
-.sug-chip .g,.sk-pick .g{
-  flex:none!important; width:34px!important; height:34px!important;
-  border-radius:9px; display:grid; place-items:center; align-self:center;
-}
-.sug-chip .g svg,.sk-pick .g svg{width:17px; height:17px}
-.sug-chip .sc-c,.sk-pick .c{flex:1; min-width:0; display:flex; flex-direction:column; gap:1px}
-.sug-chip .sc-c span,.sk-pick .c span{
-  font-size:11px!important; line-height:1.3!important; height:auto!important;
-  white-space:normal; overflow-wrap:anywhere;
-}
-.sk-pick .sk-edit,.sug-chip .sc-add{
-  flex:none; min-width:30px; min-height:30px; height:auto;
-  display:grid; place-items:center; border-radius:8px;
-}
-.ring-sug-t{font-size:10.5px!important}
-.ring-status,.ring-sub{font-size:11.5px; line-height:1.4; color:var(--faint)}
-
-/* ---- goals step ---- */
-.goals-col{
-  display:flex!important; flex-direction:column!important; gap:7px;
-  width:100%; height:auto!important; max-height:none!important;
-}
-.goals-col>*{flex:0 0 auto!important; min-height:0}
-
-/* ---- title rows: stack the title above its subtitle ---- */
-.wiz-title-row{
-  display:flex!important; flex-direction:column!important;
-  align-items:flex-start; gap:3px; width:100%; min-width:0;
-}
-.wiz-title-row h2,
-.modal.wiz .wiz-title-row h2{
-  font-size:17px!important; line-height:1.34!important; height:auto!important;
-  margin:0; white-space:normal;
-}
-.wiz-title-row p,.wiz-title-row span,.wiz-title-sub{font-size:11.5px; line-height:1.4; color:var(--faint)}
-.wiz-title-row .push,.wiz-new-mini{margin-left:0}
-.wiz-new-mini,.wiz-skip-inline{min-height:32px; height:auto; padding:6px 10px; font-size:11.5px}
-.wiz-pick-bar{display:flex; flex-wrap:wrap; align-items:center; gap:6px}
-.wiz-count-live{font-family:var(--mono); font-size:11px; color:var(--hot)}
-.wiz-lead{font-size:12px; line-height:1.4; color:var(--faint)}
-
-/* ---- final step ---- */
-.launch-hero{display:flex; flex-direction:column; align-items:flex-start; gap:6px}
-.launch-hero h2{font-size:20px!important; line-height:1.25; margin:0}
-.launch-seal{width:44px; height:44px; flex:none}
-.launch-kicker{font-size:10.5px!important; letter-spacing:.14em}
-.launch-stats{
-  display:grid!important; grid-template-columns:repeat(4,minmax(0,1fr)); gap:5px; width:100%;
-}
-.launch-stats button{
-  height:auto!important; min-height:52px; padding:7px 5px;
-  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px;
-}
-.launch-stats button b{font-size:18px!important; line-height:1.2!important}
-.launch-stats button span{font-size:9.5px!important; line-height:1.15!important; text-align:center}
-.launch-habits,.launch-chip-row{display:flex; flex-wrap:wrap; gap:5px}
-.launch-chip{
-  display:inline-flex; align-items:center; gap:5px;
-  padding:5px 8px; border-radius:99px; border:1px solid var(--line2);
-  background:var(--panel2); font-size:11px;
-}
-.launch-chip svg{width:13px; height:13px}
-.launch-group-lab{font-size:10px!important; letter-spacing:.13em}
-.launch-foot,.launch-edit-note,.launch-change-note{
-  display:flex; flex-wrap:wrap; gap:6px; align-items:center;
-  font-size:10.5px; color:var(--faint);
-}
-.wiz-finish-btn,.done-go{width:100%; justify-content:center; min-height:44px; font-size:14px}
-
-/* ---- AI step ---- */
-.wiz-ai-body{display:flex; flex-direction:column; gap:10px}
-.setup-steps{display:flex; flex-direction:column; gap:6px; font-size:12px; line-height:1.4}
-
 /* ============================================================================
    12 · SAFARI-SAFE PRIMITIVES + SETUP COMPONENTS
    ----------------------------------------------------------------------------
@@ -5731,6 +5453,133 @@ html[data-theme="light"] .w-chip-ico{background:rgba(16,24,40,.06)}
 .btn{display:inline-flex; align-items:center; justify-content:center}
 .iconbtn{display:flex; align-items:center; justify-content:center}
 .tabs button{display:flex; flex-direction:column; align-items:center; justify-content:center}
+
+/* ============================================================================
+   13 · INHERITED COMPONENTS
+   The screens that still run desktop renderers emit markup built for a mouse:
+   display type with line-height equal to its box, panes with pinned heights,
+   and label/value pairs sized for a wide column. Rather than patch each one,
+   the whole family is normalised here against the phone grid.
+
+   Two rules, applied once:
+     · release every pinned height — an auto-height box cannot clip
+     · give display type real leading — the ink box of a large face exceeds a
+       1.0–1.2 line-height and shaves descenders
+   ========================================================================= */
+@media (max-width:768px){
+
+  /* -- leading for every text box the renderers emit -- */
+  .vh h1,.stat .v,.stat .l,.stat .s,
+  .ring .lbl b,.ring .lbl span,.ring-core b,.ring-core span,
+  .cal-day,.cal-day .dn,.cal-weekdays span,
+  .ops-day-head b,.ops-day-head .ops-day-date,.ops-month-num,.ops-month-dow,
+  .ops-hour-time,.ops-hour-time b,.ops-hour-empty,.ops-day-empty,
+  .fin-total,.fin-net-v,.fin-badge,.debt-k,.debt-v,
+  .log-skill .ls-body b,.log-skill .ls-body .d,.log-skill .lv,
+  .mt-item .l,.mt-item .u,.metrics-ticker-label,.metrics-ticker-label b,
+  .skl-h b,.skl-h .lvl,.skl-f,.skl-f span,.chip .lv,.qtag-count,
+  .qc .m,.qc .m b,.qc .m span,.eyebrow,.sect-t,.lab,.pill,
+  .goal-name,.gt-t,.cmd-metric-title,.cmd-metric-value,
+  .wd-val,.wd-name,.wd-lab,.rl,.rl-lv,.sp-k,.sp-v,.lvup .n{
+    height:auto!important; min-height:0; line-height:1.34!important;
+  }
+
+  /* -- no pane keeps a desktop height; the page is the only scroller -- */
+  .today-workspace,.log-workspace,.cmd-layout,.prog-workspace,.radar-layout,
+  .pillars-workspace,.ops-cal-lower,.log-right,.queue-panel,.eq-cols,
+  .todo-pond-row,.cmd-metric-board,.goals-workspace,.fin-cards,.fin-hero-row,
+  .cmd-overview-row,.ring-disc-body,.goal .dual{
+    display:flex!important; flex-direction:column!important;
+    height:auto!important; max-height:none!important; min-height:0!important;
+    gap:var(--gap-sm);
+  }
+  .today-workspace>*,.log-workspace>*,.cmd-layout>*,.prog-workspace>*,
+  .radar-layout>*,.pillars-workspace>*,.ops-cal-lower>*,.log-right>*,
+  .queue-panel>*,.eq-cols>*,.todo-pond-row>*,.cmd-metric-board>*,
+  .goals-workspace>*,.fin-cards>*,.fin-hero-row>*,.cmd-overview-row>*{
+    flex:0 0 auto!important; width:100%; min-width:0; min-height:0;
+  }
+  .view .card,.view .card-b,.view .section-block,.view .scroll-list,
+  .view .skl-rail,.view .qgrid,.view .ops-hourly,.view .log-skills,
+  .view .disc-compact,.view .hist,.view .goal-list,.view .fin-entries,
+  .view .pond-cells,.view .chart-box,.view .radar-chart-wrap,
+  .view #chSkillBars,.view #chRadar,.view #chWeekday,
+  .view #chMomentum30,.view #chBalance,.view #chHeatmaps{
+    height:auto!important; max-height:none!important; min-height:0!important;
+  }
+  .view .card,.view .card>.card-b{overflow:visible!important}
+
+  /* -- grids collapse to the single column -- */
+  .grid,.g2,.g3,.g4,.g5,.eds,.wir,.split,.split-e,.split-3,
+  .cal-grid,.pillar-table,.cmd-kpis{
+    display:grid!important; grid-template-columns:minmax(0,1fr); gap:var(--gap-sm);
+  }
+  .g4,.g5,.cmd-kpis{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .cal-weekdays,.cal-days{grid-template-columns:repeat(7,minmax(0,1fr)); gap:2px}
+  .cal-day{min-width:0; min-height:34px; padding:2px 1px}
+  .ops-week-grid{
+    grid-template-rows:none!important; grid-auto-rows:auto!important;
+    grid-template-columns:repeat(2,minmax(0,1fr)); gap:4px;
+  }
+  .ops-day,.ops-day-head{min-height:0!important; height:auto!important}
+  .ops-month-grid{grid-template-columns:repeat(7,minmax(0,1fr))}
+  .ops-month-day{min-width:0; min-height:32px; height:auto}
+
+  /* -- the log habit row, rebuilt on the app's row grid -- */
+  .log-skill{
+    display:flex!important; align-items:center; gap:var(--row-gap);
+    width:100%; padding:11px var(--gutter); height:auto; min-height:0;
+  }
+  .log-skill .g{
+    flex:none; width:var(--row-ico); height:var(--row-ico);
+    display:flex; align-items:center; justify-content:center; border-radius:8px;
+  }
+  .log-skill .g svg{width:15px; height:15px}
+  .log-skill .ls-body{flex:1 1 auto; min-width:0; display:flex; flex-wrap:wrap; gap:1px}
+  .log-skill .ls-body b{
+    flex:1 1 100%; width:100%; min-width:0; font-size:var(--fs)!important;
+    white-space:normal!important; overflow:visible!important; text-overflow:clip!important;
+  }
+  .log-skill .ls-body .ls-sep{display:none}
+  .log-skill .ls-body .d{
+    flex:1 1 100%; width:100%; min-width:0; font-size:var(--fs-sm)!important;
+    white-space:normal!important; overflow:visible!important; text-overflow:clip!important;
+    color:var(--faint);
+  }
+  .log-skill .lv{flex:0 0 auto; min-width:max-content; white-space:nowrap; font-size:var(--fs-sm)!important}
+
+  /* -- horizontal rails stay swipeable, never squashed -- */
+  .metrics-ticker,.metrics-ticker-bar,.metrics-ticker-viewport,
+  .skl-rail,.week-strip,.chips,.qtags,.seg{
+    overflow-x:auto!important; overflow-y:hidden; scrollbar-width:none;
+  }
+  .metrics-ticker-bar::-webkit-scrollbar,.metrics-ticker-viewport::-webkit-scrollbar,
+  .skl-rail::-webkit-scrollbar,.chips::-webkit-scrollbar{display:none}
+  .metrics-ticker-track{animation:none!important; transform:none!important; width:max-content}
+  .mt-item{flex:0 0 auto}
+
+  /* -- type floor: nothing below 10.5px on a phone -- */
+  .eyebrow,.sect-t,.lab,.pill,.qtag-count,.fin-badge,.lv,.note,
+  .ops-month-dow,.ops-type-key span,.wd-lab,.rl-lv,.skl-f,.skl-f span,
+  .skl-h .lvl,.mt-item .l,.mt-item .u,.cal-weekdays span,
+  .ops-hour-time,.ops-hour-time b,.metrics-ticker-label{font-size:10.5px!important}
+  .stat .s,.qc .m,.qc .m b,.qc .m span,.cal-day,.cal-day .dn,
+  .ops-month-num,.ops-day-empty,.ops-hour-empty,.wd-val{font-size:11.5px!important}
+
+  /* -- touch floor on inherited controls -- */
+  .chip,.seg button,.tag,.qc,.sug-chip,.row-a,.todo .x,.sk-edit,
+  .cal-day,.ops-month-day,.fin-entry .edit{min-height:30px; height:auto}
+
+  /* last strays: the log day badge and the weekday-chart values */
+  .daybar-meta,.daybar-meta>span{
+    display:flex; align-items:center; flex-wrap:wrap; gap:6px;
+    height:auto!important; min-height:0; line-height:1.4!important;
+  }
+  /* pinned to 14px upstream at a weight a single class cannot outrank */
+  .wd-col .wd-val,.wd-bars .wd-val,.wd-col span{
+    height:auto!important; min-height:0; line-height:1.35!important; font-size:10.5px!important;
+  }
+}
 </style>
 </head>
 <body>
@@ -5764,10 +5613,13 @@ html[data-theme="light"] .w-chip-ico{background:rgba(16,24,40,.06)}
 <div class="pagewrap">
 
   <!-- ---------------------- 1 · TODAY ---------------------- -->
+  <!-- ---------------------- 1 · TODAY · the daily loop ----------------------
+       Ring first, then the checklist you actually tap. Everything read-only
+       sits below the fold on purpose. -->
   <section class="view" id="v-today">
     <div class="vh">
       <div class="vh-t">
-        <span class="vh-eyebrow" data-i18n="eyebrow.today">TACTICAL · 01</span>
+        <span class="vh-eyebrow" id="todayEyebrow">TACTICAL · 01</span>
         <h1 data-i18n="view.today">Today</h1>
       </div>
       <div class="vh-a">
@@ -5777,64 +5629,60 @@ html[data-theme="light"] .w-chip-ico{background:rgba(16,24,40,.06)}
       </div>
     </div>
 
-    <div class="sect">
-      <div class="tiles" id="todayStats"></div>
+    <div class="hero">
+      <div class="hero-ring" id="coreRing"></div>
+      <div class="hero-l" id="ringMeta"></div>
+      <div class="hero-s" id="todayStatus"></div>
     </div>
 
     <div class="sect">
-      <div class="quotebar">
-        <button type="button" class="qstrip" data-act="go" data-view="wisdom" id="todayQuote"></button>
-        <button type="button" class="iconbtn ghost" data-act="shuffleQuote" id="btnShuffleQuote" aria-label="Random quote"></button>
-      </div>
+      <div class="sect-h"><b data-i18n="core">Essentials</b><span class="push" id="ringSealedBadge"></span>
+        <button class="btn ghost sm" data-act="openSkills" data-i18n="btn.editSkills">Editar</button></div>
+      <div class="list" id="todayCore"></div>
+    </div>
+
+    <div class="sect" id="todayBonusSect">
+      <div class="sect-h"><b data-i18n="bonus">Extras</b></div>
+      <div class="list" id="todayBonus"></div>
     </div>
 
     <div class="sect">
-      <div class="sect-h"><b data-i18n="today.rings">Rings</b><span id="ringSealedBadge"></span>
-        <button class="btn ghost sm push" data-act="openSkills" data-i18n="btn.editSkills">Editar</button></div>
-      <div class="card">
-        <div class="card-b">
-          <div id="coreRing"></div>
-          <div class="ringmeta" id="ringMeta"></div>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-b" id="todayChips"></div>
-      </div>
+      <div class="sect-h"><b data-i18n="today.todo">To-do</b></div>
+      <div class="card"><div class="card-b">
+        <div class="addrow"><input class="in" id="edTodoNew" data-i18n-ph="ph.todo" placeholder="Add a task…"><button type="button" class="btn pri addbtn" data-act="addTodo" aria-label="+">+</button></div>
+        <div id="edTodoList"></div>
+      </div></div>
     </div>
 
     <div class="sect">
       <div class="sect-h"><b data-i18n="today.moves">Next moves</b>
         <button class="btn ghost sm push" data-act="go" data-view="command" data-i18n="view.command">Command</button></div>
-      <div class="card">
-        <div class="card-b"><select class="in" id="todayMoveFilter" aria-label="Filter next moves"></select></div>
-        <div class="card-b flush" id="todayMoves"></div>
-      </div>
-    </div>
-
-    <div class="sect">
-      <div class="sect-h"><b data-i18n="today.todo">To-do</b></div>
-      <div class="card">
-        <div class="card-b">
-          <div class="addrow"><input class="in" id="edTodoNew" data-i18n-ph="ph.todo" placeholder="Add a task…"><button type="button" class="btn pri addbtn" data-act="addTodo" aria-label="+">+</button></div>
-          <div id="edTodoList"></div>
-        </div>
-      </div>
+      <div class="list" id="todayMoves"></div>
     </div>
 
     <div class="sect">
       <div class="sect-h"><b data-i18n="today.pondering">Pondering</b></div>
-      <div class="card">
-        <div class="card-b">
-          <div class="addrow"><input class="in" id="edPondNew" data-i18n-ph="ph.pond" placeholder="Reflection, friction, signal…" autocomplete="off"><button type="button" class="btn pri addbtn" data-act="addPondToday" aria-label="+">+</button></div>
-          <div id="edPondList"></div>
-        </div>
-      </div>
+      <div class="card"><div class="card-b">
+        <div class="addrow"><input class="in" id="edPondNew" data-i18n-ph="ph.pond" placeholder="Reflection, friction, signal…" autocomplete="off"><button type="button" class="btn pri addbtn" data-act="addPondToday" aria-label="+">+</button></div>
+        <div id="edPondList"></div>
+      </div></div>
     </div>
 
     <div class="sect">
-      <div class="sect-h"><b data-i18n="today.skills">Skills</b>
-        <button class="btn ghost sm push" data-act="go" data-view="progression" data-i18n="btn.progression">All</button></div>
-      <div class="card"><div class="card-b" id="todaySkills"></div></div>
+      <div class="sect-h"><b data-i18n="today.status">Status</b></div>
+      <div class="tiles" id="todayStats"></div>
+    </div>
+
+    <div class="sect">
+      <div class="card"><div class="card-b">
+        <button type="button" class="qstrip" data-act="go" data-view="wisdom" id="todayQuote"></button>
+      </div></div>
+    </div>
+
+    <div class="hidden-stub" aria-hidden="true">
+      <select id="todayMoveFilter"></select>
+      <div id="todayChips"></div><div id="todaySkills"></div>
+      <button id="btnShuffleQuote"></button>
     </div>
   </section>
 
@@ -6268,6 +6116,13 @@ html[data-theme="light"] .w-chip-ico{background:rgba(16,24,40,.06)}
       <button class="btn" data-act="impPreview" data-i18n="btn.preview">Preview</button>
       <button class="btn pri" data-act="impApply" id="impApplyBtn" disabled data-i18n="btn.apply">Apply</button>
     </div>
+  </div>
+</div>
+
+<div class="ov" id="ovMore">
+  <div class="modal">
+    <div class="modal-h"><div><h2 data-i18n="more.title">More</h2></div><button class="iconbtn" data-act="closeTop" aria-label="Close">&times;</button></div>
+    <div class="modal-b" id="moreBody"></div>
   </div>
 </div>
 
@@ -6822,6 +6677,9 @@ function statusLabel(s) {
 const STATUSES = ['active','building','incubating','stalled','done'];
 const STATUS_LABEL = { active:'Active', building:'Building', incubating:'Incubating', stalled:'Stalled', done:'Done' };
 
+/* the five screens that earn a permanent tab on a phone */
+const PHONE_TABS = ['today', 'log', 'command', 'calendar', 'progression'];
+
 const VIEWS = [
   { id:'today',       label:'Today',       group:'TACTICAL',    ico:'sun'    },
   { id:'log',         label:'Daily Log',   group:'TACTICAL',    ico:'book'   },
@@ -7010,6 +6868,7 @@ const GEN_META = 'Revisar las próximas tareas de cada proyecto y escoger las tr
 
 /* --------------------------------------------------------------- 1. ICONS */
 const ICO = {
+  dots:'<circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/>',
   sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
   book:'<path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H19v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 1 6.5 18H19v3H6.5A2.5 2.5 0 0 1 4 20.5z"/>',
   grid:'<rect x="3" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.5"/>',
@@ -7969,9 +7828,17 @@ function renderNav() {
             (v.id === 'wisdom' ? '' : '<span class="nav-count" data-nav-count="' + v.id + '">0</span>') + '</button>';
   });
   $('navDesk').innerHTML = html;
-  $('navMob').innerHTML = VIEWS.map(function (v) {
-    return '<button data-act="go" data-view="' + v.id + '">' + ico(v.ico) + '<span>' + esc(viewLabel(v)) + '</span></button>';
-  }).join('');
+  /* Phone nav: five tabs, iOS convention. Nine put 43% of the rail off-screen.
+     The remaining screens live behind "Más", which opens a grouped sheet. */
+  $('navMob').innerHTML =
+    PHONE_TABS.map(function (id) {
+      const v = VIEWS.filter(function (x) { return x.id === id; })[0];
+      if (!v) return '';
+      return '<button data-act="go" data-view="' + v.id + '">' + ico(v.ico) +
+        '<span>' + esc(viewLabel(v)) + '</span></button>';
+    }).join('') +
+    '<button data-act="moreMenu" class="tab-more">' + ico('dots') +
+      '<span>' + tr('More', 'Más') + '</span></button>';
   document.querySelectorAll('.lang-glyph[data-flag]').forEach(function (e) { if (!e.firstChild) e.innerHTML = flag(e.dataset.flag); });
   $('brandMark').innerHTML = ico('tungsten');
   $('brandMarkM').innerHTML = ico('tungsten');
@@ -8110,86 +7977,76 @@ function statTile(label, value, sub, cls) {
     (sub ? '<div class="s">' + sub + '</div>' : '') + '</div>';
 }
 
+/* ----------------------------------------------------------------------------
+   renderToday · the daily loop.
+   The ring answers "where am I today", the checklist is the thing you tap, and
+   everything read-only lives below it. Same state and same actions as desktop.
+   -------------------------------------------------------------------------- */
+function habitRow(k, date) {
+  const s = SKILL_MAP[k]; if (!s) return '';
+  const L = getLog(date), on = !!(L && L.completed.indexOf(k) >= 0);
+  const col = SKILL_COLORS[k] || 'var(--hot)';
+  const ticks = skillTickCount(k);
+  return '<button type="button" class="row' + (on ? ' on' : '') + '" style="--sk-c:' + col + '"' +
+    ' data-act="toggleSkill" data-key="' + k + '" data-date="' + esc(date) + '">' +
+    '<span class="w-in">' +
+      '<span class="row-ico">' + ico(s.ico) + '</span>' +
+      '<span class="row-c"><b>' + esc(s.name) + '</b>' +
+        (s.desc ? '<span>' + esc(s.desc) + '</span>' : '') + '</span>' +
+      '<span class="row-t">' + ticks + '</span>' +
+      '<span class="row-tick">' + ico('check') + '</span>' +
+    '</span></button>';
+}
+
 function renderToday() {
   const a = anchorDate(), L = getLog(a), ck = coreKeys(), cd = coreDone(a);
   const pct = ck.length ? Math.round(cd / ck.length * 100) : 0;
   const sealed = isSealed(a), streak = calcStreak();
   const bk = bonusKeys();
-  const bonusDoneN = (L ? L.completed : []).filter(function (k) { return ck.indexOf(k) < 0; }).length;
-  const bonusPct = bk.length ? Math.round(bonusDoneN / bk.length * 100) : 0;
+  const bonusDone = (L ? L.completed : []).filter(function (k) { return ck.indexOf(k) < 0; }).length;
+  const bonusPct = bk.length ? Math.round(bonusDone / bk.length * 100) : 0;
 
-  /* Day box: only day number. Date box: calendar date. */
-  $('todayStats').innerHTML =
-    statTile(t('day'), diaLabel(a), sealed ? t('sealed') : cd + '/' + ck.length, 'accent') +
-    statTile(t('date'), esc(fmtDate(a, { month:'short', day:'numeric' })), esc(fmtDate(a, { weekday:'long' }))) +
-    statTile(t('levels'), fmtNum(globalLevel()), lang() === 'es' ? 'sube 1 nivel cada ' + TO_LEVEL + ' hábitos completados' : 'gains 1 level every ' + TO_LEVEL + ' habit completions') +
-    statTile(t('streak'), streak, streak ? (lang() === 'es' ? 'mejor ' : 'best ') + bestStreak() : (lang() === 'es' ? 'empieza hoy' : 'start one today')) +
-    statTile(t('logged'), logDates().length, fmtNum(totalActs()) + (lang() === 'es' ? ' hábitos completados' : ' habit completions'));
+  /* header: the day number carries the identity, not a tile */
+  if ($('todayEyebrow')) $('todayEyebrow').textContent = dayWord() + ' ' + diaLabel(a) + ' · ' + fmtDate(a, { weekday:'long', day:'numeric', month:'long' });
 
-  /* Sealed badge always rendered (invisible when open) so header height never changes */
-  if ($('ringSealedBadge')) {
-    $('ringSealedBadge').innerHTML =
-      '<span class="pill st-active ring-sealed-pill' + (sealed ? '' : ' is-off') + '">' + esc(t('sealed')) + '</span>';
-  }
-  $('ringMeta').innerHTML =
-    '<span class="pill">' + cd + '/' + ck.length + ' ' + esc(t('core')) + '</span>' +
-    (bk.length ? '<span class="pill st-building">' + bonusDoneN + '/' + bk.length + ' ' + esc(t('bonus')) + '</span>' : '');
-  const completed = (L && L.completed) || [];
-  const statusTitle = sealed
-    ? (lang() === 'es' ? 'Día completo.' : 'Day complete.')
+  /* hero */
+  $('coreRing').innerHTML = dualRingSVG(pct, bonusPct, sealed) +
+    '<span class="hero-n"><b>' + pct + '%</b><span>' + esc(t('core')) + '</span></span>';
+  $('ringMeta').textContent = sealed
+    ? tr('Day complete.', 'Día completo.')
+    : cd + ' ' + tr('of', 'de') + ' ' + ck.length + ' ' + esc(t('core')).toLowerCase();
+  $('todayStatus').textContent = sealed
+    ? tr('Every essential is in. Extras compound the record.', 'Marcaste todos los esenciales. Los extras suman aparte.')
     : cd === 0
-      ? (lang() === 'es' ? 'Nada registrado aún.' : 'Nothing logged yet.')
-      : ((ck.length - cd) + (lang() === 'es' ? ' esenciales por completar.' : ' essentials left.'));
-  /* one fixed slot per bonus skill, off slots keep space so nothing moves when ticking */
-  const sparkRail = (bk.length ? bk : []).map(function (k) {
-    const on = completed.indexOf(k) >= 0;
-    const col = SKILL_COLORS[k] || 'var(--ok)';
-    const sk = SKILL_MAP[k] || { ico:'check', name:k };
-    return '<span class="spark' + (on ? '' : ' is-off') + '" style="color:' + col + ';border-color:' + col + '44;background:' + col + '18" title="' + esc(skillLabel(k)) + '">' +
-      (on ? ico(sk.ico) : '') + '</span>';
-  }).join('');
-  $('coreRing').innerHTML =
-    '<div class="dual-rings">' +
-      '<div class="ring' + (sealed ? ' sealed' : '') + '">' + dualRingSVG(pct, bonusPct, sealed) +
-        '<div class="lbl"><b>' + pct + '%</b></div></div>' +
-      '<div class="ring-txt"><h4>' + statusTitle + '</h4>' +
-        '<p>' + esc(sealed
-          ? (lang() === 'es' ? 'Marcaste todos los esenciales. Los extras suman aparte.' : 'Every core discipline is in. Bonus work compounds the record.')
-          : cd === 0
-            ? (lang() === 'es' ? 'Los no negociables sostienen el piso. Empieza por el que menos quieres.' : 'Four non-negotiables hold the floor. Start with the one you least want to do.')
-            : (lang() === 'es' ? 'Vas ' + cd + ' de ' + ck.length + ' en el piso.' : 'You are ' + cd + ' of ' + ck.length + ' through the floor.')) + '</p>' +
-        '<div class="sparks">' + sparkRail + '</div>' +
-      '</div>' +
-    '</div>';
+      ? tr('Start with the one you least want to do.', 'Empieza por el que menos quieres.')
+      : (ck.length - cd) + tr(' left to close the day.', ' para cerrar el día.');
+  if ($('ringSealedBadge')) {
+    $('ringSealedBadge').innerHTML = sealed ? '<span class="pill">' + esc(t('sealed')) + '</span>' : '';
+  }
 
-  if ($('discMeta')) $('discMeta').textContent = '';
-  $('todayChips').innerHTML =
-    '<div class="dgroup"><div class="lab">' + esc(t('core')) + '</div><div class="chips">' + ck.map(function (k) { return chipHTML(k, a); }).join('') + '</div></div>' +
-    (bk.length ? '<div class="dgroup"><div class="lab">' + esc(t('bonus')) + '</div><div class="chips">' + bk.map(function (k) { return chipHTML(k, a); }).join('') + '</div></div>' : '');
+  /* the checklist — the reason the screen exists */
+  $('todayCore').innerHTML = ck.length
+    ? ck.map(function (k) { return habitRow(k, a); }).join('')
+    : '<div class="empty">' + tr('No essentials yet.', 'Aún no hay esenciales.') + '</div>';
+  if ($('todayBonus')) {
+    $('todayBonus').innerHTML = bk.map(function (k) { return habitRow(k, a); }).join('');
+  }
+  if ($('todayBonusSect')) $('todayBonusSect').style.display = bk.length ? '' : 'none';
 
-  $('todaySkills').innerHTML = visibleSkills().map(function (s) {
-    const rec = state.skills[s.key], pctp = Math.round(rec.progress / TO_LEVEL * 100);
-    const on = !!(L && L.completed.indexOf(s.key) >= 0);
-    const col = SKILL_COLORS[s.key] || 'var(--hot)';
-    const ticks = skillTickCount(s.key);
-    return '<div class="skl' + (on ? '' : ' dimmed') + '" style="--sk:' + col + '">' +
-      '<div class="skl-h"><div class="g">' + ico(s.ico) + '</div><b>' + esc(s.name) + ' (' + ticks + ')</b><span class="lvl">' + tr('Level','Nivel') + ' ' + rec.level + '</span></div>' +
-      '<div class="bar slim"><i style="width:' + pctp + '%"></i></div>' +
-      '<div class="skl-f"><span>' + rec.progress.toFixed(1) + '/' + TO_LEVEL + '</span><span>' + tr('Best level','Mejor nivel') + ' ' + peakLevel(rec) + '</span></div></div>';
-  }).join('');
+  /* supporting cast, below the fold */
+  $('todayStats').innerHTML =
+    statTile(tr('Streak', 'Racha'), streak, streak ? (tr('best ', 'mejor ') + bestStreak()) : tr('start today', 'empieza hoy')) +
+    statTile(tr('Level', 'Nivel'), fmtNum(globalLevel()), fmtNum(totalActs()) + tr(' done', ' hechos')) +
+    statTile(tr('Logged', 'Registrados'), logDates().length, tr('days', 'días'));
 
   fillTodayMoveFilter();
-  const all = openMovesSorted();
-  const top = filterTodayMoves(all);
-  const narrowed = ui.todayMoveFilter !== 'all';
+  const top = filterTodayMoves(openMovesSorted()).slice(0, 5);
   $('todayMoves').innerHTML = top.length
-    ? '<div class="rows">' + top.map(function (m) { return moveRowHTML(m, true); }).join('') + '</div>'
-    : narrowed
-      ? emptyState('inbox', lang() === 'es' ? 'Ninguna tarea con este filtro.' : 'No moves match this filter.', lang() === 'es' ? 'Ver todos' : 'Show all', 'clearTodayMoveFilter')
-      : emptyState('inbox', lang() === 'es' ? 'No tienes tareas pendientes.' : 'No open next moves.', lang() === 'es' ? 'Generar pasos' : 'Generate next steps', 'genSteps');
+    ? top.map(function (m) { return moveRowHTML(m, true); }).join('')
+    : '<div class="empty">' + tr('No open next moves.', 'No tienes tareas pendientes.') + '</div>';
 
   const q = dailyQuote();
-  if ($('todayQuote')) $('todayQuote').innerHTML = '<q>' + esc(qTxt(q)) + '</q><div class="who">' + esc(qWho(q)) + (qMeta(q) ? '<i>' + esc(qMeta(q)) + '</i>' : '') + '</div>';
+  if ($('todayQuote')) $('todayQuote').innerHTML = '<q>' + esc(qTxt(q)) + '</q><div class="who">' + esc(qWho(q)) + '</div>';
 
   renderTodos('edTodoList', a);
 }
@@ -13006,6 +12863,35 @@ const ACTIONS = {
     }
   },
   settings: function () { renderSettings(); openOverlay('ovSettings'); },
+  moreMenu: function () {
+    const rest = VIEWS.filter(function (v) { return PHONE_TABS.indexOf(v.id) < 0; });
+    $('moreBody').innerHTML =
+      '<div class="list">' +
+        rest.map(function (v) {
+          return '<button class="row" data-act="go" data-view="' + v.id + '" data-close="1">' +
+            '<span class="w-in">' +
+              '<span class="row-ico">' + ico(v.ico) + '</span>' +
+              '<span class="row-c"><b>' + esc(viewLabel(v)) + '</b></span>' +
+              '<span class="row-chev">' + ico('right') + '</span>' +
+            '</span></button>';
+        }).join('') +
+      '</div>' +
+      '<div class="list">' +
+        '<button class="row" data-act="settings" data-close="1"><span class="w-in">' +
+          '<span class="row-ico">' + ico('sliders') + '</span>' +
+          '<span class="row-c"><b>' + tr('Settings', 'Ajustes') + '</b></span>' +
+          '<span class="row-chev">' + ico('right') + '</span></span></button>' +
+        '<button class="row" data-act="help" data-close="1"><span class="w-in">' +
+          '<span class="row-ico">' + ico('info') + '</span>' +
+          '<span class="row-c"><b>' + tr('How it works', 'Cómo funciona') + '</b></span>' +
+          '<span class="row-chev">' + ico('right') + '</span></span></button>' +
+        '<button class="row" data-act="export" data-close="1"><span class="w-in">' +
+          '<span class="row-ico">' + ico('download') + '</span>' +
+          '<span class="row-c"><b>' + tr('Export backup', 'Exportar copia') + '</b></span>' +
+          '<span class="row-chev">' + ico('right') + '</span></span></button>' +
+      '</div>';
+    openOverlay('ovMore');
+  },
   help: openHelp,
   viewHelp: function (el) { openViewHelp(el.dataset.view || ui.view); },
   setHabitPresetKind: setHabitPresetKind,
@@ -13550,6 +13436,23 @@ function wireLogEditor(elId, field) {
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
 else init();
 
+})();
+</script>
+
+<script>
+/* Rows inside the "Más" sheet navigate and then dismiss it. Kept outside the
+   main IIFE so no app logic is touched; it only synthesises the close click. */
+(function () {
+  'use strict';
+  document.addEventListener('click', function (e) {
+    var el = e.target.closest && e.target.closest('[data-close]');
+    if (!el) return;
+    requestAnimationFrame(function () {
+      var b = document.createElement('button');
+      b.setAttribute('data-act', 'closeTop');
+      document.body.appendChild(b); b.click(); b.remove();
+    });
+  });
 })();
 </script>
 </body>
