@@ -4941,10 +4941,13 @@ button,a,label,summary,[data-act]{touch-action:manipulation}
 
 /* --------------------------------------------------------- 5 · CONTAINERS  */
 .card{
+  position:relative;   /* absolutely-positioned badges anchor here, not to the
+                          page — .fin-badge was landing 114px above its card */
   border:1px solid var(--line); border-radius:var(--r);
   background:var(--panel); overflow:hidden;
   height:auto; max-height:none;
 }
+.card-b{position:relative}
 .card+.card{margin-top:var(--gap-sm)}
 .card-b{padding:10px; display:flex; flex-direction:column; gap:var(--gap-sm)}
 .card-b.flush{padding:0; gap:0}
@@ -5454,222 +5457,280 @@ body:has(> .ov.on){overflow:hidden}
 .setup-steps{display:flex; flex-direction:column; gap:6px; font-size:12px; line-height:1.4}
 
 /* ============================================================================
-   12 · SETUP · components for the rebuilt renderWizard
-   Every element here is a flex box that centres its own contents. No absolute
-   positioning, no fixed heights, no circle math — so icons and labels cannot
-   drift out of their boxes at any width.
+   12 · SAFARI-SAFE PRIMITIVES + SETUP COMPONENTS
+   ----------------------------------------------------------------------------
+   Written against iOS Safari, not Chrome's device emulation. Three rules the
+   emulator never enforced and which broke the build on a real iPhone:
+
+     1. A <button> is NOT a reliable flex container on iOS. Safari applies
+        -webkit-appearance:push-button, which imposes its own box model and
+        centring. Every button here is reset to appearance:none and its layout
+        lives on an inner .w-in wrapper.
+     2. Icons carry width/height attributes now (see ico()), but the tiles also
+        pin an explicit size so nothing depends on inheritance.
+     3. No color-mix() below this line. It needs Safari 16.2+; under that the
+        whole declaration is dropped and tiles lose their background. Tints are
+        plain rgba, which every Safari understands.
    ========================================================================= */
+
+/* ---- global button reset: the single highest-leverage Safari fix ---- */
+button,
+input[type="button"],
+input[type="submit"],
+input[type="reset"]{
+  -webkit-appearance:none; appearance:none;
+  -webkit-tap-highlight-color:transparent;
+  font-family:inherit; font-size:inherit; line-height:inherit;
+  color:inherit; text-align:inherit;
+  border-radius:0;
+}
+/* Safari also refuses to shrink form controls below their intrinsic width */
+button,input,select,textarea{min-width:0; max-width:100%}
+/* every icon gets a real box; nothing relies on a selector happening to match */
+svg{display:block; flex:none}
+.w-in svg,.tabs svg,.btn svg,.iconbtn svg{flex:none}
+
+/* the inner wrapper carries the layout, the button is just a hit target */
+.w-in{
+  display:flex; align-items:center; gap:10px;
+  width:100%; min-width:0; text-align:left;
+}
+
+/* ---- sheet chrome ---- */
 .modal.wiz{height:auto; max-height:94dvh; width:100%; max-width:none}
-.modal.wiz .wiz-steps{flex:none; display:flex; gap:4px; padding:9px 14px 4px}
+.modal.wiz .wiz-steps{flex:none; display:flex; gap:4px; padding:10px 14px 4px}
 .modal.wiz .wiz-steps i{flex:1 1 0; height:3px; border-radius:2px; background:var(--line2)}
 .modal.wiz .wiz-steps i.done{background:var(--hot)}
 .modal.wiz .modal-h{
   flex:none; display:flex; justify-content:flex-end;
-  padding:0 12px; border-bottom:0; min-height:0;
+  padding:0 12px 2px; border-bottom:0; min-height:0;
 }
 .modal.wiz.is-home .modal-h{display:none}
 .modal.wiz .wiz-head-copy{display:none}
 .modal.wiz .modal-b{
   display:block!important; overflow-y:auto!important; min-height:0;
-  padding:12px 14px calc(16px + var(--safe-b));
+  padding:12px 14px calc(18px + var(--safe-b));
 }
 .modal.wiz .modal-f{display:none!important}
 
 /* ---- headings ---- */
-.w-head{display:flex; flex-direction:column; gap:6px; margin-bottom:12px}
+.w-head{display:block; margin-bottom:12px}
 .w-title{
-  margin:0; font-size:19px; font-weight:650; line-height:1.3;
+  margin:0 0 6px; font-size:19px; font-weight:650; line-height:1.35;
   letter-spacing:-.02em; color:var(--txt);
 }
 .w-title em{font-style:normal; color:var(--hot)}
-.w-lead{margin:0; font-size:12.5px; line-height:1.45; color:var(--faint)}
+.w-lead{margin:0; font-size:12.5px; line-height:1.5; color:var(--faint)}
 .w-lead b,.w-lead .em{color:var(--label); font-weight:600}
 .w-grp{
-  display:block; margin:14px 0 6px;
-  font-family:var(--mono); font-size:10px; letter-spacing:.15em;
-  text-transform:uppercase; color:var(--faint);
+  display:block; margin:15px 0 7px;
+  font-family:var(--mono); font-size:10.5px; letter-spacing:.15em;
+  line-height:1.4; text-transform:uppercase; color:var(--faint);
 }
 .w-count{
-  align-self:flex-start; display:inline-flex; align-items:center;
-  padding:4px 9px; border-radius:99px;
-  font-family:var(--mono); font-size:11px; line-height:1.3;
+  display:inline-block; margin-top:8px; padding:4px 10px;
+  border-radius:99px; font-family:var(--mono); font-size:11.5px; line-height:1.4;
   border:1px solid var(--line2); background:var(--panel2); color:var(--dim);
 }
-.w-count.ok{color:var(--ok); border-color:color-mix(in srgb,var(--ok) 45%,transparent); background:var(--okbg)}
-.w-count.opt{color:var(--faint)}
+.w-count.ok{color:var(--ok); border-color:rgba(47,212,146,.45); background:rgba(47,212,146,.12)}
 
 /* ---- home ---- */
-.w-hero{display:flex; align-items:center; gap:10px; margin-bottom:12px}
+.w-hero{display:flex; align-items:center; gap:11px; margin-bottom:13px}
 .w-mark{
-  flex:none; width:42px; height:42px; display:grid; place-items:center;
-  border-radius:12px; background:var(--hotbg); color:var(--hot);
+  flex:none; width:44px; height:44px;
+  display:flex; align-items:center; justify-content:center;
+  border-radius:13px; background:var(--hotbg); color:var(--hot);
 }
-.w-mark svg{width:23px; height:23px}
-.w-wm{display:flex; align-items:baseline; gap:7px; min-width:0}
-.w-wm b{font-size:24px; font-weight:650; line-height:1.3; letter-spacing:-.02em}
+.w-mark svg{width:24px; height:24px}
+.w-wm{display:flex; align-items:center; gap:8px; min-width:0}
+.w-wm b{font-size:25px; font-weight:650; line-height:1.35; letter-spacing:-.02em}
 .w-wm i{
   font-style:normal; font-family:var(--mono); font-size:9.5px; letter-spacing:.14em;
-  padding:2px 5px; border-radius:5px; border:1px solid var(--line2); color:var(--faint);
+  padding:3px 6px; border-radius:6px; border:1px solid var(--line2); color:var(--faint);
 }
-.w-tag{margin:0 0 14px; font-size:16px; line-height:1.45; color:var(--dim)}
+.w-tag{margin:0 0 15px; font-size:16px; line-height:1.5; color:var(--dim)}
 .w-tag b{color:var(--hot); font-weight:650}
 
-.w-field{display:flex; flex-direction:column; gap:5px; margin-bottom:12px}
+.w-field{display:block; margin-bottom:13px}
 .w-field label{
-  font-family:var(--mono); font-size:9.5px; letter-spacing:.14em;
+  display:block; margin-bottom:5px;
+  font-family:var(--mono); font-size:10px; letter-spacing:.14em;
   text-transform:uppercase; color:var(--faint);
 }
 
-.w-prefs{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:8px}
-.w-seg{display:inline-flex; gap:2px; padding:2px; border-radius:10px; border:1px solid var(--line2); background:var(--panel2)}
+.w-prefs{display:flex; flex-wrap:wrap; gap:7px; margin-bottom:9px}
+.w-seg{
+  display:inline-flex; gap:3px; padding:3px;
+  border-radius:11px; border:1px solid var(--line2); background:var(--panel2);
+}
 .w-seg button{
-  display:inline-grid; place-items:center;
-  min-width:38px; height:32px; padding:0 8px;
+  display:flex; align-items:center; justify-content:center;
+  min-width:42px; height:34px; padding:0 9px;
   border:0; border-radius:8px; background:transparent; color:var(--faint);
   font-size:12px; cursor:pointer;
 }
-.w-seg button svg{width:15px; height:15px}
+.w-seg button svg{width:16px; height:16px}
 .w-seg button.on{background:var(--raise); color:var(--txt)}
-.w-dots{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px}
-.w-dot{width:26px; height:26px; border-radius:99px; border:2px solid transparent; cursor:pointer}
+.w-dots{display:flex; flex-wrap:wrap; gap:7px; margin-bottom:11px}
+.w-dot{
+  width:28px; height:28px; border-radius:99px;
+  border:2px solid transparent; padding:0; cursor:pointer;
+}
 .w-dot.on{border-color:var(--txt)}
 
 /* ---- the workhorse row ---- */
-.w-stack{display:flex; flex-direction:column; gap:6px}
-.w-opt,.w-path{
-  display:flex; align-items:center; gap:10px; width:100%;
-  padding:9px 10px; text-align:left; cursor:pointer;
+.w-stack{display:flex; flex-direction:column; gap:7px}
+.w-opt,.w-path,.w-add,.w-pack,.w-stat{
+  display:block; width:100%; padding:10px 11px; cursor:pointer;
   border:1px solid var(--line2); border-radius:var(--r-sm);
   background:var(--panel2); color:var(--txt);
   font-family:var(--sans); font-size:13px;
 }
-.w-opt.on{border-color:var(--sk-c,var(--hot)); background:color-mix(in srgb,var(--sk-c,var(--hot)) 12%,var(--panel2))}
-.w-opt:active,.w-path:active{opacity:.65}
+.w-opt:active,.w-path:active,.w-add:active,.w-pack:active,.w-stat:active{opacity:.6}
+.w-opt.on{border-color:var(--sk-c,var(--hot)); background:var(--raise)}
+
 .w-opt-ico,.w-path-ico{
-  flex:none; width:34px; height:34px; display:grid; place-items:center;
-  border-radius:9px; color:var(--sk-c,var(--hot));
-  background:color-mix(in srgb,var(--sk-c,var(--hot)) 15%,transparent);
+  flex:none; width:36px; height:36px;
+  display:flex; align-items:center; justify-content:center;
+  border-radius:10px; color:var(--sk-c,var(--hot));
+  background:rgba(255,255,255,.06);
 }
-.w-opt-ico svg,.w-path-ico svg{width:17px; height:17px; display:block}
-.w-opt-c{flex:1 1 auto; min-width:0; display:flex; flex-direction:column; gap:1px}
-.w-opt-c b{font-size:13px; font-weight:600; line-height:1.32; overflow-wrap:anywhere}
-.w-opt-c span{font-size:11px; line-height:1.35; color:var(--faint); overflow-wrap:anywhere}
+html[data-theme="light"] .w-opt-ico,
+html[data-theme="light"] .w-path-ico{background:rgba(16,24,40,.05)}
+.w-opt-ico svg,.w-path-ico svg{width:18px; height:18px}
+
+.w-opt-c{
+  flex:1 1 auto; min-width:0;
+  display:flex; flex-direction:column; gap:2px; text-align:left;
+}
+.w-opt-c b{font-size:13.5px; font-weight:600; line-height:1.35; overflow-wrap:anywhere}
+.w-opt-c>span{font-size:11.5px; line-height:1.4; color:var(--faint); overflow-wrap:anywhere}
+
 .w-opt-tick{
-  flex:none; width:26px; height:26px; display:grid; place-items:center;
+  flex:none; width:28px; height:28px;
+  display:flex; align-items:center; justify-content:center;
   border-radius:99px; border:1px solid var(--line2); color:var(--faint);
 }
-.w-opt-tick svg{width:13px; height:13px; display:block}
+.w-opt-tick svg{width:14px; height:14px}
 .w-opt.on .w-opt-tick{background:var(--sk-c,var(--hot)); border-color:var(--sk-c,var(--hot)); color:#fff}
 .w-opt-edit{
-  flex:none; width:30px; height:30px; display:grid; place-items:center;
-  border-radius:8px; color:var(--faint); border:1px solid var(--line2);
+  flex:none; width:32px; height:32px;
+  display:flex; align-items:center; justify-content:center;
+  border-radius:9px; color:var(--faint); border:1px solid var(--line2);
 }
-.w-opt-edit svg{width:13px; height:13px; display:block}
+.w-opt-edit svg{width:14px; height:14px}
 
-/* setup paths */
-.w-path-go{flex:none; width:22px; display:grid; place-items:center; color:var(--faint)}
-.w-path-go svg{width:15px; height:15px; display:block}
+.w-path-go{flex:none; width:20px; display:flex; align-items:center; justify-content:center; color:var(--faint)}
+.w-path-go svg{width:16px; height:16px}
 .w-reco{
-  display:inline-block; margin-left:6px; font-style:normal; vertical-align:middle;
-  font-family:var(--mono); font-size:8.5px; letter-spacing:.09em;
-  padding:2px 5px; border-radius:99px; background:var(--hotbg); color:var(--hot);
+  display:inline-block; margin-left:7px; font-style:normal;
+  font-family:var(--mono); font-size:9px; letter-spacing:.09em; line-height:1.5;
+  padding:2px 6px; border-radius:99px; background:var(--hotbg); color:var(--hot);
+  white-space:nowrap;
 }
 
-/* packs */
-.w-packs{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:6px}
-.w-pack{
-  display:flex; align-items:center; justify-content:center; gap:6px;
-  min-height:40px; padding:8px 10px; min-width:0;
-  border:1px solid var(--line2); border-radius:var(--r-sm);
-  background:var(--panel2); color:var(--txt);
-  font-family:var(--sans); font-size:12px; font-weight:550;
-  white-space:nowrap; overflow:hidden; cursor:pointer;
+/* packs: two per row, label allowed to wrap rather than be cut */
+.w-packs{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:7px}
+.w-pack{padding:9px 10px}
+.w-pack .w-in{justify-content:center; gap:7px}
+.w-pack-ico{flex:none; display:flex; align-items:center; justify-content:center; color:var(--hot)}
+.w-pack-ico svg{width:16px; height:16px}
+.w-pack-l{
+  min-width:0; font-size:12.5px; font-weight:550; line-height:1.3;
+  overflow-wrap:anywhere; text-align:center;
 }
-.w-pack-ico{flex:none; display:grid; place-items:center; color:var(--hot)}
-.w-pack-ico svg{width:15px; height:15px; display:block}
-.w-pack span{overflow:hidden; text-overflow:ellipsis}
 
-.w-add{
-  display:flex; align-items:center; justify-content:center; gap:7px;
-  width:100%; min-height:40px; padding:9px 10px;
-  border:1px dashed var(--line3); border-radius:var(--r-sm);
-  background:transparent; color:var(--dim); font-size:12.5px; cursor:pointer;
-}
-.w-add svg{width:14px; height:14px; display:block}
+.w-add{border-style:dashed; border-color:var(--line3); background:transparent; color:var(--dim)}
+.w-add .w-in{justify-content:center; gap:8px}
+.w-add svg{width:15px; height:15px}
+.w-add span{font-size:12.5px}
+
 .w-empty{
-  padding:14px 12px; border:1px dashed var(--line2); border-radius:var(--r-sm);
-  text-align:center; font-size:12px; color:var(--faint);
+  padding:15px 12px; border:1px dashed var(--line2); border-radius:var(--r-sm);
+  text-align:center; font-size:12px; line-height:1.45; color:var(--faint);
 }
 .w-link{
-  display:inline-flex; align-items:center; gap:6px;
-  border:0; background:none; padding:0; cursor:pointer;
-  font-size:11.5px; color:var(--dim);
+  display:inline-block; border:0; background:none; padding:0; cursor:pointer;
+  font-size:12px; color:var(--dim); width:auto;
 }
-.w-link svg{width:13px; height:13px; display:block}
+.w-link .w-in{gap:7px; width:auto}
+.w-link svg{width:14px; height:14px}
 .w-foot-meta{
-  display:flex; align-items:center; gap:8px; flex-wrap:wrap;
-  margin-top:16px; padding-top:12px; border-top:1px solid var(--line);
+  display:flex; align-items:center; gap:9px; flex-wrap:wrap;
+  margin-top:17px; padding-top:13px; border-top:1px solid var(--line);
 }
-.w-ver{margin-left:auto; font-family:var(--mono); font-size:9.5px; color:var(--faint)}
-.w-note{margin:10px 0 0; font-size:11px; line-height:1.4; color:var(--faint); text-align:center}
-.w-steps{margin:0 0 12px; padding-left:18px; display:flex; flex-direction:column; gap:6px; font-size:12.5px; line-height:1.45; color:var(--dim)}
-.w-wide{width:100%; justify-content:center; min-height:44px}
+.w-ver{margin-left:auto; font-family:var(--mono); font-size:10px; color:var(--faint)}
+.w-note{margin:11px 0 0; font-size:11.5px; line-height:1.45; color:var(--faint); text-align:center}
+.w-steps{
+  margin:0 0 13px; padding-left:20px;
+  display:flex; flex-direction:column; gap:7px;
+  font-size:12.5px; line-height:1.5; color:var(--dim);
+}
+.w-wide{width:100%; min-height:44px}
 
-/* ---- step nav, top-right of the sheet ---- */
-.w-nav{display:flex; align-items:center; gap:6px}
+/* ---- step nav ---- */
+.w-nav{display:flex; align-items:center; gap:7px}
 .w-nav-btn{
-  display:inline-flex; align-items:center; justify-content:center; gap:5px;
-  min-width:38px; min-height:38px; padding:0 11px;
-  border:1px solid var(--line2); border-radius:9px;
+  display:flex; align-items:center; justify-content:center; gap:6px;
+  min-width:40px; min-height:40px; padding:0 12px;
+  border:1px solid var(--line2); border-radius:10px;
   background:var(--panel2); color:var(--txt);
   font-family:var(--sans); font-size:12.5px; font-weight:550; cursor:pointer;
 }
-.w-nav-btn svg{width:14px; height:14px; display:block}
+.w-nav-btn svg{width:15px; height:15px}
 .w-nav-btn.pri{background:var(--hot); border-color:var(--hot); color:var(--hot-ink)}
 .w-nav-btn:disabled{opacity:.4}
 .w-nav-skip{
-  border:0; background:none; padding:0 6px; cursor:pointer;
-  font-size:11.5px; color:var(--faint);
+  border:0; background:none; padding:0 7px; cursor:pointer;
+  font-size:12px; color:var(--faint); width:auto; min-width:0;
 }
 
 /* ---- done ---- */
-.w-done{display:flex; flex-direction:column; align-items:flex-start; gap:7px; margin-bottom:14px}
+.w-done{display:block; margin-bottom:15px}
 .w-seal{
-  width:44px; height:44px; display:grid; place-items:center; border-radius:99px;
-  background:var(--okbg); color:var(--ok); border:1px solid color-mix(in srgb,var(--ok) 40%,transparent);
+  width:46px; height:46px; margin-bottom:9px;
+  display:flex; align-items:center; justify-content:center; border-radius:99px;
+  background:rgba(47,212,146,.14); color:var(--ok); border:1px solid rgba(47,212,146,.4);
 }
-.w-seal svg{width:22px; height:22px; display:block}
-.w-done .w-grp{margin:0}
+.w-seal svg{width:23px; height:23px}
+.w-done .w-grp{margin:0 0 5px}
 .w-day{
-  display:flex; align-items:center; gap:8px; flex-wrap:wrap;
-  padding:8px 10px; border-radius:var(--r-sm);
-  border:1px solid var(--line2); background:var(--panel2); width:100%;
-}
-.w-day span{font-family:var(--mono); font-size:10px; letter-spacing:.14em; color:var(--hot)}
-.w-day b{font-size:12.5px; font-weight:600; color:var(--label)}
-.w-stats{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:5px; margin-bottom:6px}
-.w-stat{
-  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px;
-  min-height:54px; padding:8px 4px; min-width:0;
-  border:1px solid var(--line2); border-radius:var(--r-sm);
-  background:var(--panel2); color:var(--txt); cursor:pointer;
-}
-.w-stat b{font-family:var(--mono); font-size:18px; line-height:1.25; color:var(--hot)}
-.w-stat span{font-size:9.5px; line-height:1.2; color:var(--faint); text-align:center; overflow-wrap:anywhere}
-.w-chips{display:flex; flex-wrap:wrap; gap:5px}
-.w-chip{
-  display:inline-flex; align-items:center; gap:5px;
-  padding:5px 9px 5px 5px; border-radius:99px;
+  display:flex; align-items:center; gap:9px; flex-wrap:wrap;
+  margin-top:11px; padding:9px 11px; border-radius:var(--r-sm);
   border:1px solid var(--line2); background:var(--panel2);
-  font-size:11.5px; line-height:1.3; color:var(--txt);
+}
+.w-day span{font-family:var(--mono); font-size:10.5px; letter-spacing:.14em; color:var(--hot)}
+.w-day b{font-size:13px; font-weight:600; color:var(--label)}
+
+.w-stats{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:6px; margin-bottom:7px}
+.w-stat{padding:9px 4px}
+.w-stat .w-in{flex-direction:column; align-items:center; gap:3px; text-align:center}
+.w-stat b{font-family:var(--mono); font-size:19px; line-height:1.3; color:var(--hot)}
+.w-stat span{font-size:10px; line-height:1.25; color:var(--faint); overflow-wrap:anywhere}
+
+.w-chips{display:flex; flex-wrap:wrap; gap:6px}
+.w-chip{
+  display:inline-flex; align-items:center; gap:6px;
+  padding:5px 10px 5px 5px; border-radius:99px;
+  border:1px solid var(--line2); background:var(--panel2);
+  font-size:12px; line-height:1.35; color:var(--txt);
 }
 .w-chip-ico{
-  flex:none; width:20px; height:20px; display:grid; place-items:center;
-  border-radius:99px; color:var(--sk-c,var(--hot));
-  background:color-mix(in srgb,var(--sk-c,var(--hot)) 18%,transparent);
+  flex:none; width:22px; height:22px;
+  display:flex; align-items:center; justify-content:center;
+  border-radius:99px; color:var(--sk-c,var(--hot)); background:rgba(255,255,255,.07);
 }
-.w-chip-ico svg{width:12px; height:12px; display:block}
-.w-start{width:100%; justify-content:center; min-height:46px; font-size:14.5px; margin-top:14px}
+html[data-theme="light"] .w-chip-ico{background:rgba(16,24,40,.06)}
+.w-chip-ico svg{width:13px; height:13px}
+.w-start{width:100%; min-height:48px; font-size:15px; margin-top:15px}
+
+/* ---- the app shell's own buttons, restated after the global reset ---- */
+.btn,.iconbtn,.tabs button,.w-seg button,.w-nav-btn{
+  -webkit-appearance:none; appearance:none;
+}
+.btn{display:inline-flex; align-items:center; justify-content:center}
+.iconbtn{display:flex; align-items:center; justify-content:center}
+.tabs button{display:flex; flex-direction:column; align-items:center; justify-content:center}
 </style>
 </head>
 <body>
@@ -7058,7 +7119,18 @@ function flag(code) {
     '<path d="M12 0v16M0 8h24" stroke="#C8102E" stroke-width="3"/></svg>';
 }
 function ico(n, cls) {
-  return '<svg class="' + (cls || '') + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (ICO[n] || '') + '</svg>';
+  /* width/height are emitted as ATTRIBUTES on purpose. Without an intrinsic
+     size, iOS Safari falls back to its own default box whenever a CSS rule
+     does not happen to match the icon's context — which is what made icons sit
+     wrong inside their tiles. CSS still overrides these freely. */
+  return '<svg class="' + (cls || '') + '" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (ICO[n] || '') + '</svg>';
+}
+
+/* color-mix() needs Safari 16.2+; below that the whole declaration is dropped
+   and the tile loses its background. 8-digit hex alpha works everywhere. */
+function tint(c, aa) {
+  c = String(c || '');
+  return /^#[0-9a-fA-F]{6}$/.test(c) ? c + aa : 'rgba(255,255,255,.07)';
 }
 
 /* -------------------------------------------------------------- 2. HELPERS */
@@ -9464,7 +9536,7 @@ function renderProgression() {
       return '<div class="skill-bar-row">' +
         '<div class="meta">' +
           '<span style="display:flex;align-items:center;gap:7px;min-width:0">' +
-            '<span style="width:20px;height:20px;border-radius:6px;display:grid;place-items:center;flex:none;color:' + SKILL_COLORS[r.s.key] + ';background:color-mix(in srgb,' + SKILL_COLORS[r.s.key] + ' 14%,transparent);border:1px solid color-mix(in srgb,' + SKILL_COLORS[r.s.key] + ' 30%,transparent)">' + ico(r.s.ico) + '</span>' +
+            '<span style="width:20px;height:20px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex:none;color:' + SKILL_COLORS[r.s.key] + ';background:' + tint(SKILL_COLORS[r.s.key], '24') + ';border:1px solid ' + tint(SKILL_COLORS[r.s.key], '4D') + '">' + ico(r.s.ico) + '</span>' +
             '<span style="overflow:hidden;text-overflow:ellipsis">' + esc(r.s.name) + ' <span style="color:var(--dim);font-weight:500">(' + ticks + ')</span></span>' +
             '<span class="skill-role ' + (isCoreKey(r.s.key) ? 'core' : 'bonus') + '">' + (isCoreKey(r.s.key) ? tr('Essential','Esencial') : tr('Extra','Extra')) + '</span></span>' +
           '<span style="font-size:11.5px;color:var(--label);font-weight:600;flex:none">' + tr('Level','Nivel') + ' ' + rec.level + '</span></div>' +
@@ -11747,7 +11819,7 @@ function openSkillManager() {
   const rows = SKILLS.map(function (d) {
     const core = isCoreKey(d.key);
     return '<div class="sk-row">' +
-      '<span class="g" style="background:color-mix(in srgb,' + esc(d.color) + ' 16%,transparent);color:' + esc(d.color) + ';border:1px solid color-mix(in srgb,' + esc(d.color) + ' 34%,var(--line))">' + ico(d.ico) + '</span>' +
+      '<span class="g" style="background:' + tint(d.color, '29') + ';color:' + esc(d.color) + ';border:1px solid ' + tint(d.color, '57') + '">' + ico(d.ico) + '</span>' +
       '<span class="nm"><b>' + esc(d.name) + '</b><span>' + esc(d.desc || '-') + '</span></span>' +
       skillRoleToggleHTML(d.key, core) +
       '<button class="icon-btn sk-manager-edit" data-act="skillEdit" data-key="' + esc(d.key) + '" title="' + esc(es ? 'Editar hábito' : 'Edit habit') + '" aria-label="' + esc(es ? 'Editar hábito' : 'Edit habit') + '">' + ico('edit') + '</button>' +
@@ -11794,7 +11866,7 @@ function renderSkillEditor() {
                               'Ponle nombre, icono y color. Ese color lo vas a ver en toda la app.');
   $('edBody').innerHTML =
     '<div class="sk-preview" style="--sk-c:' + esc(d.color) + '">' +
-      '<span class="g" style="background:color-mix(in srgb,' + esc(d.color) + ' 16%,transparent);color:' + esc(d.color) + ';border:1px solid color-mix(in srgb,' + esc(d.color) + ' 34%,var(--line))">' + ico(d.ico) + '</span>' +
+      '<span class="g" style="background:' + tint(d.color, '29') + ';color:' + esc(d.color) + ';border:1px solid ' + tint(d.color, '57') + '">' + ico(d.ico) + '</span>' +
       '<span><b>' + esc(d.name || tr('New habit','Hábito nuevo')) + '</b><span>' + esc(d.desc || tr('No description yet','Sin descripción todavía')) + '</span></span>' +
     '</div>' +
     '<div class="fld"><label>' + tr('NAME','NOMBRE') + '</label><input class="in" id="skName" maxlength="28" value="' + esc(d.name) + '" placeholder="' + tr('Training','Entreno') + '"></div>' +
@@ -12000,13 +12072,15 @@ function renderWizard() {
       ' data-act="' + o.act + '"' + (o.key ? ' data-key="' + esc(o.key) + '"' : '') +
       (o.id ? ' data-id="' + esc(o.id) + '"' : '') +
       (o.kind ? ' data-kind="' + esc(o.kind) + '"' : '') + '>' +
-      '<span class="w-opt-ico">' + ico(o.ico || 'check') + '</span>' +
-      '<span class="w-opt-c"><b>' + esc(o.name) + '</b>' +
-        (o.sub ? '<span>' + esc(o.sub) + '</span>' : '') + '</span>' +
-      (o.editId
-        ? '<span class="w-opt-edit" role="button" tabindex="0" data-act="' + o.editAct + '" data-id="' + esc(o.editId) + '">' + ico('edit') + '</span>'
-        : '') +
-      '<span class="w-opt-tick">' + ico(o.tickIco || 'check') + '</span>' +
+      '<span class="w-in">' +
+        '<span class="w-opt-ico">' + ico(o.ico || 'check') + '</span>' +
+        '<span class="w-opt-c"><b>' + esc(o.name) + '</b>' +
+          (o.sub ? '<span>' + esc(o.sub) + '</span>' : '') + '</span>' +
+        (o.editId
+          ? '<span class="w-opt-edit" role="button" tabindex="0" data-act="' + o.editAct + '" data-id="' + esc(o.editId) + '">' + ico('edit') + '</span>'
+          : '') +
+        '<span class="w-opt-tick">' + ico(o.tickIco || 'check') + '</span>' +
+      '</span>' +
       '</button>';
   };
   const NAV = function (opt) {
@@ -12033,14 +12107,17 @@ function renderWizard() {
 
     const path = function (act, icon, name, sub, reco) {
       return '<button type="button" class="w-path" data-act="' + act + '">' +
-        '<span class="w-path-ico">' + ico(icon) + '</span>' +
-        '<span class="w-opt-c"><b>' + name + (reco ? '<i class="w-reco">' + tr('Recommended', 'Recomendado') + '</i>' : '') + '</b>' +
-        '<span>' + sub + '</span></span>' +
-        '<span class="w-path-go">' + ico('right') + '</span></button>';
+        '<span class="w-in">' +
+          '<span class="w-path-ico">' + ico(icon) + '</span>' +
+          '<span class="w-opt-c"><b>' + name + (reco ? '<i class="w-reco">' + tr('Recommended', 'Recomendado') + '</i>' : '') + '</b>' +
+          '<span>' + sub + '</span></span>' +
+          '<span class="w-path-go">' + ico('right') + '</span>' +
+        '</span></button>';
     };
     const pack = function (k, icon, label) {
       return '<button type="button" class="w-pack" data-act="wizPack" data-pack="' + k + '">' +
-        '<span class="w-pack-ico">' + ico(icon) + '</span><span>' + label + '</span></button>';
+        '<span class="w-in"><span class="w-pack-ico">' + ico(icon) + '</span>' +
+        '<span class="w-pack-l">' + label + '</span></span></button>';
     };
 
     body =
@@ -12087,7 +12164,7 @@ function renderWizard() {
       '</div>' +
 
       '<div class="w-foot-meta">' +
-        '<button type="button" class="w-link" data-act="openImport">' + ico('upload') + tr('I already have a backup', 'Ya tengo un backup') + '</button>' +
+        '<button type="button" class="w-link" data-act="openImport"><span class="w-in">' + ico('upload') + '<span>' + tr('I already have a backup', 'Ya tengo un backup') + '</span></span></button>' +
         '<span class="w-ver">v' + APP_VERSION + '</span>' +
       '</div>';
   }
@@ -12142,7 +12219,7 @@ function renderWizard() {
         sug.map(function (d) {
           return OPT({ act:'wizPick', key:d.key, ico:d.ico, color:d.color, name:d.name, sub:d.desc || '', tickIco:'plus' });
         }).join('') +
-        '<button type="button" class="w-add" data-act="wizPickCore">' + ico('plus') + tr('Create my own', 'Crear el mío') + '</button>' +
+        '<button type="button" class="w-add" data-act="wizPickCore"><span class="w-in">' + ico('plus') + '<span>' + tr('Create my own', 'Crear el mío') + '</span></span></button>' +
       '</div>';
     foot = NAV({ back:true, next:true, nextDisabled:!ok });
   }
@@ -12162,7 +12239,7 @@ function renderWizard() {
           return OPT({ act:'wizToggleBonus', key:d.key, ico:d.ico, color:d.color, name:d.name,
             sub:d.desc || '', on:w.bonus.indexOf(d.key) >= 0 });
         }).join('') +
-        '<button type="button" class="w-add" data-act="wizCustomBonus">' + ico('plus') + tr('Create my own', 'Crear el mío') + '</button>' +
+        '<button type="button" class="w-add" data-act="wizCustomBonus"><span class="w-in">' + ico('plus') + '<span>' + tr('Create my own', 'Crear el mío') + '</span></span></button>' +
       '</div>';
     foot = NAV({ back:true, next:true, nextDisabled:!ok });
   }
@@ -12181,7 +12258,7 @@ function renderWizard() {
             color:(PILLAR_CATS[p.cat] || {}).color || 'var(--hot)',
             on:sel.indexOf(p.id) >= 0, editId:p.id, editAct:'wizEditPillar' });
         }).join('') +
-        '<button type="button" class="w-add" data-act="wizNewPillar">' + ico('plus') + tr('Create my own', 'Crear el mío') + '</button>' +
+        '<button type="button" class="w-add" data-act="wizNewPillar"><span class="w-in">' + ico('plus') + '<span>' + tr('Create my own', 'Crear el mío') + '</span></span></button>' +
       '</div>';
     foot = NAV({ back:true, skip:true, next:true });
   }
@@ -12207,7 +12284,7 @@ function renderWizard() {
           return OPT({ act:'wizGoal', id:g.id, ico:par[2], color:par[3], name:g.name, sub:sub,
             on:sel.indexOf(g.id) >= 0, editId:g.id, editAct:'wizEditGoal' });
         }).join('') +
-        '<button type="button" class="w-add" data-act="wizNewGoal" data-kind="' + par[0] + '">' + ico('plus') + tr('Create my own', 'Crear la mía') + '</button>' +
+        '<button type="button" class="w-add" data-act="wizNewGoal" data-kind="' + par[0] + '"><span class="w-in">' + ico('plus') + '<span>' + tr('Create my own', 'Crear la mía') + '</span></span></button>' +
         '</div>';
     });
     foot = NAV({ back:true, skip:true, next:true });
@@ -12224,7 +12301,7 @@ function renderWizard() {
     };
     const stat = function (v, l, step) {
       return '<button type="button" class="w-stat" data-act="wizJump" data-step="' + step + '">' +
-        '<b>' + v + '</b><span>' + l + '</span></button>';
+        '<span class="w-in"><b>' + v + '</b><span>' + l + '</span></span></button>';
     };
 
     body =
