@@ -5452,6 +5452,224 @@ body:has(> .ov.on){overflow:hidden}
 /* ---- AI step ---- */
 .wiz-ai-body{display:flex; flex-direction:column; gap:10px}
 .setup-steps{display:flex; flex-direction:column; gap:6px; font-size:12px; line-height:1.4}
+
+/* ============================================================================
+   12 · SETUP · components for the rebuilt renderWizard
+   Every element here is a flex box that centres its own contents. No absolute
+   positioning, no fixed heights, no circle math — so icons and labels cannot
+   drift out of their boxes at any width.
+   ========================================================================= */
+.modal.wiz{height:auto; max-height:94dvh; width:100%; max-width:none}
+.modal.wiz .wiz-steps{flex:none; display:flex; gap:4px; padding:9px 14px 4px}
+.modal.wiz .wiz-steps i{flex:1 1 0; height:3px; border-radius:2px; background:var(--line2)}
+.modal.wiz .wiz-steps i.done{background:var(--hot)}
+.modal.wiz .modal-h{
+  flex:none; display:flex; justify-content:flex-end;
+  padding:0 12px; border-bottom:0; min-height:0;
+}
+.modal.wiz.is-home .modal-h{display:none}
+.modal.wiz .wiz-head-copy{display:none}
+.modal.wiz .modal-b{
+  display:block!important; overflow-y:auto!important; min-height:0;
+  padding:12px 14px calc(16px + var(--safe-b));
+}
+.modal.wiz .modal-f{display:none!important}
+
+/* ---- headings ---- */
+.w-head{display:flex; flex-direction:column; gap:6px; margin-bottom:12px}
+.w-title{
+  margin:0; font-size:19px; font-weight:650; line-height:1.3;
+  letter-spacing:-.02em; color:var(--txt);
+}
+.w-title em{font-style:normal; color:var(--hot)}
+.w-lead{margin:0; font-size:12.5px; line-height:1.45; color:var(--faint)}
+.w-lead b,.w-lead .em{color:var(--label); font-weight:600}
+.w-grp{
+  display:block; margin:14px 0 6px;
+  font-family:var(--mono); font-size:10px; letter-spacing:.15em;
+  text-transform:uppercase; color:var(--faint);
+}
+.w-count{
+  align-self:flex-start; display:inline-flex; align-items:center;
+  padding:4px 9px; border-radius:99px;
+  font-family:var(--mono); font-size:11px; line-height:1.3;
+  border:1px solid var(--line2); background:var(--panel2); color:var(--dim);
+}
+.w-count.ok{color:var(--ok); border-color:color-mix(in srgb,var(--ok) 45%,transparent); background:var(--okbg)}
+.w-count.opt{color:var(--faint)}
+
+/* ---- home ---- */
+.w-hero{display:flex; align-items:center; gap:10px; margin-bottom:12px}
+.w-mark{
+  flex:none; width:42px; height:42px; display:grid; place-items:center;
+  border-radius:12px; background:var(--hotbg); color:var(--hot);
+}
+.w-mark svg{width:23px; height:23px}
+.w-wm{display:flex; align-items:baseline; gap:7px; min-width:0}
+.w-wm b{font-size:24px; font-weight:650; line-height:1.3; letter-spacing:-.02em}
+.w-wm i{
+  font-style:normal; font-family:var(--mono); font-size:9.5px; letter-spacing:.14em;
+  padding:2px 5px; border-radius:5px; border:1px solid var(--line2); color:var(--faint);
+}
+.w-tag{margin:0 0 14px; font-size:16px; line-height:1.45; color:var(--dim)}
+.w-tag b{color:var(--hot); font-weight:650}
+
+.w-field{display:flex; flex-direction:column; gap:5px; margin-bottom:12px}
+.w-field label{
+  font-family:var(--mono); font-size:9.5px; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--faint);
+}
+
+.w-prefs{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:8px}
+.w-seg{display:inline-flex; gap:2px; padding:2px; border-radius:10px; border:1px solid var(--line2); background:var(--panel2)}
+.w-seg button{
+  display:inline-grid; place-items:center;
+  min-width:38px; height:32px; padding:0 8px;
+  border:0; border-radius:8px; background:transparent; color:var(--faint);
+  font-size:12px; cursor:pointer;
+}
+.w-seg button svg{width:15px; height:15px}
+.w-seg button.on{background:var(--raise); color:var(--txt)}
+.w-dots{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px}
+.w-dot{width:26px; height:26px; border-radius:99px; border:2px solid transparent; cursor:pointer}
+.w-dot.on{border-color:var(--txt)}
+
+/* ---- the workhorse row ---- */
+.w-stack{display:flex; flex-direction:column; gap:6px}
+.w-opt,.w-path{
+  display:flex; align-items:center; gap:10px; width:100%;
+  padding:9px 10px; text-align:left; cursor:pointer;
+  border:1px solid var(--line2); border-radius:var(--r-sm);
+  background:var(--panel2); color:var(--txt);
+  font-family:var(--sans); font-size:13px;
+}
+.w-opt.on{border-color:var(--sk-c,var(--hot)); background:color-mix(in srgb,var(--sk-c,var(--hot)) 12%,var(--panel2))}
+.w-opt:active,.w-path:active{opacity:.65}
+.w-opt-ico,.w-path-ico{
+  flex:none; width:34px; height:34px; display:grid; place-items:center;
+  border-radius:9px; color:var(--sk-c,var(--hot));
+  background:color-mix(in srgb,var(--sk-c,var(--hot)) 15%,transparent);
+}
+.w-opt-ico svg,.w-path-ico svg{width:17px; height:17px; display:block}
+.w-opt-c{flex:1 1 auto; min-width:0; display:flex; flex-direction:column; gap:1px}
+.w-opt-c b{font-size:13px; font-weight:600; line-height:1.32; overflow-wrap:anywhere}
+.w-opt-c span{font-size:11px; line-height:1.35; color:var(--faint); overflow-wrap:anywhere}
+.w-opt-tick{
+  flex:none; width:26px; height:26px; display:grid; place-items:center;
+  border-radius:99px; border:1px solid var(--line2); color:var(--faint);
+}
+.w-opt-tick svg{width:13px; height:13px; display:block}
+.w-opt.on .w-opt-tick{background:var(--sk-c,var(--hot)); border-color:var(--sk-c,var(--hot)); color:#fff}
+.w-opt-edit{
+  flex:none; width:30px; height:30px; display:grid; place-items:center;
+  border-radius:8px; color:var(--faint); border:1px solid var(--line2);
+}
+.w-opt-edit svg{width:13px; height:13px; display:block}
+
+/* setup paths */
+.w-path-go{flex:none; width:22px; display:grid; place-items:center; color:var(--faint)}
+.w-path-go svg{width:15px; height:15px; display:block}
+.w-reco{
+  display:inline-block; margin-left:6px; font-style:normal; vertical-align:middle;
+  font-family:var(--mono); font-size:8.5px; letter-spacing:.09em;
+  padding:2px 5px; border-radius:99px; background:var(--hotbg); color:var(--hot);
+}
+
+/* packs */
+.w-packs{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:6px}
+.w-pack{
+  display:flex; align-items:center; justify-content:center; gap:6px;
+  min-height:40px; padding:8px 10px; min-width:0;
+  border:1px solid var(--line2); border-radius:var(--r-sm);
+  background:var(--panel2); color:var(--txt);
+  font-family:var(--sans); font-size:12px; font-weight:550;
+  white-space:nowrap; overflow:hidden; cursor:pointer;
+}
+.w-pack-ico{flex:none; display:grid; place-items:center; color:var(--hot)}
+.w-pack-ico svg{width:15px; height:15px; display:block}
+.w-pack span{overflow:hidden; text-overflow:ellipsis}
+
+.w-add{
+  display:flex; align-items:center; justify-content:center; gap:7px;
+  width:100%; min-height:40px; padding:9px 10px;
+  border:1px dashed var(--line3); border-radius:var(--r-sm);
+  background:transparent; color:var(--dim); font-size:12.5px; cursor:pointer;
+}
+.w-add svg{width:14px; height:14px; display:block}
+.w-empty{
+  padding:14px 12px; border:1px dashed var(--line2); border-radius:var(--r-sm);
+  text-align:center; font-size:12px; color:var(--faint);
+}
+.w-link{
+  display:inline-flex; align-items:center; gap:6px;
+  border:0; background:none; padding:0; cursor:pointer;
+  font-size:11.5px; color:var(--dim);
+}
+.w-link svg{width:13px; height:13px; display:block}
+.w-foot-meta{
+  display:flex; align-items:center; gap:8px; flex-wrap:wrap;
+  margin-top:16px; padding-top:12px; border-top:1px solid var(--line);
+}
+.w-ver{margin-left:auto; font-family:var(--mono); font-size:9.5px; color:var(--faint)}
+.w-note{margin:10px 0 0; font-size:11px; line-height:1.4; color:var(--faint); text-align:center}
+.w-steps{margin:0 0 12px; padding-left:18px; display:flex; flex-direction:column; gap:6px; font-size:12.5px; line-height:1.45; color:var(--dim)}
+.w-wide{width:100%; justify-content:center; min-height:44px}
+
+/* ---- step nav, top-right of the sheet ---- */
+.w-nav{display:flex; align-items:center; gap:6px}
+.w-nav-btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:5px;
+  min-width:38px; min-height:38px; padding:0 11px;
+  border:1px solid var(--line2); border-radius:9px;
+  background:var(--panel2); color:var(--txt);
+  font-family:var(--sans); font-size:12.5px; font-weight:550; cursor:pointer;
+}
+.w-nav-btn svg{width:14px; height:14px; display:block}
+.w-nav-btn.pri{background:var(--hot); border-color:var(--hot); color:var(--hot-ink)}
+.w-nav-btn:disabled{opacity:.4}
+.w-nav-skip{
+  border:0; background:none; padding:0 6px; cursor:pointer;
+  font-size:11.5px; color:var(--faint);
+}
+
+/* ---- done ---- */
+.w-done{display:flex; flex-direction:column; align-items:flex-start; gap:7px; margin-bottom:14px}
+.w-seal{
+  width:44px; height:44px; display:grid; place-items:center; border-radius:99px;
+  background:var(--okbg); color:var(--ok); border:1px solid color-mix(in srgb,var(--ok) 40%,transparent);
+}
+.w-seal svg{width:22px; height:22px; display:block}
+.w-done .w-grp{margin:0}
+.w-day{
+  display:flex; align-items:center; gap:8px; flex-wrap:wrap;
+  padding:8px 10px; border-radius:var(--r-sm);
+  border:1px solid var(--line2); background:var(--panel2); width:100%;
+}
+.w-day span{font-family:var(--mono); font-size:10px; letter-spacing:.14em; color:var(--hot)}
+.w-day b{font-size:12.5px; font-weight:600; color:var(--label)}
+.w-stats{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:5px; margin-bottom:6px}
+.w-stat{
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px;
+  min-height:54px; padding:8px 4px; min-width:0;
+  border:1px solid var(--line2); border-radius:var(--r-sm);
+  background:var(--panel2); color:var(--txt); cursor:pointer;
+}
+.w-stat b{font-family:var(--mono); font-size:18px; line-height:1.25; color:var(--hot)}
+.w-stat span{font-size:9.5px; line-height:1.2; color:var(--faint); text-align:center; overflow-wrap:anywhere}
+.w-chips{display:flex; flex-wrap:wrap; gap:5px}
+.w-chip{
+  display:inline-flex; align-items:center; gap:5px;
+  padding:5px 9px 5px 5px; border-radius:99px;
+  border:1px solid var(--line2); background:var(--panel2);
+  font-size:11.5px; line-height:1.3; color:var(--txt);
+}
+.w-chip-ico{
+  flex:none; width:20px; height:20px; display:grid; place-items:center;
+  border-radius:99px; color:var(--sk-c,var(--hot));
+  background:color-mix(in srgb,var(--sk-c,var(--hot)) 18%,transparent);
+}
+.w-chip-ico svg{width:12px; height:12px; display:block}
+.w-start{width:100%; justify-content:center; min-height:46px; font-size:14.5px; margin-top:14px}
 </style>
 </head>
 <body>
@@ -11758,433 +11976,307 @@ function wizHeadNav(opts) {
   return h;
 }
 function wizFootNav(opts) { return wizHeadNav(opts); }
+/* ============================================================================
+   renderWizard · rebuilt for the phone.
+   Same state (ui.wiz), same actions, same ids the engine listens to. What
+   changed is the markup: no circle math, no absolutely positioned slots, no
+   two-column split. Everything is a flex row that centres its own icon and
+   text, so nothing can drift out of its box at any width.
+   ========================================================================= */
 function renderWizard() {
   const w = ui.wiz, st = w.step;
-  $('obSteps').innerHTML = [1,2,3,4,5,6].map(function (i) { return '<i class="' + (i <= st ? 'done' : '') + '"></i>'; }).join('');
-  let title = '', subt = '', body = '', foot = '';
 
+  /* ---- small building blocks, shared by every step ---- */
+  const H = function (title, lead, extra) {
+    return '<div class="w-head">' +
+      '<h2 class="w-title">' + title + '</h2>' +
+      (lead ? '<p class="w-lead">' + lead + '</p>' : '') +
+      (extra || '') + '</div>';
+  };
+  /* the workhorse: [icon] [name + sub] [trailing] — one row, always centred */
+  const OPT = function (o) {
+    return '<button type="button" class="w-opt' + (o.on ? ' on' : '') + '"' +
+      (o.color ? ' style="--sk-c:' + esc(o.color) + '"' : '') +
+      ' data-act="' + o.act + '"' + (o.key ? ' data-key="' + esc(o.key) + '"' : '') +
+      (o.id ? ' data-id="' + esc(o.id) + '"' : '') +
+      (o.kind ? ' data-kind="' + esc(o.kind) + '"' : '') + '>' +
+      '<span class="w-opt-ico">' + ico(o.ico || 'check') + '</span>' +
+      '<span class="w-opt-c"><b>' + esc(o.name) + '</b>' +
+        (o.sub ? '<span>' + esc(o.sub) + '</span>' : '') + '</span>' +
+      (o.editId
+        ? '<span class="w-opt-edit" role="button" tabindex="0" data-act="' + o.editAct + '" data-id="' + esc(o.editId) + '">' + ico('edit') + '</span>'
+        : '') +
+      '<span class="w-opt-tick">' + ico(o.tickIco || 'check') + '</span>' +
+      '</button>';
+  };
+  const NAV = function (opt) {
+    opt = opt || {};
+    let h = '';
+    if (opt.back) h += '<button type="button" class="w-nav-btn" data-act="wizBack" aria-label="' + esc(tr('Back', 'Atrás')) + '">' + ico('left') + '</button>';
+    if (opt.home) h += '<button type="button" class="w-nav-btn" data-act="wizHome" aria-label="' + esc(tr('Back', 'Atrás')) + '">' + ico('left') + '</button>';
+    if (opt.skip) h += '<button type="button" class="w-nav-skip" data-act="wizJump" data-step="6">' + tr('Skip', 'Saltar') + '</button>';
+    if (opt.next) h += '<button type="button" class="w-nav-btn pri" data-act="wizNext"' + (opt.nextDisabled ? ' disabled' : '') + '>' +
+      (opt.nextLabel || tr('Continue', 'Continuar')) + ico('right') + '</button>';
+    return h ? '<div class="w-nav">' + h + '</div>' : '';
+  };
+
+  let body = '', foot = '';
+
+  /* ------------------------------------------------------------ 1 · HOME */
   if (st === 1) {
-    title = ''; subt = '';
-    const accDots = Object.keys(ACCENT_PRESETS).map(function (k) {
-      return '<button type="button" class="wiz-dot' + (currentAccent() === k ? ' on' : '') + '" style="background:' + (ACCENT_PRESETS[k].swatch || ACCENT_PRESETS[k].hot) + '" data-act="setAccent" data-accent="' + k + '" title="' + esc(ACCENT_PRESETS[k].label) + '" aria-label="' + esc(ACCENT_PRESETS[k].label) + '"></button>';
-    }).join('');
     const th = document.documentElement.dataset.theme === 'light' ? 'light' : 'dark';
-    body = '<div class="wiz-split">' +
-        '<div class="wiz-left">' +
-          '<div class="wiz-left-top">' +
-            '<div class="wiz-lockup"><div class="mark">' + ico('tungsten') + '</div>' +
-              '<div class="wm"><b>Tungsten</b><i>OS</i></div></div>' +
-            '<p class="wiz-tagline">' + tr(
-              'Choose a few habits.<br><b>Keep them.</b><br>Tungsten keeps the count for you.',
-              'Elige pocos hábitos.<br><b>Cúmplelos.</b><br>Tungsten lleva la cuenta por ti.') + '</p>' +
-            '<span class="wiz-rule" aria-hidden="true"></span>' +
-          '</div>' +
-          '<div class="wiz-left-bot">' +
-            '<div class="fld wiz-date"><label>' + tr('START DATE','FECHA DE INICIO') + '</label>' +
-              '<input type="date" class="in" id="wizDate" value="' + esc(w.date) + '"></div>' +
-            '<div class="wiz-prefs">' +
-              '<div class="wiz-lang">' +
-                '<button type="button" class="' + (lang() === 'es' ? 'on' : '') + '" data-act="setLang" data-lang="es" title="Español">' + flag('es') + '</button>' +
-                '<button type="button" class="' + (lang() === 'en' ? 'on' : '') + '" data-act="setLang" data-lang="en" title="English">' + flag('en') + '</button>' +
-              '</div>' +
-              '<div class="theme-switch sm" role="group" aria-label="' + esc(tr('Theme','Tema')) + '">' +
-                '<button type="button" class="' + (th === 'light' ? 'on' : '') + '" data-act="setTheme" data-theme="light" title="' + tr('Light','Claro') + '">' + ico('sun') + '</button>' +
-                '<button type="button" class="' + (th === 'dark' ? 'on' : '') + '" data-act="setTheme" data-theme="dark" title="' + tr('Dark','Oscuro') + '">' + ico('moon') + '</button>' +
-              '</div>' +
-              '<span class="accent-slot">' +
-                '<button type="button" class="accent-btn' + (ui._accentOpen ? ' on' : '') + '" data-act="wizAccent" title="' + tr('Accent colour','Color de acento') + '">' +
-                  ico('palette') + '<i style="background:' + (ACCENT_PRESETS[currentAccent()].swatch || ACCENT_PRESETS[currentAccent()].hot) + '"></i></button>' +
-                (ui._accentOpen ? '<span class="accent-pop-inline" role="group">' + accDots + '</span>' : '') +
-              '</span>' +
-            '</div>' +
-          '</div>' +
-        '</div>' +
-        '<div class="wiz-rule-v"></div>' +
-        '<div class="wiz-right">' +
-          '<div class="wiz-grp" style="margin-top:0">' + tr('How do you want to set it up?','¿Cómo quieres configurarlo?') + '</div>' +
-          '<div class="setup-paths">' +
-            '<div role="button" tabindex="0" class="setup-path reco" data-tag="' + tr('Recommended','Recomendado') + '" data-act="wizPathManual">' +
-              '<span class="g">' + ico('check') + '</span>' +
-              '<span class="sp-txt"><b>' + tr('Set it up myself','Configurarlo yo') + '</b>' +
-              '<p>' + tr('Habits first. Projects later.','Hábitos primero. Proyectos después.') + '</p></span>' +
-            '</div>' +
-            '<div role="button" tabindex="0" class="setup-path" data-act="wizPathAI">' +
-              '<span class="g">' + ico('bulb') + '</span>' +
-              '<span class="sp-txt"><b>' + tr('Let an AI set it up','Que una IA lo arme') + '</b>' +
-              '<p>' + tr('Brief → JSON → load here.','Instrucciones → JSON → cárgalo aquí.') + '</p></span>' +
-            '</div>' +
-            '<div role="button" tabindex="0" class="setup-path" data-act="wizPathSkip">' +
-              '<span class="g">' + ico('right') + '</span>' +
-              '<span class="sp-txt"><b>' + tr('Just the date','Solo la fecha') + '</b>' +
-              '<p>' + tr('Four basics. Add the rest later.','Cuatro básicos. El resto después.') + '</p></span>' +
-            '</div>' +
-          '</div>' +
-          '<div class="wiz-right-foot">' +
-            '<div class="wiz-grp">' + tr('Quick start packs','Paquetes rápidos') + '</div>' +
-            '<div class="wiz-pack-row">' +
-              '<button type="button" class="btn sm ghost wiz-pack" data-act="wizPack" data-pack="student">' + ico('cap') + ' ' + tr('Student','Estudiante') + '</button>' +
-              '<button type="button" class="btn sm ghost wiz-pack" data-act="wizPack" data-pack="founder">' + ico('bolt') + ' ' + tr('Founder','Emprendedor') + '</button>' +
-              '<button type="button" class="btn sm ghost wiz-pack" data-act="wizPack" data-pack="fitness">' + ico('dumbbell') + ' ' + tr('Fitness','Fitness') + '</button>' +
-              '<button type="button" class="btn sm ghost wiz-pack" data-act="wizPack" data-pack="family">' + ico('users') + ' ' + tr('Family','Familia') + '</button>' +
-            '</div>' +
-            '<div class="wiz-right-meta">' +
-              '<p class="wiz-hint">' + tr('Everything is editable later in Settings.','Todo se edita después en Ajustes.') + '</p>' +
-              '<span class="wiz-meta-act">' +
-                '<span class="wiz-ver">v' + APP_VERSION + '</span>' +
-                '<button type="button" class="btn ghost sm" data-act="openImport">' + ico('upload') + ' ' +
-                  tr('I already have a backup','Ya tengo un backup') + '</button>' +
-              '</span>' +
-            '</div>' +
-          '</div>' +
-        '</div>' +
-      '</div>';
-    foot = '';
-  }
+    const accDots = Object.keys(ACCENT_PRESETS).map(function (k) {
+      return '<button type="button" class="w-dot' + (currentAccent() === k ? ' on' : '') +
+        '" style="background:' + (ACCENT_PRESETS[k].swatch || ACCENT_PRESETS[k].hot) +
+        '" data-act="setAccent" data-accent="' + k + '" aria-label="' + esc(ACCENT_PRESETS[k].label) + '"></button>';
+    }).join('');
 
-  if (st === 'ai') {
-    /* El encabezado vive dentro del cuerpo: la cabecera del modal solo lleva la flecha. */
-    body = '<div class="wiz-step-stack">' +
-      '<div class="wiz-title-row">' +
-        '<h2>' + tr('Let an AI set it up','Que una IA lo arme') + '</h2>' +
-        '<p class="wiz-title-sub">' + tr(
-          'Download the brief, get a JSON back, paste or load it here.',
-          'Descarga las instrucciones, recibe un JSON y pégalo o cárgalo aquí.') + '</p>' +
-      '</div>' +
-      '<div class="wiz-ai-body">' +
-      '<div class="wiz-note"><b>' + tr('How it works','Cómo funciona') + '</b><p>' + tr(
-        'You download a brief with everything the AI needs to know. It interviews you, then hands you back a file or JSON block. Load it here and your Tungsten is ready.',
-        'Descargas unas instrucciones con todo lo que la IA necesita saber. Ella te entrevista y te devuelve un archivo o un bloque JSON. Cárgalo aquí y tu Tungsten queda listo.') + '</p></div>' +
-      '<ol class="setup-steps">' +
-        '<li>' + tr('Download the brief and open <b>ChatGPT</b>, <b>Claude</b> or any assistant.','Descarga las instrucciones y abre <b>ChatGPT</b>, <b>Claude</b> o el asistente que uses.') + '</li>' +
-        '<li>' + tr('Paste it. It will ask you about your routine, your projects and your goals.','Pégalas. Te va a preguntar por tu rutina, tus proyectos y tus metas.') + '</li>' +
-        '<li>' + tr('Paste the JSON below, or save a <b>.json</b> and load the file.','Pega el JSON abajo, o guarda un <b>.json</b> y carga el archivo.') + '</li>' +
-      '</ol>' +
-      '<div class="wiz-add">' +
-        '<button type="button" class="btn pri" data-act="wizBrief">' + ico('download') + ' ' + tr('Download the brief','Descargar instrucciones') + '</button>' +
-        '<button type="button" class="btn" data-act="wizLoadJson">' + ico('upload') + ' ' + tr('Load the file','Cargar el archivo') + '</button>' +
-      '</div>' +
-      '<div class="fld"><label>' + tr('OR PASTE JSON','O PEGA EL JSON') + '</label>' +
-        '<textarea class="in" id="wizPasteJson" rows="6" spellcheck="false" placeholder=\'{ "format": "tungsten-setup", ... }\'></textarea></div>' +
-      '<button type="button" class="btn pri" data-act="wizApplyPaste">' + tr('Apply pasted setup','Aplicar configuración pegada') + '</button>' +
-      '<input type="file" id="wizFile" accept=".json,application/json" hidden>' +
-      '</div></div>';
-    foot = '<button type="button" class="wiz-nav-btn" data-act="wizHome" title="' + esc(tr('Back','Atrás')) + '">' + ico('left') + '</button>';
-  }
-
-  /* ---- 2 · esenciales, en anillo ---- */
-  if (st === 2) {
-    const n = w.core.length, ok = n >= CORE_MIN && n <= CORE_MAX;
-    const defs = wizAllDefs();
-    /* arranca en 4 cupos y crece hasta 6 a medida que los llenas */
-    const cupos = Math.min(CORE_MAX, Math.max(4, n + 1));
-    const total = cupos + 1;
-    title = '';
-    subt = '';
-
-    const pos = function (i) {
-      const a = (-90 + (360 / total) * i) * Math.PI / 180;
-      return 'left:' + (50 + 37 * Math.cos(a)).toFixed(2) + '%;top:' + (50 + 37 * Math.sin(a)).toFixed(2) + '%';
+    const path = function (act, icon, name, sub, reco) {
+      return '<button type="button" class="w-path" data-act="' + act + '">' +
+        '<span class="w-path-ico">' + ico(icon) + '</span>' +
+        '<span class="w-opt-c"><b>' + name + (reco ? '<i class="w-reco">' + tr('Recommended', 'Recomendado') + '</i>' : '') + '</b>' +
+        '<span>' + sub + '</span></span>' +
+        '<span class="w-path-go">' + ico('right') + '</span></button>';
     };
-    let slots = '<button type="button" class="ring-slot ring-add" style="' + pos(0) + ';animation-delay:.03s" data-act="wizPickCore" title="' + tr('Add habit','Agregar hábito') + '" aria-label="' + tr('Create','Crear') + '">' +
-      '<span class="rs-crear">' + tr('Create','Crear') + '</span><span class="rs-in">' + ico('plus') + '</span></button>';
-    for (let i = 0; i < cupos; i++) {
-      const key = w.core[i];
-      const d = key ? defs.filter(function (x) { return x.key === key; })[0] : null;
-      const st2 = pos(i + 1) + ';animation-delay:' + (0.03 + 0.045 * (i + 1)).toFixed(3) + 's';
-      slots += d
-        ? '<button type="button" class="ring-slot filled" style="' + st2 + ';--sk-c:' + esc(d.color) + '" data-act="wizDropCore" data-key="' + esc(d.key) + '" title="' + esc(d.name) + ' · ' + tr('click to remove','clic para quitar') + '">' +
-            '<span class="rs-in">' + ico(d.ico) + '</span><span class="rs-lab">' + esc(d.name) + '</span></button>'
-        : '<button type="button" class="ring-slot empty" style="' + st2 + '" data-act="wizPickCore" title="' + tr('Empty slot','Cupo libre') + '"><span class="rs-in"></span></button>';
-    }
+    const pack = function (k, icon, label) {
+      return '<button type="button" class="w-pack" data-act="wizPack" data-pack="' + k + '">' +
+        '<span class="w-pack-ico">' + ico(icon) + '</span><span>' + label + '</span></button>';
+    };
 
-    const usados = w.core.concat(w.bonus);
-    const sug = defs.filter(function (d) { return usados.indexOf(d.key) < 0; })
-      .sort(function (a, b) { return (b.common ? 1 : 0) - (a.common ? 1 : 0); }).slice(0, 6);
+    body =
+      '<div class="w-hero">' +
+        '<span class="w-mark">' + ico('tungsten') + '</span>' +
+        '<span class="w-wm"><b>Tungsten</b><i>OS</i></span>' +
+      '</div>' +
+      '<p class="w-tag">' + tr(
+        'Choose a few habits.<br><b>Keep them.</b><br>Tungsten keeps the count for you.',
+        'Elige pocos hábitos.<br><b>Cúmplelos.</b><br>Tungsten lleva la cuenta por ti.') + '</p>' +
 
-    body = '<div class="ring-split">' +
-        '<div class="ring-copy">' +
-          '<div class="wiz-title-row">' +
-            '<h2>' + tr('Your <em>essential</em> habits','Tus hábitos <em>esenciales</em>') + '</h2>' +
-          '</div>' +
-          '<p class="ring-sub">' + tr(
-            'Between ' + CORE_MIN + ' and ' + CORE_MAX + ' small things you repeat <b class="em">every day</b>. ' +
-              'The day only counts as complete when all of them are done, so keep them possible on your worst day.',
-            'De ' + CORE_MIN + ' a ' + CORE_MAX + ' cosas pequeñas que repites <b class="em">todos los días</b>. ' +
-              'El día solo cuenta como completo cuando cumples todas: que sean posibles hasta en tu peor día.') + '</p>' +
-          (sug.length ? '<div class="ring-sug"><div class="ring-sug-t">' + tr('Quick add','Agregar rápido') + '</div>' +
-            '<div class="ring-sug-grid">' + sug.map(function (d) {
-              return '<button type="button" class="sug-chip" style="--sk-c:' + esc(d.color) + '" data-act="wizAddPicked" data-kind="core" data-key="' + esc(d.key) + '">' +
-                '<span class="g">' + ico(d.ico) + '</span>' +
-                '<span class="sc-c"><b>' + esc(d.name) + '</b><span>' + esc(d.desc || '') + '</span></span>' +
-                '<span class="sc-add">' + ico('plus') + '</span></button>';
-            }).join('') + '</div></div>' : '') +
-        '</div>' +
-        '<div class="ring-stage">' +
-          '<div class="ring-wheel">' + slots +
-            '<div class="ring-core"><b>' + n + '<span>/' + CORE_MAX + '</span></b><span>' + tr('essentials','esenciales') + '</span></div>' +
-          '</div>' +
-          '<div class="ring-status ' + (ok ? 'ok' : '') + '">' +
-            '<span class="dot"></span>' +
-            (ok ? tr('Ready. Add more or keep going.','Listo. Agrega más o sigue.')
-                : tr('Pick at least ' + CORE_MIN + '.','Elige al menos ' + CORE_MIN + '.')) +
-          '</div>' +
-        '</div>' +
+      '<div class="w-field"><label for="wizDate">' + tr('START DATE', 'FECHA DE INICIO') + '</label>' +
+        '<input type="date" class="in" id="wizDate" value="' + esc(w.date) + '"></div>' +
+
+      '<div class="w-prefs">' +
+        '<span class="w-seg">' +
+          '<button type="button" class="' + (lang() === 'es' ? 'on' : '') + '" data-act="setLang" data-lang="es" aria-label="Español">' + flag('es') + '</button>' +
+          '<button type="button" class="' + (lang() === 'en' ? 'on' : '') + '" data-act="setLang" data-lang="en" aria-label="English">' + flag('en') + '</button>' +
+        '</span>' +
+        '<span class="w-seg">' +
+          '<button type="button" class="' + (th === 'light' ? 'on' : '') + '" data-act="setTheme" data-theme="light" aria-label="' + tr('Light', 'Claro') + '">' + ico('sun') + '</button>' +
+          '<button type="button" class="' + (th === 'dark' ? 'on' : '') + '" data-act="setTheme" data-theme="dark" aria-label="' + tr('Dark', 'Oscuro') + '">' + ico('moon') + '</button>' +
+        '</span>' +
+        '<span class="w-seg">' +
+          '<button type="button" class="' + (ui._accentOpen ? 'on' : '') + '" data-act="wizAccent" aria-label="' + tr('Accent colour', 'Color de acento') + '">' +
+            ico('palette') + '</button>' +
+        '</span>' +
+      '</div>' +
+      (ui._accentOpen ? '<div class="w-dots">' + accDots + '</div>' : '') +
+
+      '<div class="w-grp">' + tr('How do you want to set it up?', '¿Cómo quieres configurarlo?') + '</div>' +
+      '<div class="w-stack">' +
+        path('wizPathManual', 'check', tr('Set it up myself', 'Configurarlo yo'), tr('Habits first. Projects later.', 'Hábitos primero. Proyectos después.'), true) +
+        path('wizPathAI', 'bulb', tr('Let an AI set it up', 'Que una IA lo arme'), tr('Brief → JSON → load here.', 'Instrucciones → JSON → cárgalo aquí.')) +
+        path('wizPathSkip', 'right', tr('Just the date', 'Solo la fecha'), tr('Four basics. Add the rest later.', 'Cuatro básicos. El resto después.')) +
+      '</div>' +
+
+      '<div class="w-grp">' + tr('Quick start packs', 'Paquetes rápidos') + '</div>' +
+      '<div class="w-packs">' +
+        pack('student', 'cap', tr('Student', 'Estudiante')) +
+        pack('founder', 'bolt', tr('Founder', 'Emprendedor')) +
+        pack('fitness', 'dumbbell', tr('Fitness', 'Fitness')) +
+        pack('family', 'users', tr('Family', 'Familia')) +
+      '</div>' +
+
+      '<div class="w-foot-meta">' +
+        '<button type="button" class="w-link" data-act="openImport">' + ico('upload') + tr('I already have a backup', 'Ya tengo un backup') + '</button>' +
+        '<span class="w-ver">v' + APP_VERSION + '</span>' +
       '</div>';
-    /* arrows: same global chrome as other steps */
-    foot = wizHeadNav({ back:true, next:true, nextDisabled:!ok });
   }
 
-  /* ---- 3 · extras, en cuadrícula ---- */
-  if (st === 3) {
-    const n = w.bonus.length, ok = n >= BONUS_MIN && n <= BONUS_MAX;
+  /* -------------------------------------------------------------- AI PATH */
+  if (st === 'ai') {
+    body =
+      H(tr('Let an AI <em>set it up</em>', 'Que una IA <em>lo arme</em>'),
+        tr('Three steps and you are done.', 'Tres pasos y listo.')) +
+      '<ol class="w-steps">' +
+        '<li>' + tr('Download the brief and open ChatGPT, Claude or any assistant.', 'Descarga las instrucciones y abre ChatGPT, Claude o el asistente que uses.') + '</li>' +
+        '<li>' + tr('Paste it. It will ask about your routine, projects and goals.', 'Pégalas. Te preguntará por tu rutina, proyectos y metas.') + '</li>' +
+        '<li>' + tr('Paste the JSON below, or load the .json file.', 'Pega el JSON abajo, o carga el archivo .json.') + '</li>' +
+      '</ol>' +
+      '<div class="w-stack">' +
+        '<button type="button" class="btn pri w-wide" data-act="wizBrief">' + ico('download') + tr('Download the brief', 'Descargar instrucciones') + '</button>' +
+        '<button type="button" class="btn w-wide" data-act="wizLoadJson">' + ico('upload') + tr('Load the file', 'Cargar el archivo') + '</button>' +
+      '</div>' +
+      '<div class="w-field"><label>' + tr('OR PASTE JSON', 'O PEGA EL JSON') + '</label>' +
+        '<textarea class="in" id="wizPasteJson" rows="5" spellcheck="false"></textarea></div>' +
+      '<button type="button" class="btn pri w-wide" data-act="wizApplyPaste">' + tr('Apply pasted setup', 'Aplicar configuración pegada') + '</button>' +
+      '<input type="file" id="wizFile" accept=".json,application/json" hidden>';
+    foot = NAV({ home:true });
+  }
+
+  /* -------------------------------------------------- 2 · ESSENTIAL HABITS */
+  if (st === 2) {
     const defs = wizAllDefs();
-    const libresAll = defs.filter(function (d) { return w.core.indexOf(d.key) < 0; });
-    /* Keep the Extra Habits grid visually complete: never leave one orphan card on a final row. */
-    const libres = libresAll.length % 2 ? libresAll.slice(0, -1) : libresAll;
-    title = '';
-    subt = '';
-    body = '<div class="wiz-step-stack">' +
-      '<div class="wiz-title-row">' +
-        '<h2>' + tr('Your <em>extra</em> habits','Tus hábitos <em>extra</em>') + '</h2>' +
-        '<span id="wizCountLive" class="wiz-count-live' + (ok ? ' ok' : '') + '" data-word="' + esc(tr('chosen','elegidas')) + '">' + n + ' / ' + BONUS_MAX + '</span>' +
-        '<button type="button" class="wiz-new-mini" data-act="wizCustomBonus">' + ico('plus') +
-          tr('Create my own','Crear el mío') + '</button>' +
-      '</div>' +
-      '<div class="wiz-pick-bar">' +
-        '<p class="wiz-lead wiz-top">' + tr(
-          'They add points, but <b class="em">never block</b> a complete day.',
-          'Suman puntos, pero <b class="em">nunca bloquean</b> un día completo.') + '</p>' +
-      '</div>' +
-      '<div class="sk-grid wiz-fit-grid">' +
-        libres.map(function (d) {
-          const on = w.bonus.indexOf(d.key) >= 0;
-          return '<div role="button" tabindex="0" class="sk-pick' + (on ? ' on' : '') + '" style="--sk-c:' + esc(d.color) + '" data-act="wizToggleBonus" data-key="' + esc(d.key) + '">' +
-            '<span class="g">' + ico(d.ico) + '</span>' +
-            '<span class="c"><b>' + esc(d.name) + '</b><span>' + esc(d.desc || '') + '</span></span>' +
-            '<span class="tick">' + ico('check') + '</span></div>';
+    const n = w.core.length, ok = n >= CORE_MIN && n <= CORE_MAX;
+    const byKey = function (k) { return defs.filter(function (d) { return d.key === k; })[0]; };
+    const chosen = w.core.map(byKey).filter(Boolean);
+    const used = w.core.concat(w.bonus);
+    const sug = defs.filter(function (d) { return used.indexOf(d.key) < 0; })
+      .sort(function (a, b) { return (b.common ? 1 : 0) - (a.common ? 1 : 0); }).slice(0, 8);
+
+    body =
+      H(tr('Your <em>essential</em> habits', 'Tus hábitos <em>esenciales</em>'),
+        tr('Between ' + CORE_MIN + ' and ' + CORE_MAX + ' small things you repeat <b class="em">every day</b>. The day only counts when all of them are done — keep them possible on your worst day.',
+           'De ' + CORE_MIN + ' a ' + CORE_MAX + ' cosas pequeñas que repites <b class="em">todos los días</b>. El día solo cuenta cuando cumples todas: que sean posibles hasta en tu peor día.'),
+        '<span id="wizCountLive" class="w-count' + (ok ? ' ok' : '') + '" data-word="' + esc(tr('chosen', 'elegidas')) + '">' + n + ' / ' + CORE_MAX + '</span>') +
+
+      (chosen.length
+        ? '<div class="w-grp">' + tr('Chosen', 'Elegidas') + '</div>' +
+          '<div class="w-stack">' + chosen.map(function (d) {
+            return OPT({ act:'wizDropCore', key:d.key, ico:d.ico, color:d.color, name:d.name,
+              sub:tr('Tap to remove', 'Toca para quitar'), on:true, tickIco:'x' });
+          }).join('') + '</div>'
+        : '<div class="w-empty">' + tr('Nothing chosen yet. Pick from below.', 'Nada elegido aún. Elige abajo.') + '</div>') +
+
+      '<div class="w-grp">' + tr('Suggestions', 'Sugerencias') + '</div>' +
+      '<div class="w-stack">' +
+        sug.map(function (d) {
+          return OPT({ act:'wizPick', key:d.key, ico:d.ico, color:d.color, name:d.name, sub:d.desc || '', tickIco:'plus' });
         }).join('') +
-      '</div></div>';
-    foot = wizFootNav({ back:true, next:true, nextDisabled:!ok });
+        '<button type="button" class="w-add" data-act="wizPickCore">' + ico('plus') + tr('Create my own', 'Crear el mío') + '</button>' +
+      '</div>';
+    foot = NAV({ back:true, next:true, nextDisabled:!ok });
   }
 
-  /* ---- 4 · proyectos ---- */
+  /* ------------------------------------------------------ 3 · EXTRA HABITS */
+  if (st === 3) {
+    const defs = wizAllDefs();
+    const n = w.bonus.length, ok = n <= BONUS_MAX;
+    const free = defs.filter(function (d) { return w.core.indexOf(d.key) < 0; });
+    body =
+      H(tr('Your <em>extra</em> habits', 'Tus hábitos <em>extra</em>'),
+        tr('They add points, but <b class="em">never block</b> a complete day.',
+           'Suman puntos, pero <b class="em">nunca bloquean</b> un día completo.'),
+        '<span id="wizCountLive" class="w-count' + (ok ? ' ok' : '') + '" data-word="' + esc(tr('chosen', 'elegidas')) + '">' + n + ' / ' + BONUS_MAX + '</span>') +
+      '<div class="w-stack">' +
+        free.map(function (d) {
+          return OPT({ act:'wizToggleBonus', key:d.key, ico:d.ico, color:d.color, name:d.name,
+            sub:d.desc || '', on:w.bonus.indexOf(d.key) >= 0 });
+        }).join('') +
+        '<button type="button" class="w-add" data-act="wizCustomBonus">' + ico('plus') + tr('Create my own', 'Crear el mío') + '</button>' +
+      '</div>';
+    foot = NAV({ back:true, next:true, nextDisabled:!ok });
+  }
+
+  /* ---------------------------------------------------------- 4 · PROJECTS */
   if (st === 4) {
     const sel = w.pillars;
-    title = '';
-    subt = '';
-    body = '<div class="wiz-step-stack">' +
-      '<div class="wiz-title-row">' +
-        '<h2>' + tr('What are you <em>working</em> on?','¿En qué estás <em>trabajando</em>?') + '</h2>' +
-        '<span id="wizCountLive" class="wiz-count-live opt" data-word="' + esc(tr('chosen','elegidas')) + '">' + sel.length + ' ' + tr('chosen','elegidas') + '</span>' +
-        '<button type="button" class="wiz-new-mini" data-act="wizNewPillar">' + ico('plus') +
-          tr('Create my own','Crear el mío') + '</button>' +
-      '</div>' +
-      '<div class="wiz-pick-bar">' +
-        '<p class="wiz-lead wiz-top">' + tr(
-          'Work that takes <b class="em">months</b>: your daily tasks live inside them.',
-          'Trabajos de <b class="em">meses</b>: las tareas del día viven adentro.') + '</p>' +
-        '<button type="button" class="wiz-skip-inline" data-act="wizJump" data-step="6">' +
-          tr('Skip this step','Saltar este paso') + '</button>' +
-      '</div>' +
-      '<div class="sk-grid wiz-fit-grid">' +
+    body =
+      H(tr('What are you <em>working</em> on?', '¿En qué estás <em>trabajando</em>?'),
+        tr('Work that takes <b class="em">months</b>: your daily tasks live inside them.',
+           'Trabajos de <b class="em">meses</b>: las tareas del día viven adentro.'),
+        '<span id="wizCountLive" class="w-count opt" data-word="' + esc(tr('chosen', 'elegidas')) + '">' + sel.length + ' ' + tr('chosen', 'elegidas') + '</span>') +
+      '<div class="w-stack">' +
         wizPillarDefs().map(function (p) {
-          const on = sel.indexOf(p.id) >= 0;
-          const c = (PILLAR_CATS[p.cat] || {}).color || 'var(--hot)';
-          return '<div role="button" tabindex="0" class="sk-pick' + (on ? ' on' : '') + '" style="--sk-c:' + c + '" data-act="wizPillar" data-id="' + esc(p.id) + '">' +
-            '<span class="g">' + ico(p.ico) + '</span>' +
-            '<span class="c"><b>' + esc(p.name) + '</b><span>' + esc(p.sub) + '</span></span>' +
-            '<button type="button" class="sk-edit" data-act="wizEditPillar" data-id="' + esc(p.id) + '" title="' + tr('Edit','Editar') + '">' + ico('edit') + '</button>' +
-            '<span class="tick">' + ico('check') + '</span></div>';
+          return OPT({ act:'wizPillar', id:p.id, ico:p.ico, name:p.name, sub:p.sub,
+            color:(PILLAR_CATS[p.cat] || {}).color || 'var(--hot)',
+            on:sel.indexOf(p.id) >= 0, editId:p.id, editAct:'wizEditPillar' });
         }).join('') +
-      '</div></div>';
-    foot = wizFootNav({ back:true, next:true });
+        '<button type="button" class="w-add" data-act="wizNewPillar">' + ico('plus') + tr('Create my own', 'Crear el mío') + '</button>' +
+      '</div>';
+    foot = NAV({ back:true, skip:true, next:true });
   }
 
-  /* ---- 5 · metas medibles ---- */
+  /* ------------------------------------------------------------- 5 · GOALS */
   if (st === 5) {
     const sel = w.goals;
-    title = '';
-    subt = '';
-    body = '<div class="wiz-step-stack">' +
-      '<div class="wiz-title-row">' +
-        '<h2>' + tr('Choose your <em>direction</em>.','Elige tu <em>dirección</em>.') + '</h2>' +
-        '<span id="wizCountLive" class="wiz-count-live opt" data-word="' + esc(tr('chosen','elegidas')) + '">' + sel.length + ' ' + tr('chosen','elegidas') + '</span>' +
-      '</div>' +
-      '<div class="wiz-pick-bar"><p class="wiz-lead wiz-top">' + tr(
-        '<b class="em">Measurable goals</b> are results with numbers. <b>Values & principles</b> are standards you want to live by.',
-        '<b class="em">Metas medibles</b> son resultados con números. <b>Valores y principios</b> son reglas que quieres vivir.') + '</p>' +
-        '<button type="button" class="wiz-skip-inline" data-act="wizJump" data-step="6">' + tr('Skip this step','Saltar este paso') + '</button></div>' +
-      '<div class="goals-cols">';
-    [['outcome',tr('Measurable goals','Metas medibles')],['identity',tr('Values & principles','Valores y principios')]].forEach(function(par){
-      const items=wizGoalDefs().filter(function(g){return g.kind===par[0];}); if(!items.length)return;
-      body += '<div class="goals-col"><div class="wiz-grp">'+esc(par[1])+'</div><div class="sk-grid">' +
-        '<button type="button" class="sk-pick sk-new" data-act="wizNewGoal" data-kind="'+par[0]+'"><span class="nb">'+ico('plus')+'</span>'+tr('Create my own','Crear la mía')+'</button>' +
-        items.map(function(g){ const on=sel.indexOf(g.id)>=0, c=g.kind==='identity'?'var(--violet)':'var(--hot)';
-          const sub=g.kind==='identity'?g.why:(g.metric+': '+fmtCompact(g.current)+' → '+fmtCompact(g.target)+(g.unit?' '+g.unit:''));
-          return '<div role="button" tabindex="0" class="sk-pick'+(on?' on':'')+'" style="--sk-c:'+c+'" data-act="wizGoal" data-id="'+esc(g.id)+'"><span class="g">'+ico(g.kind==='identity'?'spa':'target')+'</span><span class="c"><b>'+esc(g.name)+'</b><span>'+esc(sub)+'</span></span><button type="button" class="sk-edit" data-act="wizEditGoal" data-id="'+esc(g.id)+'" title="'+tr('Edit','Editar')+'">'+ico('edit')+'</button><span class="tick">'+ico('check')+'</span></div>';
-        }).join('')+'</div></div>';
+    body =
+      H(tr('Choose your <em>direction</em>.', 'Elige tu <em>dirección</em>.'),
+        tr('<b class="em">Measurable goals</b> are results with numbers. <b>Values</b> are standards you want to live by.',
+           '<b class="em">Metas medibles</b> son resultados con números. <b>Valores</b> son reglas que quieres vivir.'),
+        '<span id="wizCountLive" class="w-count opt" data-word="' + esc(tr('chosen', 'elegidas')) + '">' + sel.length + ' ' + tr('chosen', 'elegidas') + '</span>');
+
+    [['outcome', tr('Measurable goals', 'Metas medibles'), 'target', 'var(--hot)'],
+     ['identity', tr('Values & principles', 'Valores y principios'), 'spa', 'var(--violet)']].forEach(function (par) {
+      const items = wizGoalDefs().filter(function (g) { return g.kind === par[0]; });
+      if (!items.length) return;
+      body += '<div class="w-grp">' + esc(par[1]) + '</div><div class="w-stack">' +
+        items.map(function (g) {
+          const sub = g.kind === 'identity'
+            ? (g.why || '')
+            : (g.metric + ': ' + fmtCompact(g.current) + ' → ' + fmtCompact(g.target) + (g.unit ? ' ' + g.unit : ''));
+          return OPT({ act:'wizGoal', id:g.id, ico:par[2], color:par[3], name:g.name, sub:sub,
+            on:sel.indexOf(g.id) >= 0, editId:g.id, editAct:'wizEditGoal' });
+        }).join('') +
+        '<button type="button" class="w-add" data-act="wizNewGoal" data-kind="' + par[0] + '">' + ico('plus') + tr('Create my own', 'Crear la mía') + '</button>' +
+        '</div>';
     });
-    body += '</div></div>';
-    foot = wizFootNav({ back:true, next:true });
+    foot = NAV({ back:true, skip:true, next:true });
   }
 
+  /* -------------------------------------------------------------- 6 · DONE */
   if (st === 6) {
     const defs = wizAllDefs();
     const coreD = defs.filter(function (d) { return w.core.indexOf(d.key) >= 0; });
-    const bonD  = defs.filter(function (d) { return w.bonus.indexOf(d.key) >= 0; });
-    const pN = w.pillars.length, gN = w.goals.length;
+    const bonD = defs.filter(function (d) { return w.bonus.indexOf(d.key) >= 0; });
     const chip = function (d) {
-      return '<span class="launch-chip" style="--sk-c:' + esc(d.color || 'var(--hot)') + '">' +
-        '<span class="g">' + ico(d.ico || 'target') + '</span>' +
-        '<span>' + esc(d.name) + '</span></span>';
+      return '<span class="w-chip" style="--sk-c:' + esc(d.color || 'var(--hot)') + '">' +
+        '<span class="w-chip-ico">' + ico(d.ico || 'target') + '</span>' + esc(d.name) + '</span>';
+    };
+    const stat = function (v, l, step) {
+      return '<button type="button" class="w-stat" data-act="wizJump" data-step="' + step + '">' +
+        '<b>' + v + '</b><span>' + l + '</span></button>';
     };
 
-    title = '';
-    subt = '';
+    body =
+      '<div class="w-done">' +
+        '<span class="w-seal">' + ico('check') + '</span>' +
+        '<span class="w-grp">' + tr('SETUP COMPLETE', 'CONFIGURACIÓN LISTA') + '</span>' +
+        '<h2 class="w-title">' + tr('Your Tungsten is ready.', 'Tu Tungsten está listo.') + '</h2>' +
+        '<p class="w-lead">' + tr(
+          'Show up, mark what you did, and let the record build.',
+          'Aparece, marca lo que hiciste y deja que el registro se construya.') + '</p>' +
+        '<div class="w-day"><span>' + tr('DAY 001', 'DÍA 001') + '</span><b>' + esc(fmtDate(w.date)) + '</b></div>' +
+      '</div>' +
 
-    body = '<div class="launch-stage">' +
+      '<div class="w-stats">' +
+        stat(coreD.length, tr('essentials', 'esenciales'), 2) +
+        stat(bonD.length, tr('extras', 'extras'), 3) +
+        stat(w.pillars.length, tr('projects', 'proyectos'), 4) +
+        stat(w.goals.length, tr('goals', 'metas'), 5) +
+      '</div>' +
 
-        '<section class="launch-hero">' +
-          '<div class="launch-seal" aria-hidden="true">' + ico('check') + '</div>' +
-          '<div class="launch-kicker">' +
-            tr('SETUP COMPLETE','CONFIGURACIÓN LISTA') +
-          '</div>' +
+      (coreD.length ? '<div class="w-grp">' + tr('Essentials', 'Esenciales') + '</div><div class="w-chips">' + coreD.map(chip).join('') + '</div>' : '') +
+      (bonD.length ? '<div class="w-grp">' + tr('Extras', 'Extras') + '</div><div class="w-chips">' + bonD.map(chip).join('') + '</div>' : '') +
 
-          '<h2>' +
-            tr('Your Tungsten is ready.','Tu Tungsten está listo.') +
-          '</h2>' +
-
-          '<p>' +
-            tr(
-              'You have a simple system now: show up, mark what you did, and let the record build.',
-              'Ya tienes un sistema simple: aparece, marca lo que hiciste y deja que el registro se construya.'
-            ) +
-          '</p>' +
-
-          '<div class="launch-day">' +
-            '<span>' + tr('DAY 001','DÍA 001') + '</span>' +
-            '<b>' + esc(fmtDate(w.date)) + '</b>' +
-          '</div>' +
-
-          '<button type="button" class="btn pri launch-start" data-act="wizFinish">' +
-            tr('Start Tungsten','Comenzar Tungsten') +
-            ico('right') +
-          '</button>' +
-        '</section>' +
-
-        '<section class="launch-summary">' +
-
-          '<div class="launch-summary-head">' +
-            '<div>' +
-              '<span>' + tr('YOUR SYSTEM','TU SISTEMA') + '</span>' +
-              '<h3>' + tr('What you chose','Lo que elegiste') + '</h3>' +
-            '</div>' +
-          '</div>' +
-
-          '<div class="launch-stats">' +
-
-            '<button type="button" data-act="wizJump" data-step="2">' +
-              '<b>' + coreD.length + '</b>' +
-              '<span>' + tr('Essentials','Esenciales') + '</span>' +
-            '</button>' +
-
-            '<button type="button" data-act="wizJump" data-step="3">' +
-              '<b>' + bonD.length + '</b>' +
-              '<span>' + tr('Extras','Extras') + '</span>' +
-            '</button>' +
-
-            '<button type="button" data-act="wizJump" data-step="4">' +
-              '<b>' + pN + '</b>' +
-              '<span>' + tr('Projects','Proyectos') + '</span>' +
-            '</button>' +
-
-            '<button type="button" data-act="wizJump" data-step="5">' +
-              '<b>' + gN + '</b>' +
-              '<span>' + tr('Goals','Metas') + '</span>' +
-            '</button>' +
-
-          '</div>' +
-
-          ((coreD.length || bonD.length)
-            ? '<div class="launch-habits">' +
-
-                (coreD.length
-                  ? '<div class="launch-group">' +
-                      '<span class="launch-group-lab">' +
-                        tr('ESSENTIALS','ESENCIALES') +
-                      '</span>' +
-                      '<div class="launch-chip-row">' +
-                        coreD.map(chip).join('') +
-                      '</div>' +
-                    '</div>'
-                  : '') +
-
-                (bonD.length
-                  ? '<div class="launch-group">' +
-                      '<span class="launch-group-lab">' +
-                        tr('EXTRAS','EXTRAS') +
-                      '</span>' +
-                      '<div class="launch-chip-row">' +
-                        bonD.map(chip).join('') +
-                      '</div>' +
-                    '</div>'
-                  : '') +
-
-              '</div>'
-            : '') +
-
-          '<div class="launch-foot">' +
-            '<p class="launch-change-note">' +
-              tr(
-                'You can change any of this later.',
-                'Puedes cambiar cualquiera de estas cosas después.'
-              ) +
-            '</p>' +
-
-            '<div class="launch-edit-note">' +
-              ico('edit') +
-              '<span>' +
-                tr(
-                  'Click any number above to change that part.',
-                  'Haz clic en cualquier número de arriba para cambiar esa parte.'
-                ) +
-              '</span>' +
-            '</div>' +
-          '</div>' +
-
-        '</section>' +
-
-      '</div>';
-
-    foot = wizHeadNav({ back:true });
+      '<button type="button" class="btn pri w-start" data-act="wizFinish">' +
+        tr('Start Tungsten', 'Comenzar Tungsten') + ico('right') + '</button>' +
+      '<p class="w-note">' + tr('Everything can be changed later in Settings.', 'Todo se puede cambiar después en Ajustes.') + '</p>';
+    foot = NAV({ back:true });
   }
+
+  /* ---- paint ---- */
+  $('obSteps').innerHTML = [1, 2, 3, 4, 5, 6].map(function (i) {
+    const done = (st === 'ai') ? i <= 1 : i <= st;
+    return '<i class="' + (done ? 'done' : '') + '"></i>';
+  }).join('');
 
   const wm = document.querySelector('.modal.wiz');
   if (wm) {
     wm.classList.toggle('is-home', st === 1);
-    wm.classList.toggle('is-done', st === 6);
     wm.classList.toggle('is-ring', st === 2);
+    wm.classList.toggle('is-done', st === 6);
     wm.classList.toggle('is-ai', st === 'ai');
-    /* El botón Saltar ensancha el bloque de flechas: la cabecera reserva ese ancho. */
-    wm.classList.toggle('has-skip', foot.indexOf('wiz-skip') >= 0);
   }
-  $('obTitle').textContent = title;
-  $('obSub').textContent = '';
-  $('obSub').style.display = 'none';
+  if ($('obTitle')) $('obTitle').innerHTML = '';
+  if ($('obSub')) $('obSub').innerHTML = '';
   $('obBody').innerHTML = body;
-  /* Top-right nav chrome; keep bottom footer empty (no grey stripe) */
   if ($('obNav')) $('obNav').innerHTML = foot || '';
   if ($('obFoot')) { $('obFoot').innerHTML = ''; $('obFoot').hidden = true; }
-  /* la entrada escalonada corre una vez por paso, no en cada clic */
-  if (ui._wizPainted !== st) {
-    ui._wizPainted = st;
-    document.querySelectorAll('#obBody .sk-grid').forEach(function (g) {
-      g.setAttribute('data-anim', '1');
-      setTimeout(function () { g.removeAttribute('data-anim'); }, 700);
-    });
-  }
+
   const di = $('wizDate');
   if (di) di.addEventListener('change', function () { ui.wiz.date = di.value; });
+  const ob = $('obBody');
+  if (ob) ob.scrollTop = 0;
 }
 function wizAssign(key, kind) {
   const w = ui.wiz;
