@@ -4,15 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="dark light">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Tungsten">
-<meta name="format-detection" content="telephone=no">
-<meta name="theme-color" content="#06080c" media="(prefers-color-scheme: dark)">
-<meta name="theme-color" content="#f0f2f6" media="(prefers-color-scheme: light)">
-
-<title>Tungsten</title>
+<title>Tungsten OS · Work</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2212%22%20fill%3D%22%232D7DF6%22%2F%3E%3Cpath%20d%3D%22M10%2017l9.2%2030.7L32%2024.8l12.8%2022.9L54%2017%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%226%22%20stroke-linejoin%3D%22miter%22%2F%3E%3Cpath%20d%3D%22M24.4%2017L32%2030.6%2039.6%2017%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%224%22%20opacity%3D%22.78%22%2F%3E%3C%2Fsvg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -4809,777 +4801,6 @@ html[data-theme="light"] #ovHelp .view-help-sitrep .help-item-head{
   #v-command .cmd-pulse-card>.card-h .note{margin-left:0;text-align:left;width:100%}
 }
 
-
-
-/* ============================================================================
-   TUNGSTEN · PHONE APP
-   ----------------------------------------------------------------------------
-   Not a responsive version of the desktop app. A phone app that happens to
-   share its engine and its look.
-
-   What that means concretely, and why each earlier attempt failed:
-
-     · Onboarding is FULL SCREEN, not a bottom sheet. A sheet left 20% of the
-       screen dead above it — that was the "empty space above".
-     · FIVE tabs, not nine. Nine put 43% of the nav off-screen. The rest live
-       behind "Más", which is the iOS convention, not a demotion.
-     · Screens are task-first. Today is the daily loop — ring, then the habit
-       checklist you actually tap — not a grid of read-only stat tiles.
-     · ONE alignment grid. Every row in the app is
-           [16px gutter][28px icon][12px gap][text ……][trailing][16px gutter]
-       so nothing can look subtly off against anything else.
-     · Every control is Safari-safe: appearance reset, layout on an inner
-       wrapper, icons with intrinsic size, no color-mix().
-   ========================================================================= */
-
-:root{
-  /* type — DM Sans for UI, Plex Mono for data, Instrument Serif for display */
-  --fs-cap:10.5px;   /* mono caps, group headers */
-  --fs-sm:12px;      /* secondary line */
-  --fs:14px;         /* body / row title */
-  --fs-md:15px;
-  --fs-lg:17px;      /* screen subtitle */
-  --fs-title:28px;   /* large title */
-  --fs-hero:40px;    /* the one number that matters */
-
-  /* rhythm */
-  --gutter:16px;     /* the single horizontal grid */
-  --row-ico:28px;
-  --row-gap:12px;
-  --gap:10px;
-  --gap-sm:7px;
-
-  --r:14px;          /* grouped list radius */
-  --r-sm:10px;
-
-  --safe-t:env(safe-area-inset-top,0px);
-  --safe-b:env(safe-area-inset-bottom,0px);
-  --tabs-h:52px;
-  --tabs-total:calc(var(--tabs-h) + var(--safe-b));
-}
-
-html{-webkit-text-size-adjust:100%; text-size-adjust:100%}
-html,body{height:auto; min-height:100%}
-body{
-  margin:0; background:var(--bg); color:var(--txt);
-  font-family:var(--sans); font-size:var(--fs); line-height:1.45;
-  overscroll-behavior-y:none; -webkit-font-smoothing:antialiased;
-}
-*{-webkit-tap-highlight-color:transparent}
-button,a,label,summary,[data-act]{touch-action:manipulation}
-.hidden-stub{display:none!important}
-
-/* ---- Safari-safe control primitives (see round 06) ---- */
-button,input[type=button],input[type=submit],input[type=reset]{
-  -webkit-appearance:none; appearance:none;
-  font-family:inherit; font-size:inherit; line-height:inherit;
-  color:inherit; text-align:inherit; border-radius:0;
-}
-button,input,select,textarea{min-width:0; max-width:100%}
-svg{display:block; flex:none}
-.w-in{display:flex; align-items:center; gap:var(--row-gap); width:100%; min-width:0; text-align:left}
-
-/* ============================ 1 · APP CHROME ============================ */
-.tbar{
-  position:sticky; top:0; z-index:60;
-  display:flex; align-items:center; gap:10px;
-  padding:calc(var(--safe-t) + 8px) var(--gutter) 8px;
-  background:var(--bg);
-}
-.tbar-brand{display:flex; align-items:center; gap:9px; flex:1; min-width:0; border:0; background:none; padding:0; color:inherit}
-.tbar-mark{
-  flex:none; width:28px; height:28px;
-  display:flex; align-items:center; justify-content:center;
-  border-radius:8px; background:var(--hotbg); color:var(--hot);
-}
-.tbar-mark svg{width:16px; height:16px}
-.tbar-id{display:flex; flex-direction:column; min-width:0; line-height:1.2}
-.tbar-id b{font-size:13px; font-weight:600; letter-spacing:-.01em}
-.tbar-id span{font-family:var(--mono); font-size:9.5px; letter-spacing:.12em; color:var(--faint)}
-.tbar-a{display:flex; align-items:center; gap:6px; flex:none}
-
-.screen{display:block}
-.pagewrap{padding:0 0 calc(var(--tabs-total) + 16px)}
-.view{display:none}
-.view.on{display:block}
-
-/* ---- large title, iOS style ---- */
-.vh{padding:4px var(--gutter) 12px}
-.vh-t{display:block; min-width:0}
-.vh-eyebrow{
-  display:block; margin-bottom:3px;
-  font-family:var(--mono); font-size:var(--fs-cap); letter-spacing:.16em;
-  text-transform:uppercase; color:var(--hot);
-}
-.vh h1{margin:0; font-size:var(--fs-title); font-weight:680; letter-spacing:-.03em; line-height:1.28}
-.vh-a{
-  display:flex; flex-wrap:nowrap; align-items:center; gap:6px;
-  margin-top:11px; overflow-x:auto; scrollbar-width:none;
-  -webkit-mask-image:linear-gradient(to right,#000 calc(100% - 22px),transparent);
-  mask-image:linear-gradient(to right,#000 calc(100% - 22px),transparent);
-}
-.vh-a::-webkit-scrollbar{display:none}
-.vh-a>*{flex:0 0 auto}
-
-/* ============================ 2 · TAB BAR =============================== */
-.tabs{
-  position:fixed; left:0; right:0; bottom:0; z-index:120;
-  display:flex; align-items:stretch;
-  padding:4px 4px calc(4px + var(--safe-b));
-  background:var(--bg); border-top:1px solid var(--line);
-}
-.tabs::before{
-  content:''; position:absolute; left:0; right:0; top:-20px; height:20px;
-  pointer-events:none; background:linear-gradient(to top,var(--bg),transparent);
-}
-.tabs button{
-  flex:1 1 0; min-width:0; min-height:44px;
-  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px;
-  padding:3px 2px; border:0; border-radius:9px; background:none;
-  color:var(--faint); font-family:var(--sans); font-size:9.5px; font-weight:550;
-  line-height:1.1; letter-spacing:-.01em;
-}
-.tabs button svg{width:21px; height:21px; stroke-width:1.8}
-.tabs button span{max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
-.tabs button.on{color:var(--hot)}
-.tabs button:active{opacity:.5}
-.tabs .nav-g,.tabs .nav-count{display:none}
-
-/* ============================ 3 · GROUPED LISTS =========================
-   The iOS idiom, and the one alignment grid for the whole app. */
-.sect{margin:0 0 20px}
-.sect-h{
-  display:flex; align-items:baseline; gap:8px;
-  padding:0 var(--gutter) 7px; min-width:0;
-  font-family:var(--mono); font-size:var(--fs-cap); letter-spacing:.15em;
-  text-transform:uppercase; color:var(--faint);
-}
-.sect-h b{font-weight:600; color:var(--faint); letter-spacing:.15em}
-.sect-h .push{margin-left:auto}
-.sect-h .note{font-family:var(--sans); letter-spacing:0; text-transform:none; font-size:11.5px}
-.sect-ico{align-self:center; color:var(--hot)}
-.sect-ico svg{width:13px; height:13px}
-
-/* inset card: the container every list and panel sits in */
-.card,.list{
-  position:relative; margin:0 var(--gutter);
-  border:1px solid var(--line); border-radius:var(--r);
-  background:var(--panel); overflow:hidden;
-  height:auto; max-height:none;
-}
-.card+.card,.list+.list{margin-top:var(--gap-sm)}
-.card-b{position:relative; padding:var(--gutter); display:flex; flex-direction:column; gap:var(--gap)}
-.card-b.flush{padding:0; gap:0}
-.card-b>*{min-width:0}
-
-/* the row — used by every list in the app */
-.row{
-  display:block; width:100%; padding:11px var(--gutter);
-  border:0; background:none; color:var(--txt);
-  font-family:var(--sans); font-size:var(--fs); cursor:pointer;
-}
-.row+.row{box-shadow:inset 0 1px 0 var(--line)}
-.row:active{background:var(--panel2)}
-.row-ico{
-  flex:none; width:var(--row-ico); height:var(--row-ico);
-  display:flex; align-items:center; justify-content:center;
-  border-radius:8px; color:var(--sk-c,var(--hot)); background:rgba(255,255,255,.06);
-}
-html[data-theme="light"] .row-ico{background:rgba(16,24,40,.05)}
-.row-ico svg{width:15px; height:15px}
-.row-c{flex:1 1 auto; min-width:0; display:flex; flex-direction:column; gap:1px; text-align:left}
-.row-c b{font-size:var(--fs); font-weight:550; line-height:1.35; overflow-wrap:anywhere}
-.row-c span{font-size:var(--fs-sm); line-height:1.35; color:var(--faint); overflow-wrap:anywhere}
-.row-t{flex:none; display:flex; align-items:center; gap:8px; color:var(--faint); font-size:var(--fs-sm)}
-.row-chev{flex:none; color:var(--line3)}
-.row-chev svg{width:15px; height:15px}
-
-/* the tick used by every toggleable row */
-.row-tick{
-  flex:none; width:26px; height:26px;
-  display:flex; align-items:center; justify-content:center;
-  border-radius:99px; border:1.5px solid var(--line2); color:transparent;
-}
-.row-tick svg{width:14px; height:14px}
-.row.on .row-tick{background:var(--sk-c,var(--ok)); border-color:var(--sk-c,var(--ok)); color:#fff}
-.row.on .row-c b{color:var(--txt)}
-
-/* ============================ 4 · HERO ================================== */
-.hero{
-  display:flex; flex-direction:column; align-items:center; gap:3px;
-  padding:6px var(--gutter) 20px;
-}
-.hero-ring{position:relative; width:168px; height:168px; display:flex; align-items:center; justify-content:center}
-/* the ring's circles are styled by class in dualRingSVG(); without these they
-   fall back to SVG defaults (fill:black, no stroke) and read as a flat disc */
-.hero-ring svg{width:100%; height:100%; transform:rotate(-90deg)}
-.hero-ring circle{fill:none; stroke-linecap:round}
-.hero-ring .trk{stroke:var(--line2)}
-.hero-ring .val{stroke:url(#gHot); transition:stroke-dashoffset .7s var(--ease)}
-.hero-ring .val-bonus{stroke:url(#gCool); transition:stroke-dashoffset .7s var(--ease)}
-.hero-ring.sealed .val{stroke:url(#gOk)}
-.hero-n{
-  position:absolute; inset:0;
-  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1px;
-}
-.hero-n b{
-  font-family:var(--mono); font-size:var(--fs-hero); font-weight:600;
-  line-height:1.26; height:auto; letter-spacing:-.03em; color:var(--txt);
-}
-.hero-n span{font-family:var(--mono); font-size:var(--fs-cap); letter-spacing:.14em; color:var(--faint)}
-.hero-l{margin-top:9px; font-size:var(--fs-md); font-weight:550; text-align:center; line-height:1.35}
-.hero-s{margin-top:2px; font-size:var(--fs-sm); color:var(--faint); text-align:center; line-height:1.4; padding:0 8px}
-
-/* ============================ 5 · CONTROLS ============================== */
-.btn{
-  display:inline-flex; align-items:center; justify-content:center; gap:7px;
-  min-height:38px; padding:9px 14px;
-  border:1px solid var(--line2); border-radius:10px;
-  background:var(--panel2); color:var(--txt);
-  font-size:13px; font-weight:550; white-space:nowrap; cursor:pointer;
-}
-.btn.sm{min-height:32px; padding:6px 11px; font-size:12px; border-radius:9px}
-.btn svg{width:14px; height:14px}
-.btn.pri{background:var(--hot); border-color:var(--hot); color:var(--hot-ink)}
-.btn.ghost{background:transparent}
-.btn.danger{background:var(--bad); border-color:var(--bad); color:#fff}
-.btn:disabled{opacity:.4}
-.btn:active{opacity:.6}
-.btn-wide{width:100%}
-
-.iconbtn{
-  flex:none; display:flex; align-items:center; justify-content:center;
-  width:34px; height:34px;
-  border:1px solid var(--line2); border-radius:10px;
-  background:var(--panel2); color:var(--dim); font-size:13px; cursor:pointer;
-}
-.iconbtn.ghost{background:transparent; border-color:transparent; width:30px; height:30px}
-.iconbtn svg{width:15px; height:15px}
-.iconbtn:active{opacity:.55}
-
-.in{
-  width:100%; min-height:42px; padding:10px 12px;
-  border:1px solid var(--line2); border-radius:10px;
-  background:var(--bg2); color:var(--txt);
-  font-family:var(--sans); font-size:16px; line-height:1.35;
-}
-select.in{
-  appearance:none; -webkit-appearance:none; padding-right:30px;
-  background-image:linear-gradient(45deg,transparent 50%,var(--faint) 50%),linear-gradient(135deg,var(--faint) 50%,transparent 50%);
-  background-position:calc(100% - 16px) 50%,calc(100% - 11px) 50%;
-  background-size:5px 5px,5px 5px; background-repeat:no-repeat;
-}
-textarea.in{min-height:80px; resize:vertical}
-.fld{display:flex; flex-direction:column; gap:5px}
-.fld label{font-family:var(--mono); font-size:var(--fs-cap); letter-spacing:.14em; color:var(--faint); text-transform:uppercase}
-.drop{border:1px dashed var(--line3); border-radius:var(--r-sm); padding:16px 12px; text-align:center; font-size:12px; color:var(--faint)}
-
-.addrow{display:flex; gap:8px; align-items:stretch}
-.addrow .in{flex:1; min-width:0}
-.addbtn{flex:none; width:44px; padding:0; justify-content:center; font-size:20px}
-
-/* stat tiles — kept, but they are supporting cast now, never the hero */
-.tiles{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:var(--gap-sm); padding:0 var(--gutter)}
-.tiles-2{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:var(--gap-sm); padding:0 var(--gutter)}
-.stat{
-  padding:11px; border:1px solid var(--line); border-radius:var(--r-sm);
-  background:var(--panel); height:auto; box-shadow:none;
-}
-.stat .l{
-  display:block; font-family:var(--mono); font-size:9.5px!important; letter-spacing:.13em;
-  text-transform:uppercase; color:var(--faint); line-height:1.35!important; height:auto!important;
-}
-.stat .v{
-  display:block; margin-top:4px; font-family:var(--mono);
-  font-size:19px!important; font-weight:600; line-height:1.25!important; height:auto!important;
-  letter-spacing:-.02em; white-space:nowrap;
-}
-.stat .s{display:block; margin-top:2px; font-size:11px!important; line-height:1.35!important; height:auto!important; color:var(--faint)}
-
-.rail{
-  display:flex; align-items:center; gap:7px;
-  padding:0 var(--gutter) 2px; overflow-x:auto; scrollbar-width:none;
-  -webkit-mask-image:linear-gradient(to right,#000 calc(100% - 22px),transparent);
-  mask-image:linear-gradient(to right,#000 calc(100% - 22px),transparent);
-}
-.rail::-webkit-scrollbar{display:none}
-.rail>*{flex:0 0 auto}
-
-/* ============================ 6 · SHEETS ================================ */
-.ov{
-  position:fixed; inset:0; z-index:200; display:none;
-  align-items:flex-end; justify-content:center; padding:0;
-  background:rgba(3,5,8,.86);
-}
-html[data-theme="light"] .ov{background:rgba(24,28,36,.5)}
-.ov.on{display:flex}
-body:has(> .ov.on){overflow:hidden}
-.modal{
-  width:100%; max-width:none; max-height:92dvh;
-  display:flex; flex-direction:column; min-height:0;
-  border:1px solid var(--line2); border-bottom:0;
-  border-radius:18px 18px 0 0; background:var(--panel);
-  animation:sheet .26s var(--ease);
-}
-@keyframes sheet{from{transform:translateY(100%)} to{transform:none}}
-.modal::before{
-  content:''; flex:none; width:36px; height:4px; border-radius:99px;
-  background:var(--line3); margin:8px auto 2px; opacity:.8;
-}
-.modal-h{flex:none; display:flex; align-items:flex-start; gap:10px; padding:8px var(--gutter) 12px; border-bottom:1px solid var(--line)}
-.modal-h h2{margin:0; font-size:17px; font-weight:650; line-height:1.3}
-.modal-h p{margin:3px 0 0; font-size:12px; color:var(--faint); line-height:1.4}
-.modal-h>div:first-child{flex:1; min-width:0}
-.modal-b{
-  flex:1 1 auto; min-height:0; overflow-y:auto; overscroll-behavior:contain;
-  padding:var(--gutter); display:flex; flex-direction:column; gap:var(--gap);
-}
-.modal-b>*{flex:0 0 auto; min-height:0}
-.modal-f{
-  flex:none; display:flex; gap:8px; padding:12px var(--gutter) calc(12px + var(--safe-b));
-  border-top:1px solid var(--line); background:var(--panel2);
-}
-.modal-f .btn{flex:1 1 0; min-width:0}
-
-/* ---- ONBOARDING IS FULL SCREEN. Not a sheet. This is the fix for the
-        20% of dead space that sat above the setup flow. ---- */
-#ovOnboard{align-items:stretch; padding:0; background:var(--bg)}
-#ovOnboard .modal{
-  width:100%; max-width:none; height:100dvh; max-height:100dvh;
-  border:0; border-radius:0; background:var(--bg);
-  animation:fadeup .28s var(--ease);
-}
-@keyframes fadeup{from{opacity:0; transform:translateY(10px)} to{opacity:1; transform:none}}
-#ovOnboard .modal::before{display:none}
-
-/* ============================ 7 · MISC ================================== */
-.toasts{
-  position:fixed; left:50%; transform:translateX(-50%); z-index:500;
-  bottom:calc(var(--tabs-total) + 12px);
-  display:flex; flex-direction:column; gap:7px; align-items:center;
-  width:calc(100% - 32px); pointer-events:none;
-}
-.toasts-top{bottom:auto; top:calc(var(--safe-t) + 58px)}
-.toast{font-size:12.5px; padding:10px 13px; border-radius:11px; box-shadow:none}
-.lvup{position:fixed; z-index:400; left:50%; transform:translateX(-50%); top:calc(var(--safe-t) + 58px)}
-.note{font-size:11.5px; color:var(--faint)}
-.pill{
-  display:inline-flex; align-items:center; height:auto;
-  font-family:var(--mono); font-size:9.5px!important; letter-spacing:.1em;
-  line-height:1.5!important; padding:3px 7px; border-radius:99px;
-  border:1px solid var(--line2); color:var(--faint);
-}
-.empty{padding:22px var(--gutter); text-align:center; font-size:12.5px; color:var(--faint); line-height:1.5}
-
-/* perf: no blur/large shadow anywhere on the phone */
-*{backdrop-filter:none!important; -webkit-backdrop-filter:none!important}
-.card,.list,.stat,.chip,.modal,.toast{box-shadow:none}
-
-@media (prefers-reduced-motion:reduce){
-  .modal,#ovOnboard .modal{animation:none!important}
-}
-/* ============================================================================
-   12 · SAFARI-SAFE PRIMITIVES + SETUP COMPONENTS
-   ----------------------------------------------------------------------------
-   Written against iOS Safari, not Chrome's device emulation. Three rules the
-   emulator never enforced and which broke the build on a real iPhone:
-
-     1. A <button> is NOT a reliable flex container on iOS. Safari applies
-        -webkit-appearance:push-button, which imposes its own box model and
-        centring. Every button here is reset to appearance:none and its layout
-        lives on an inner .w-in wrapper.
-     2. Icons carry width/height attributes now (see ico()), but the tiles also
-        pin an explicit size so nothing depends on inheritance.
-     3. No color-mix() below this line. It needs Safari 16.2+; under that the
-        whole declaration is dropped and tiles lose their background. Tints are
-        plain rgba, which every Safari understands.
-   ========================================================================= */
-
-/* ---- global button reset: the single highest-leverage Safari fix ---- */
-button,
-input[type="button"],
-input[type="submit"],
-input[type="reset"]{
-  -webkit-appearance:none; appearance:none;
-  -webkit-tap-highlight-color:transparent;
-  font-family:inherit; font-size:inherit; line-height:inherit;
-  color:inherit; text-align:inherit;
-  border-radius:0;
-}
-/* Safari also refuses to shrink form controls below their intrinsic width */
-button,input,select,textarea{min-width:0; max-width:100%}
-/* every icon gets a real box; nothing relies on a selector happening to match */
-svg{display:block; flex:none}
-.w-in svg,.tabs svg,.btn svg,.iconbtn svg{flex:none}
-
-/* the inner wrapper carries the layout, the button is just a hit target */
-.w-in{
-  display:flex; align-items:center; gap:10px;
-  width:100%; min-width:0; text-align:left;
-}
-
-/* ---- sheet chrome ---- */
-.modal.wiz{height:auto; max-height:94dvh; width:100%; max-width:none}
-.modal.wiz .wiz-steps{flex:none; display:flex; gap:4px; padding:10px 14px 4px}
-.modal.wiz .wiz-steps i{flex:1 1 0; height:3px; border-radius:2px; background:var(--line2)}
-.modal.wiz .wiz-steps i.done{background:var(--hot)}
-.modal.wiz .modal-h{
-  flex:none; display:flex; justify-content:flex-end;
-  padding:0 12px 2px; border-bottom:0; min-height:0;
-}
-.modal.wiz.is-home .modal-h{display:none}
-.modal.wiz .wiz-head-copy{display:none}
-.modal.wiz .modal-b{
-  display:block!important; overflow-y:auto!important; min-height:0;
-  padding:12px 14px calc(18px + var(--safe-b));
-}
-.modal.wiz .modal-f{display:none!important}
-
-/* ---- headings ---- */
-.w-head{display:block; margin-bottom:12px}
-.w-title{
-  margin:0 0 6px; font-size:19px; font-weight:650; line-height:1.35;
-  letter-spacing:-.02em; color:var(--txt);
-}
-.w-title em{font-style:normal; color:var(--hot)}
-.w-lead{margin:0; font-size:12.5px; line-height:1.5; color:var(--faint)}
-.w-lead b,.w-lead .em{color:var(--label); font-weight:600}
-.w-grp{
-  display:block; margin:15px 0 7px;
-  font-family:var(--mono); font-size:10.5px; letter-spacing:.15em;
-  line-height:1.4; text-transform:uppercase; color:var(--faint);
-}
-.w-count{
-  display:inline-block; margin-top:8px; padding:4px 10px;
-  border-radius:99px; font-family:var(--mono); font-size:11.5px; line-height:1.4;
-  border:1px solid var(--line2); background:var(--panel2); color:var(--dim);
-}
-.w-count.ok{color:var(--ok); border-color:rgba(47,212,146,.45); background:rgba(47,212,146,.12)}
-
-/* ---- home ---- */
-.w-hero{display:flex; align-items:center; gap:11px; margin-bottom:13px}
-.w-mark{
-  flex:none; width:44px; height:44px;
-  display:flex; align-items:center; justify-content:center;
-  border-radius:13px; background:var(--hotbg); color:var(--hot);
-}
-.w-mark svg{width:24px; height:24px}
-.w-wm{display:flex; align-items:center; gap:8px; min-width:0}
-.w-wm b{font-size:25px; font-weight:650; line-height:1.35; letter-spacing:-.02em}
-.w-wm i{
-  font-style:normal; font-family:var(--mono); font-size:9.5px; letter-spacing:.14em;
-  padding:3px 6px; border-radius:6px; border:1px solid var(--line2); color:var(--faint);
-}
-.w-tag{margin:0 0 15px; font-size:16px; line-height:1.5; color:var(--dim)}
-.w-tag b{color:var(--hot); font-weight:650}
-
-.w-field{display:block; margin-bottom:13px}
-.w-field label{
-  display:block; margin-bottom:5px;
-  font-family:var(--mono); font-size:10px; letter-spacing:.14em;
-  text-transform:uppercase; color:var(--faint);
-}
-
-.w-prefs{display:flex; flex-wrap:wrap; gap:7px; margin-bottom:9px}
-.w-seg{
-  display:inline-flex; gap:3px; padding:3px;
-  border-radius:11px; border:1px solid var(--line2); background:var(--panel2);
-}
-.w-seg button{
-  display:flex; align-items:center; justify-content:center;
-  min-width:42px; height:34px; padding:0 9px;
-  border:0; border-radius:8px; background:transparent; color:var(--faint);
-  font-size:12px; cursor:pointer;
-}
-.w-seg button svg{width:16px; height:16px}
-.w-seg button.on{background:var(--raise); color:var(--txt)}
-.w-dots{display:flex; flex-wrap:wrap; gap:7px; margin-bottom:11px}
-.w-dot{
-  width:28px; height:28px; border-radius:99px;
-  border:2px solid transparent; padding:0; cursor:pointer;
-}
-.w-dot.on{border-color:var(--txt)}
-
-/* ---- the workhorse row ---- */
-.w-stack{display:flex; flex-direction:column; gap:7px}
-.w-opt,.w-path,.w-add,.w-pack,.w-stat{
-  display:block; width:100%; padding:10px 11px; cursor:pointer;
-  border:1px solid var(--line2); border-radius:var(--r-sm);
-  background:var(--panel2); color:var(--txt);
-  font-family:var(--sans); font-size:13px;
-}
-.w-opt:active,.w-path:active,.w-add:active,.w-pack:active,.w-stat:active{opacity:.6}
-.w-opt.on{border-color:var(--sk-c,var(--hot)); background:var(--raise)}
-
-.w-opt-ico,.w-path-ico{
-  flex:none; width:36px; height:36px;
-  display:flex; align-items:center; justify-content:center;
-  border-radius:10px; color:var(--sk-c,var(--hot));
-  background:rgba(255,255,255,.06);
-}
-html[data-theme="light"] .w-opt-ico,
-html[data-theme="light"] .w-path-ico{background:rgba(16,24,40,.05)}
-.w-opt-ico svg,.w-path-ico svg{width:18px; height:18px}
-
-.w-opt-c{
-  flex:1 1 auto; min-width:0;
-  display:flex; flex-direction:column; gap:2px; text-align:left;
-}
-.w-opt-c b{font-size:13.5px; font-weight:600; line-height:1.35; overflow-wrap:anywhere}
-.w-opt-c>span{font-size:11.5px; line-height:1.4; color:var(--faint); overflow-wrap:anywhere}
-
-.w-opt-tick{
-  flex:none; width:28px; height:28px;
-  display:flex; align-items:center; justify-content:center;
-  border-radius:99px; border:1px solid var(--line2); color:var(--faint);
-}
-.w-opt-tick svg{width:14px; height:14px}
-.w-opt.on .w-opt-tick{background:var(--sk-c,var(--hot)); border-color:var(--sk-c,var(--hot)); color:#fff}
-.w-opt-edit{
-  flex:none; width:32px; height:32px;
-  display:flex; align-items:center; justify-content:center;
-  border-radius:9px; color:var(--faint); border:1px solid var(--line2);
-}
-.w-opt-edit svg{width:14px; height:14px}
-
-.w-path-go{flex:none; width:20px; display:flex; align-items:center; justify-content:center; color:var(--faint)}
-.w-path-go svg{width:16px; height:16px}
-.w-reco{
-  display:inline-block; margin-left:7px; font-style:normal;
-  font-family:var(--mono); font-size:9px; letter-spacing:.09em; line-height:1.5;
-  padding:2px 6px; border-radius:99px; background:var(--hotbg); color:var(--hot);
-  white-space:nowrap;
-}
-
-/* packs: two per row, label allowed to wrap rather than be cut */
-.w-packs{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:7px}
-.w-pack{padding:9px 10px}
-.w-pack .w-in{justify-content:center; gap:7px}
-.w-pack-ico{flex:none; display:flex; align-items:center; justify-content:center; color:var(--hot)}
-.w-pack-ico svg{width:16px; height:16px}
-.w-pack-l{
-  min-width:0; font-size:12.5px; font-weight:550; line-height:1.3;
-  overflow-wrap:anywhere; text-align:center;
-}
-
-.w-add{border-style:dashed; border-color:var(--line3); background:transparent; color:var(--dim)}
-.w-add .w-in{justify-content:center; gap:8px}
-.w-add svg{width:15px; height:15px}
-.w-add span{font-size:12.5px}
-
-.w-empty{
-  padding:15px 12px; border:1px dashed var(--line2); border-radius:var(--r-sm);
-  text-align:center; font-size:12px; line-height:1.45; color:var(--faint);
-}
-.w-link{
-  display:inline-block; border:0; background:none; padding:0; cursor:pointer;
-  font-size:12px; color:var(--dim); width:auto;
-}
-.w-link .w-in{gap:7px; width:auto}
-.w-link svg{width:14px; height:14px}
-.w-foot-meta{
-  display:flex; align-items:center; gap:9px; flex-wrap:wrap;
-  margin-top:17px; padding-top:13px; border-top:1px solid var(--line);
-}
-.w-ver{margin-left:auto; font-family:var(--mono); font-size:10px; color:var(--faint)}
-.w-note{margin:11px 0 0; font-size:11.5px; line-height:1.45; color:var(--faint); text-align:center}
-.w-steps{
-  margin:0 0 13px; padding-left:20px;
-  display:flex; flex-direction:column; gap:7px;
-  font-size:12.5px; line-height:1.5; color:var(--dim);
-}
-.w-wide{width:100%; min-height:44px}
-
-/* ---- step nav ---- */
-.w-nav{display:flex; align-items:center; gap:7px}
-.w-nav-btn{
-  display:flex; align-items:center; justify-content:center; gap:6px;
-  min-width:40px; min-height:40px; padding:0 12px;
-  border:1px solid var(--line2); border-radius:10px;
-  background:var(--panel2); color:var(--txt);
-  font-family:var(--sans); font-size:12.5px; font-weight:550; cursor:pointer;
-}
-.w-nav-btn svg{width:15px; height:15px}
-.w-nav-btn.pri{background:var(--hot); border-color:var(--hot); color:var(--hot-ink)}
-.w-nav-btn:disabled{opacity:.4}
-.w-nav-skip{
-  border:0; background:none; padding:0 7px; cursor:pointer;
-  font-size:12px; color:var(--faint); width:auto; min-width:0;
-}
-
-/* ---- done ---- */
-.w-done{display:block; margin-bottom:15px}
-.w-seal{
-  width:46px; height:46px; margin-bottom:9px;
-  display:flex; align-items:center; justify-content:center; border-radius:99px;
-  background:rgba(47,212,146,.14); color:var(--ok); border:1px solid rgba(47,212,146,.4);
-}
-.w-seal svg{width:23px; height:23px}
-.w-done .w-grp{margin:0 0 5px}
-.w-day{
-  display:flex; align-items:center; gap:9px; flex-wrap:wrap;
-  margin-top:11px; padding:9px 11px; border-radius:var(--r-sm);
-  border:1px solid var(--line2); background:var(--panel2);
-}
-.w-day span{font-family:var(--mono); font-size:10.5px; letter-spacing:.14em; color:var(--hot)}
-.w-day b{font-size:13px; font-weight:600; color:var(--label)}
-
-.w-stats{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:6px; margin-bottom:7px}
-.w-stat{padding:9px 4px}
-.w-stat .w-in{flex-direction:column; align-items:center; gap:3px; text-align:center}
-.w-stat b{font-family:var(--mono); font-size:19px; line-height:1.3; color:var(--hot)}
-.w-stat span{font-size:10px; line-height:1.25; color:var(--faint); overflow-wrap:anywhere}
-
-.w-chips{display:flex; flex-wrap:wrap; gap:6px}
-.w-chip{
-  display:inline-flex; align-items:center; gap:6px;
-  padding:5px 10px 5px 5px; border-radius:99px;
-  border:1px solid var(--line2); background:var(--panel2);
-  font-size:12px; line-height:1.35; color:var(--txt);
-}
-.w-chip-ico{
-  flex:none; width:22px; height:22px;
-  display:flex; align-items:center; justify-content:center;
-  border-radius:99px; color:var(--sk-c,var(--hot)); background:rgba(255,255,255,.07);
-}
-html[data-theme="light"] .w-chip-ico{background:rgba(16,24,40,.06)}
-.w-chip-ico svg{width:13px; height:13px}
-.w-start{width:100%; min-height:48px; font-size:15px; margin-top:15px}
-
-/* ---- the app shell's own buttons, restated after the global reset ---- */
-.btn,.iconbtn,.tabs button,.w-seg button,.w-nav-btn{
-  -webkit-appearance:none; appearance:none;
-}
-.btn{display:inline-flex; align-items:center; justify-content:center}
-.iconbtn{display:flex; align-items:center; justify-content:center}
-.tabs button{display:flex; flex-direction:column; align-items:center; justify-content:center}
-
-/* ============================================================================
-   13 · INHERITED COMPONENTS
-   The screens that still run desktop renderers emit markup built for a mouse:
-   display type with line-height equal to its box, panes with pinned heights,
-   and label/value pairs sized for a wide column. Rather than patch each one,
-   the whole family is normalised here against the phone grid.
-
-   Two rules, applied once:
-     · release every pinned height — an auto-height box cannot clip
-     · give display type real leading — the ink box of a large face exceeds a
-       1.0–1.2 line-height and shaves descenders
-   ========================================================================= */
-@media (max-width:768px){
-
-  /* -- leading for every text box the renderers emit -- */
-  .vh h1,.stat .v,.stat .l,.stat .s,
-  .ring .lbl b,.ring .lbl span,.ring-core b,.ring-core span,
-  .cal-day,.cal-day .dn,.cal-weekdays span,
-  .ops-day-head b,.ops-day-head .ops-day-date,.ops-month-num,.ops-month-dow,
-  .ops-hour-time,.ops-hour-time b,.ops-hour-empty,.ops-day-empty,
-  .fin-total,.fin-net-v,.fin-badge,.debt-k,.debt-v,
-  .log-skill .ls-body b,.log-skill .ls-body .d,.log-skill .lv,
-  .mt-item .l,.mt-item .u,.metrics-ticker-label,.metrics-ticker-label b,
-  .skl-h b,.skl-h .lvl,.skl-f,.skl-f span,.chip .lv,.qtag-count,
-  .qc .m,.qc .m b,.qc .m span,.eyebrow,.sect-t,.lab,.pill,
-  .goal-name,.gt-t,.cmd-metric-title,.cmd-metric-value,
-  .wd-val,.wd-name,.wd-lab,.rl,.rl-lv,.sp-k,.sp-v,.lvup .n{
-    height:auto!important; min-height:0; line-height:1.34!important;
-  }
-
-  /* -- no pane keeps a desktop height; the page is the only scroller -- */
-  .today-workspace,.log-workspace,.cmd-layout,.prog-workspace,.radar-layout,
-  .pillars-workspace,.ops-cal-lower,.log-right,.queue-panel,.eq-cols,
-  .todo-pond-row,.cmd-metric-board,.goals-workspace,.fin-cards,.fin-hero-row,
-  .cmd-overview-row,.ring-disc-body,.goal .dual{
-    display:flex!important; flex-direction:column!important;
-    height:auto!important; max-height:none!important; min-height:0!important;
-    gap:var(--gap-sm);
-  }
-  .today-workspace>*,.log-workspace>*,.cmd-layout>*,.prog-workspace>*,
-  .radar-layout>*,.pillars-workspace>*,.ops-cal-lower>*,.log-right>*,
-  .queue-panel>*,.eq-cols>*,.todo-pond-row>*,.cmd-metric-board>*,
-  .goals-workspace>*,.fin-cards>*,.fin-hero-row>*,.cmd-overview-row>*{
-    flex:0 0 auto!important; width:100%; min-width:0; min-height:0;
-  }
-  .view .card,.view .card-b,.view .section-block,.view .scroll-list,
-  .view .skl-rail,.view .qgrid,.view .ops-hourly,.view .log-skills,
-  .view .disc-compact,.view .hist,.view .goal-list,.view .fin-entries,
-  .view .pond-cells,.view .chart-box,.view .radar-chart-wrap,
-  .view #chSkillBars,.view #chRadar,.view #chWeekday,
-  .view #chMomentum30,.view #chBalance,.view #chHeatmaps{
-    height:auto!important; max-height:none!important; min-height:0!important;
-  }
-  .view .card,.view .card>.card-b{overflow:visible!important}
-
-  /* -- grids collapse to the single column -- */
-  .grid,.g2,.g3,.g4,.g5,.eds,.wir,.split,.split-e,.split-3,
-  .cal-grid,.pillar-table,.cmd-kpis{
-    display:grid!important; grid-template-columns:minmax(0,1fr); gap:var(--gap-sm);
-  }
-  .g4,.g5,.cmd-kpis{grid-template-columns:repeat(3,minmax(0,1fr))}
-  .cal-weekdays,.cal-days{grid-template-columns:repeat(7,minmax(0,1fr)); gap:2px}
-  .cal-day{min-width:0; min-height:34px; padding:2px 1px}
-  .ops-week-grid{
-    grid-template-rows:none!important; grid-auto-rows:auto!important;
-    grid-template-columns:repeat(2,minmax(0,1fr)); gap:4px;
-  }
-  .ops-day,.ops-day-head{min-height:0!important; height:auto!important}
-  .ops-month-grid{grid-template-columns:repeat(7,minmax(0,1fr))}
-  .ops-month-day{min-width:0; min-height:32px; height:auto}
-
-  /* -- the log habit row, rebuilt on the app's row grid -- */
-  .log-skill{
-    display:flex!important; align-items:center; gap:var(--row-gap);
-    width:100%; padding:11px var(--gutter); height:auto; min-height:0;
-  }
-  .log-skill .g{
-    flex:none; width:var(--row-ico); height:var(--row-ico);
-    display:flex; align-items:center; justify-content:center; border-radius:8px;
-  }
-  .log-skill .g svg{width:15px; height:15px}
-  .log-skill .ls-body{flex:1 1 auto; min-width:0; display:flex; flex-wrap:wrap; gap:1px}
-  .log-skill .ls-body b{
-    flex:1 1 100%; width:100%; min-width:0; font-size:var(--fs)!important;
-    white-space:normal!important; overflow:visible!important; text-overflow:clip!important;
-  }
-  .log-skill .ls-body .ls-sep{display:none}
-  .log-skill .ls-body .d{
-    flex:1 1 100%; width:100%; min-width:0; font-size:var(--fs-sm)!important;
-    white-space:normal!important; overflow:visible!important; text-overflow:clip!important;
-    color:var(--faint);
-  }
-  .log-skill .lv{flex:0 0 auto; min-width:max-content; white-space:nowrap; font-size:var(--fs-sm)!important}
-
-  /* -- horizontal rails stay swipeable, never squashed -- */
-  .metrics-ticker,.metrics-ticker-bar,.metrics-ticker-viewport,
-  .skl-rail,.week-strip,.chips,.qtags,.seg{
-    overflow-x:auto!important; overflow-y:hidden; scrollbar-width:none;
-  }
-  .metrics-ticker-bar::-webkit-scrollbar,.metrics-ticker-viewport::-webkit-scrollbar,
-  .skl-rail::-webkit-scrollbar,.chips::-webkit-scrollbar{display:none}
-  .metrics-ticker-track{animation:none!important; transform:none!important; width:max-content}
-  .mt-item{flex:0 0 auto}
-
-  /* -- type floor: nothing below 10.5px on a phone -- */
-  .eyebrow,.sect-t,.lab,.pill,.qtag-count,.fin-badge,.lv,.note,
-  .ops-month-dow,.ops-type-key span,.wd-lab,.rl-lv,.skl-f,.skl-f span,
-  .skl-h .lvl,.mt-item .l,.mt-item .u,.cal-weekdays span,
-  .ops-hour-time,.ops-hour-time b,.metrics-ticker-label{font-size:10.5px!important}
-  .stat .s,.qc .m,.qc .m b,.qc .m span,.cal-day,.cal-day .dn,
-  .ops-month-num,.ops-day-empty,.ops-hour-empty,.wd-val{font-size:11.5px!important}
-
-  /* -- touch floor on inherited controls -- */
-  .chip,.seg button,.tag,.qc,.sug-chip,.row-a,.todo .x,.sk-edit,
-  .cal-day,.ops-month-day,.fin-entry .edit{min-height:30px; height:auto}
-
-  /* last strays: the log day badge and the weekday-chart values */
-  .daybar-meta,.daybar-meta>span{
-    display:flex; align-items:center; flex-wrap:wrap; gap:6px;
-    height:auto!important; min-height:0; line-height:1.4!important;
-  }
-  /* pinned to 14px upstream at a weight a single class cannot outrank */
-  .wd-col .wd-val,.wd-bars .wd-val,.wd-col span{
-    height:auto!important; min-height:0; line-height:1.35!important; font-size:10.5px!important;
-  }
-}
 </style>
 </head>
 <body>
@@ -5589,466 +4810,504 @@ html[data-theme="light"] .w-chip-ico{background:rgba(16,24,40,.06)}
 <linearGradient id="gCool" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7fb4ff"/><stop offset="1" stop-color="#b9d7ff"/></linearGradient>
 </defs></svg>
 
-<!-- ============================================================================
-     PHONE SHELL
-     Written for the phone from scratch. Deliberately shares no layout class
-     with the desktop build (.app/.side/.main/.wrap/.mbar and every *-workspace
-     are absent), so there is no desktop scaffolding to fight. The renderers are
-     unchanged: they still fill the same ids, they just land in a single column.
-     ========================================================================= -->
+<div class="app">
 
-<header class="tbar" id="tbar">
-  <button class="tbar-brand" data-act="go" data-view="today" aria-label="Tungsten">
-    <span class="tbar-mark" id="brandMarkM"></span>
-    <span class="tbar-id"><b>Tungsten</b><span id="mDia"></span></span>
-  </button>
-  <div class="tbar-a">
-    <button class="iconbtn" data-act="help" aria-label="Help">?</button>
-    <button class="iconbtn" data-act="theme" aria-label="Theme"><span id="mThemeIco"></span></button>
-    <button class="iconbtn" data-act="settings" aria-label="Settings"><span id="mSetIco"></span></button>
-  </div>
-</header>
+  <!-- ======================= SIDEBAR (desktop) ======================= -->
+  <aside class="side">
+    <div class="brand">
+      <div class="mark" id="brandMark"></div>
+      <div class="brand-t"><b>Tungsten</b></div>
+    </div>
 
-<main class="screen">
-<div class="pagewrap">
+    <div class="lang-toggle" id="langToggle">
+      <button type="button" data-act="setLang" data-lang="es"><span class="lang-glyph" data-flag="es" aria-hidden="true"></span> Español</button>
+      <button type="button" data-act="setLang" data-lang="en" class="on"><span class="lang-glyph" data-flag="en" aria-hidden="true"></span> English</button>
+    </div>
+    <button type="button" class="side-pulse" id="sidePulse" data-act="go" data-view="command" title="Open Command"></button>
+    <!-- legacy ids kept for any stray refs -->
+    <div class="dia" id="sideDia" aria-hidden="true"></div>
+    <button class="mo-mini" data-act="go" data-view="command" id="sideMo" aria-hidden="true" tabindex="-1"></button>
 
-  <!-- ---------------------- 1 · TODAY ---------------------- -->
-  <!-- ---------------------- 1 · TODAY · the daily loop ----------------------
-       Ring first, then the checklist you actually tap. Everything read-only
-       sits below the fold on purpose. -->
-  <section class="view" id="v-today">
-    <div class="vh">
-      <div class="vh-t">
-        <span class="vh-eyebrow" id="todayEyebrow">TACTICAL · 01</span>
-        <h1 data-i18n="view.today">Today</h1>
-      </div>
-      <div class="vh-a">
-        <button type="button" class="iconbtn ghost" data-act="viewHelp" data-view="today" aria-label="Help">?</button>
-        <button class="btn ghost sm" data-act="stepBack" id="btnStepBack" data-i18n="btn.stepBack">Step back</button>
-        <button class="btn pri sm" data-act="advanceDay" data-i18n="btn.advanceDay">Advance day</button>
+    <nav class="nav" id="navDesk"></nav>
+
+    <div class="side-f">
+      <div class="side-actions">
+        <button class="bk-btn" id="btnBackup" data-act="export" title="Export full state backup"></button>
+        <button class="icon-btn" data-act="help" title="How this works" id="btnHelp" aria-label="Help">?</button>
+        <button class="icon-btn" data-act="theme" title="Toggle theme (T)" id="btnTheme"></button>
+        <button class="icon-btn" data-act="settings" title="Settings" id="btnSettings"></button>
       </div>
     </div>
+  </aside>
 
-    <div class="hero">
-      <div class="hero-ring" id="coreRing"></div>
-      <div class="hero-l" id="ringMeta"></div>
-      <div class="hero-s" id="todayStatus"></div>
-    </div>
-
-    <div class="sect">
-      <div class="sect-h"><b data-i18n="core">Essentials</b><span class="push" id="ringSealedBadge"></span>
-        <button class="btn ghost sm" data-act="openSkills" data-i18n="btn.editSkills">Editar</button></div>
-      <div class="list" id="todayCore"></div>
-    </div>
-
-    <div class="sect" id="todayBonusSect">
-      <div class="sect-h"><b data-i18n="bonus">Extras</b></div>
-      <div class="list" id="todayBonus"></div>
-    </div>
-
-    <div class="sect">
-      <div class="sect-h"><b data-i18n="today.todo">To-do</b></div>
-      <div class="card"><div class="card-b">
-        <div class="addrow"><input class="in" id="edTodoNew" data-i18n-ph="ph.todo" placeholder="Add a task…"><button type="button" class="btn pri addbtn" data-act="addTodo" aria-label="+">+</button></div>
-        <div id="edTodoList"></div>
-      </div></div>
-    </div>
-
-    <div class="sect">
-      <div class="sect-h"><b data-i18n="today.moves">Next moves</b>
-        <button class="btn ghost sm push" data-act="go" data-view="command" data-i18n="view.command">Command</button></div>
-      <div class="list" id="todayMoves"></div>
-    </div>
-
-    <div class="sect">
-      <div class="sect-h"><b data-i18n="today.pondering">Pondering</b></div>
-      <div class="card"><div class="card-b">
-        <div class="addrow"><input class="in" id="edPondNew" data-i18n-ph="ph.pond" placeholder="Reflection, friction, signal…" autocomplete="off"><button type="button" class="btn pri addbtn" data-act="addPondToday" aria-label="+">+</button></div>
-        <div id="edPondList"></div>
-      </div></div>
-    </div>
-
-    <div class="sect">
-      <div class="sect-h"><b data-i18n="today.status">Status</b></div>
-      <div class="tiles" id="todayStats"></div>
-    </div>
-
-    <div class="sect">
-      <div class="card"><div class="card-b">
-        <button type="button" class="qstrip" data-act="go" data-view="wisdom" id="todayQuote"></button>
-      </div></div>
-    </div>
-
-    <div class="hidden-stub" aria-hidden="true">
-      <select id="todayMoveFilter"></select>
-      <div id="todayChips"></div><div id="todaySkills"></div>
-      <button id="btnShuffleQuote"></button>
-    </div>
-  </section>
-
-  <!-- ---------------------- 2 · DAILY LOG ---------------------- -->
-  <section class="view" id="v-log">
-    <div class="vh">
-      <div class="vh-t">
-        <span class="vh-eyebrow" data-i18n="eyebrow.log">TACTICAL · 02</span>
-        <h1 data-i18n="view.log">Daily Log</h1>
-      </div>
-      <div class="vh-a">
-        <button type="button" class="iconbtn ghost" data-act="viewHelp" data-view="log" aria-label="Help">?</button>
-        <button class="btn ghost sm" data-act="export" data-i18n="log.exportData">Export data</button>
-        <button class="btn ghost sm" data-act="openImport" data-i18n="log.importData">Import data</button>
-      </div>
-    </div>
-    <div id="logBanner"></div>
-
-    <div class="sect">
-      <div class="daybar">
-        <button class="iconbtn" data-act="logPrev" id="logPrev" aria-label="Previous day"></button>
-        <input type="date" class="in daybar-date" id="logDate">
-        <button class="iconbtn" data-act="logNext" id="logNext" aria-label="Next day"></button>
-      </div>
-      <div class="daybar-meta"><span id="logDiaBadge"></span>
-        <button class="btn ghost sm push" data-act="logToday" data-i18n="log.current">Current day</button></div>
-    </div>
-
-    <div class="sect">
-      <div class="card"><div class="card-b" id="logChips"></div></div>
-    </div>
-
-    <div class="sect">
-      <div class="sect-h"><b data-i18n="today.todo">To-do</b></div>
-      <div class="card">
-        <div class="card-b">
-          <div class="addrow"><input class="in" id="lgTodoNew" data-i18n-ph="ph.todo" placeholder="Add a task…"><button type="button" class="btn pri addbtn" data-act="addTodoLog" aria-label="+">+</button></div>
-          <div id="lgTodoList"></div>
+  <!-- ======================= MAIN ======================= -->
+  <main class="main">
+    <div class="mbar">
+      <div class="mbar-t">
+        <div class="brand">
+          <div class="mark" id="brandMarkM"></div>
+          <div class="brand-t"><b>Tungsten</b><span id="mDia"></span></div>
         </div>
+        <button class="icon-btn" data-act="help" title="How this works" aria-label="Help">?</button>
+        <button class="icon-btn" data-act="theme" title="Toggle theme"><span id="mThemeIco"></span></button>
+        <button class="icon-btn" data-act="settings" title="Settings"><span id="mSetIco"></span></button>
       </div>
+      <div class="mnav" id="navMob"></div>
     </div>
 
-    <div class="sect">
-      <div class="sect-h"><b data-i18n="today.pondering">Pondering</b></div>
-      <div class="card"><div class="card-b" id="lgPondList"></div></div>
-    </div>
+    <div class="wrap">
 
-    <div class="sect">
-      <div class="sect-h"><b data-i18n="log.history">History</b></div>
-      <div class="card">
-        <div class="card-b"><input class="in" id="histSearch" data-i18n-ph="log.searchPh" placeholder="Search notes and to-dos…"></div>
-        <div class="card-b flush" id="histList"></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ---------------------- 3 · COMMAND ---------------------- -->
-  <section class="view" id="v-command">
-    <div class="vh">
-      <div class="vh-t">
-        <span class="vh-eyebrow" data-i18n="eyebrow.command">OPERATIONAL · 03</span>
-        <h1 data-i18n="view.command">Command</h1>
-      </div>
-      <div class="vh-a">
-        <button type="button" class="iconbtn ghost" data-act="viewHelp" data-view="command" aria-label="Help">?</button>
-        <button class="btn ghost sm" data-act="genSteps" data-i18n="btn.genSteps">Generate steps</button>
-        <button class="btn ghost sm" data-act="copyAI" data-i18n="btn.copyAI">Copy AI</button>
-        <button class="btn ghost sm" data-act="openImport" data-i18n="btn.importPlan">Import plan</button>
-        <button class="btn ghost sm" data-act="extractSitRep" data-i18n="btn.sitrep">Extract SitRep</button>
-      </div>
-    </div>
-
-    <div class="sect">
-      <div class="rail" id="cmdMetrics"></div>
-    </div>
-
-    <div class="sect">
-      <div class="sect-h"><b data-i18n="cmd.momentum">Momentum</b><span class="push" id="moBand"></span></div>
-      <div class="card"><div class="card-b"><div id="moHero"></div><div id="moWeak"></div></div></div>
-    </div>
-
-    <div class="sect">
-      <div class="sect-h"><b data-i18n="section.pulse">Pulse</b></div>
-      <div class="tiles" id="cmdStats"></div>
-    </div>
-
-    <div class="sect">
-      <div class="sect-h"><b data-i18n="cmd.metricBoard">Metrics</b>
-        <button class="btn ghost sm push" data-act="addMetric" data-i18n="cmd.addMetric">Add metric</button></div>
-      <div id="cmdMetricBoard"></div>
-    </div>
-
-    <div class="sect">
-      <div class="sect-h"><b data-i18n="today.moves">Next moves</b><span class="note push" id="cmdMoveCount"></span></div>
-      <div class="card">
-        <div class="card-b stackform">
-          <input class="in" id="cmdMoveText" data-i18n-ph="ph.move" placeholder="Create a task">
-          <div class="row2">
-            <select class="in" id="cmdMovePillar"></select>
-            <select class="in" id="cmdMovePrio"><option value="1">NOW</option><option value="2" selected>NEXT</option><option value="3">SOON</option></select>
+      <!-- ---------------------- 1 · TODAY ---------------------- -->
+      <section class="view" id="v-today">
+        <div class="vhead">
+          <div>
+            <div class="eyebrow" data-i18n="eyebrow.today">TACTICAL · 01</div>
+            <h1 data-i18n="view.today">Today</h1>
           </div>
-          <button class="btn pri" data-act="addMoveCmd" data-i18n="btn.add">Add</button>
+          <div class="vhead-a"><button type="button" class="view-help-btn" data-act="viewHelp" data-view="today" title="Help / Ayuda" aria-label="Help / Ayuda">?</button>
+            <button class="btn ghost sm" data-act="stepBack" id="btnStepBack" data-i18n="btn.stepBack">Step back</button>
+            <button class="btn pri" data-act="advanceDay" data-i18n="btn.advanceDay">Advance day</button>
+          </div>
         </div>
-        <div class="card-b flush" id="cmdMoves"></div>
-      </div>
-    </div>
 
-    <div class="sect">
-      <div class="sect-h"><b data-i18n="cmd.snapshot">Needs attention</b>
-        <button class="btn ghost sm push" data-act="go" data-view="pillars" data-i18n="btn.manage">Projects</button></div>
-      <div class="card"><div class="card-b flush" id="cmdPillars"></div></div>
-    </div>
-  </section>
-
-  <!-- ---------------------- 4 · CALENDAR ---------------------- -->
-  <section class="view" id="v-calendar">
-    <div class="vh">
-      <div class="vh-t">
-        <span class="vh-eyebrow" data-i18n="eyebrow.calendar">OPERATIONAL · 04</span>
-        <h1 data-i18n="view.calendar">Calendar</h1>
-      </div>
-      <div class="vh-a">
-        <button type="button" class="iconbtn ghost" data-act="viewHelp" data-view="calendar" aria-label="Help">?</button>
-        <button class="btn ghost sm" data-act="calendarToday" data-i18n="cal.currentWeek">Current week</button>
-        <button class="btn pri sm" data-act="addCalendarItem" data-i18n="cal.addItem">Add item</button>
-      </div>
-    </div>
-
-    <div class="sect">
-      <div class="sect-h"><span class="sect-ico" id="calWeekTitleIco"></span><b data-i18n="cal.currentWeek">Current week</b></div>
-      <div class="navrow">
-        <button class="iconbtn" id="calWeekPrev" data-act="calendarPrevWeek" aria-label="Previous week"></button>
-        <span class="navrow-l" id="calWeekLabel"></span>
-        <button class="iconbtn" id="calWeekNext" data-act="calendarNextWeek" aria-label="Next week"></button>
-      </div>
-      <div class="card"><div class="card-b flush" id="calWeek"></div></div>
-    </div>
-
-    <div class="sect">
-      <div class="sect-h"><span class="sect-ico" id="calAgendaTitleIco"></span><b data-i18n="cal.dayAgenda">Day agenda</b>
-        <button class="btn pri sm push" data-act="addCalendarItemSelected" data-i18n="btn.add">Add</button></div>
-      <div class="card"><div class="card-b" id="calAgenda"></div></div>
-    </div>
-
-    <div class="sect">
-      <div class="sect-h"><span class="sect-ico" id="calMonthTitleIco"></span><b data-i18n="cal.currentMonth">Current month</b></div>
-      <div class="navrow">
-        <button class="iconbtn" id="calMonthPrev" data-act="calendarPrevMonth" aria-label="Previous month"></button>
-        <span class="navrow-l" id="calMonthLabel"></span>
-        <button class="iconbtn" id="calMonthNext" data-act="calendarNextMonth" aria-label="Next month"></button>
-      </div>
-      <div class="card"><div class="card-b" id="calMonth"></div></div>
-    </div>
-  </section>
-
-  <!-- ---------------------- 5 · PROJECTS ---------------------- -->
-  <section class="view" id="v-pillars">
-    <div class="vh">
-      <div class="vh-t">
-        <span class="vh-eyebrow" data-i18n="eyebrow.pillars">OPERATIONAL · 05</span>
-        <h1 data-i18n="view.pillars">Projects</h1>
-      </div>
-      <div class="vh-a">
-        <button type="button" class="iconbtn ghost" data-act="viewHelp" data-view="pillars" aria-label="Help">?</button>
-        <button class="btn ghost sm" data-act="genSteps" data-i18n="btn.genSteps">Generate steps</button>
-        <button class="btn ghost sm" data-act="projectPresets" data-i18n="btn.suggested">Suggested</button>
-        <button class="btn pri sm" data-act="addPillar" data-i18n="btn.addPillar">Add project</button>
-      </div>
-    </div>
-    <div class="sect">
-      <div class="filters" id="pillarFilter"></div>
-      <select class="in" id="pillarSort">
-        <option value="order" data-i18n="sort.manual">Manual</option>
-        <option value="status" data-i18n="sort.status">Status</option>
-        <option value="progress" data-i18n="sort.progress">Progress</option>
-        <option value="touched" data-i18n="sort.touched">Touched</option>
-        <option value="category" data-i18n="sort.category">Category</option>
-      </select>
-      <div class="hidden-stub" id="pillarCatNav" aria-hidden="true"></div>
-    </div>
-    <div class="sect"><div id="pillarGrid"></div></div>
-  </section>
-
-  <!-- ---------------------- 6 · PROGRESSION ---------------------- -->
-  <section class="view" id="v-progression">
-    <div class="vh">
-      <div class="vh-t">
-        <span class="vh-eyebrow" data-i18n="eyebrow.progression">OPERATIONAL · 06</span>
-        <h1 data-i18n="view.progression">Progression</h1>
-      </div>
-      <div class="vh-a"><button type="button" class="iconbtn ghost" data-act="viewHelp" data-view="progression" aria-label="Help">?</button></div>
-    </div>
-    <div class="sect"><div class="tiles" id="progStats"></div></div>
-    <div class="sect">
-      <div class="sect-h"><b data-i18n="prog.mastery">Skill mastery</b><span class="push" id="progIcoMastery"></span></div>
-      <div class="card"><div class="card-b" id="chSkillBars"></div></div>
-    </div>
-    <div class="sect">
-      <div class="sect-h"><b data-i18n="prog.radar">Relative strength</b><span class="push" id="progIcoRadar"></span></div>
-      <div class="card"><div class="card-b" id="chRadar"></div></div>
-    </div>
-    <div class="sect">
-      <div class="sect-h"><b data-i18n="prog.weekday">Weekday rhythm</b><span class="push" id="progIcoWeek"></span></div>
-      <div class="card"><div class="card-b" id="chWeekday"></div></div>
-    </div>
-    <div class="sect">
-      <div class="sect-h"><b data-i18n="prog.momentum30">Momentum · 30 days</b><span class="push" id="progIcoMo"></span></div>
-      <div class="card"><div class="card-b" id="chMomentum30"></div></div>
-    </div>
-    <div class="sect">
-      <div class="sect-h"><b data-i18n="prog.streakmap">Streak map</b><span class="push" id="progIcoBal"></span></div>
-      <div class="card"><div class="card-b" id="chBalance"></div></div>
-    </div>
-    <div class="sect">
-      <div class="sect-h"><b data-i18n="prog.consistency">Consistency calendar</b></div>
-      <div class="card"><div class="card-b" id="chHeatmaps"></div></div>
-    </div>
-  </section>
-
-  <!-- ---------------------- 7 · FINANCES ---------------------- -->
-  <section class="view" id="v-finance">
-    <div class="vh">
-      <div class="vh-t">
-        <span class="vh-eyebrow" data-i18n="eyebrow.finance">STRATEGIC · 07</span>
-        <h1 data-i18n="view.finance">Finances</h1>
-      </div>
-      <div class="vh-a">
-        <button type="button" class="iconbtn ghost" data-act="viewHelp" data-view="finance" aria-label="Help">?</button>
-        <button class="btn ghost sm" data-act="finImport" data-i18n="fin.importCsv">Import CSV</button>
-        <button class="btn ghost sm" data-act="finExport" data-i18n="fin.exportCsv">Export CSV</button>
-        <button class="btn pri sm" data-act="addDebt" data-i18n="fin.addDebt">Add debt</button>
-        <input type="file" id="finFullFile" accept=".csv,text/csv" hidden>
-      </div>
-    </div>
-
-    <div class="sect"><div class="rail" id="finTicker"></div></div>
-
-    <div class="sect">
-      <div class="card"><div class="card-b" id="finNet"></div></div>
-      <div class="tiles-2" id="finStats"></div>
-    </div>
-
-    <div class="sect">
-      <div class="sect-h"><span class="sect-ico" id="finIcoInc"></span><b data-i18n="fin.income">Income</b>
-        <button class="iconbtn push" id="finEditIncome" data-act="finEditTotal" data-kind="income" aria-label="Edit total"></button>
-        <button class="btn sm ghost" data-act="finAdd" data-kind="income" data-i18n="fin.add">Add</button></div>
-      <div class="card"><div class="card-b"><div class="fin-total" id="finIncomeVal">-</div><div id="finIncomeList"></div></div></div>
-    </div>
-
-    <div class="sect">
-      <div class="sect-h"><span class="sect-ico" id="finIcoExp"></span><b data-i18n="fin.expenses">Expenses</b>
-        <button class="iconbtn push" id="finEditExpense" data-act="finEditTotal" data-kind="expense" aria-label="Edit total"></button>
-        <button class="btn sm ghost" data-act="finAdd" data-kind="expense" data-i18n="fin.add">Add</button></div>
-      <div class="card"><div class="card-b"><div class="fin-total" id="finExpenseVal">-</div><div id="finExpenseList"></div></div></div>
-    </div>
-
-    <div class="sect">
-      <div class="sect-h"><span class="sect-ico" id="finIcoInv"></span><b data-i18n="fin.invest">Investments</b>
-        <button class="iconbtn push" id="finEditInvest" data-act="finEditTotal" data-kind="invest" aria-label="Edit total"></button>
-        <button class="btn sm ghost" data-act="finAdd" data-kind="invest" data-i18n="fin.add">Add</button></div>
-      <div class="card"><div class="card-b"><div class="fin-total" id="finInvestVal">-</div><div id="finInvestList"></div></div></div>
-    </div>
-
-    <div class="sect">
-      <div class="sect-h"><b data-i18n="fin.debts">Debts</b><span class="note push" id="finDebtNote"></span></div>
-      <div class="card"><div class="card-b flush" id="finDebts"></div></div>
-    </div>
-
-    <div class="sect">
-      <div class="sect-h"><b data-i18n="fin.sheet">Spreadsheet</b></div>
-      <div class="card"><div class="card-b">
-        <div class="drop" id="finDrop" data-i18n="fin.drop">Drop a .csv here, or click to choose<input type="file" id="finFile" accept=".csv,text/csv" hidden></div>
-        <div class="fld"><label data-i18n="fin.paste">OR PASTE ROWS</label>
-          <textarea class="in" id="finPaste" rows="4" spellcheck="false" placeholder="Tarjeta Bancolombia, 5800000, 32, 320000"></textarea></div>
-        <div class="row2">
-          <button class="btn sm pri" data-act="finParse" data-i18n="fin.load">Load rows</button>
-          <button class="btn sm ghost" data-act="finClear" data-i18n="fin.clearAll">Clear all debts</button>
+        <div class="section-block">
+          <div class="section-label"><b data-i18n="today.status">Status</b></div>
+          <div class="today-top">
+            <div class="grid g5" id="todayStats"></div>
+          </div>
         </div>
-        <div id="finPreview"></div>
-      </div></div>
-    </div>
-  </section>
 
-  <!-- ---------------------- 8 · GOALS ---------------------- -->
-  <section class="view" id="v-goals">
-    <div class="vh">
-      <div class="vh-t">
-        <span class="vh-eyebrow" data-i18n="eyebrow.goals">STRATEGIC · 08</span>
-        <h1 data-i18n="view.goals">Goals</h1>
-      </div>
-      <div class="vh-a">
-        <button type="button" class="iconbtn ghost" data-act="viewHelp" data-view="goals" aria-label="Help">?</button>
-        <button class="btn ghost sm" data-act="goalPresets" data-i18n="btn.suggested">Suggested</button>
-        <button class="btn pri sm" data-act="addGoal" data-i18n="btn.addGoal">Add goal</button>
-      </div>
-    </div>
-    <div class="sect">
-      <div class="sect-h"><b data-i18n="goals.outcomes">Measurable goals</b><span class="note push" id="goalOutCount"></span></div>
-      <div class="rail" id="goalsOutcomeTitles"></div>
-      <div id="goalsOutcome"></div>
-    </div>
-    <div class="sect">
-      <div class="sect-h"><b data-i18n="goals.identity">Values &amp; principles</b><span class="note push" id="goalIdCount"></span></div>
-      <div class="rail" id="goalsIdentityTitles"></div>
-      <div id="goalsIdentity"></div>
-    </div>
-  </section>
+        <div class="section-block">
+          <div class="today-quote-wrap">
+            <button type="button" class="qstrip today-quote-top" data-act="go" data-view="wisdom" id="todayQuote"></button>
+            <button type="button" class="icon-btn quote-shuffle" data-act="shuffleQuote" id="btnShuffleQuote" title="Random quote" aria-label="Random quote"></button>
+          </div>
+        </div>
 
-  <!-- ---------------------- 9 · WISDOM ---------------------- -->
-  <section class="view" id="v-wisdom">
-    <div class="vh">
-      <div class="vh-t">
-        <span class="vh-eyebrow" data-i18n="eyebrow.wisdom">STRATEGIC · 09</span>
-        <h1 data-i18n="view.wisdom">Wisdom</h1>
-      </div>
-      <div class="vh-a">
-        <button type="button" class="iconbtn ghost" data-act="viewHelp" data-view="wisdom" aria-label="Help">?</button>
-        <button class="btn ghost sm" data-act="shuffleQuote" data-i18n="btn.shuffle">Shuffle</button>
-        <button class="btn ghost sm" data-act="copyQuote" data-i18n="btn.copy">Copy</button>
-      </div>
-    </div>
-    <div class="sect">
-      <div class="sect-h"><b data-i18n="wisdom.daily">Quote of the day</b></div>
-      <div id="wisdomDaily"></div>
-    </div>
-    <div class="sect">
-      <div class="sect-h"><b data-i18n="wisdom.library">Library</b><span class="note push" id="quoteCount"></span></div>
-      <div class="rail" id="quoteTags"></div>
-      <div class="qgrid" id="quoteGrid"></div>
-    </div>
-  </section>
+        <div class="section-block">
+          <div class="section-label"><b data-i18n="today.execute">Execute</b></div>
+          <div class="card ring-disc-card" style="margin-bottom:var(--gap)">
+            <div class="card-h">
+              <div class="ring-h-left">
+                <h3 data-i18n="today.rings">Rings</h3>
+                <span id="ringSealedBadge"></span>
+              </div>
+              <div class="r" id="ringMeta"></div>
+              <div class="r ring-actions"><button class="btn ghost sm ring-edit" data-act="openSkills" data-i18n="btn.editSkills" title="Editar hábitos">Editar</button></div>
+              <span class="note" id="discMeta" style="display:none" aria-hidden="true"></span>
+            </div>
+            <div class="card-b ring-disc-body">
+              <div class="ring-wrap" id="coreRing"></div>
+              <div class="disc-side" id="todayChips"></div>
+            </div>
+          </div>
+          <div class="todo-pond-row">
+            <div class="card today-todo-card">
+              <div class="card-h"><h3 data-i18n="today.todo">To-do</h3></div>
+              <div class="card-b">
+                <div class="todo-add-row"><input class="in" id="edTodoNew" data-i18n-ph="ph.todo" placeholder="Add a task…"><button type="button" class="btn pri icon-add" data-act="addTodo" title="+" aria-label="+">+</button></div>
+                <div id="edTodoList"></div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-h">
+                <h3 data-i18n="today.pondering">Pondering</h3>
+              </div>
+              <div class="card-b tight">
+                <div class="pond-wrap">
+                  <div class="pond-cells" id="edPondList"></div>
+                  <div class="pond-composer">
+                    <input class="in" id="edPondNew" data-i18n-ph="ph.pond" placeholder="Reflection, friction, signal…" autocomplete="off">
+                    <button type="button" class="btn pri icon-add" data-act="addPondToday" title="+" aria-label="+">+</button>
+                  </div>
+                </div>
+                <textarea class="in" id="edNotes" style="display:none" aria-hidden="true"></textarea>
+              </div>
+            </div>
+          </div>
+          <div class="today-workspace" style="margin-top:var(--gap)">
+            <div class="card">
+              <div class="card-h"><h3 data-i18n="today.moves">Next moves</h3><div class="r"><select class="in today-move-filter" id="todayMoveFilter" title="Filter next moves"></select><button class="btn ghost sm" data-act="go" data-view="command" data-i18n="view.command">Command</button></div></div>
+              <div class="card-b flush"><div class="scroll-list short" id="todayMoves"></div></div>
+            </div>
+            <div class="card">
+              <div class="card-h"><h3 data-i18n="today.skills">Skills</h3><div class="r"><button class="btn ghost sm" data-act="go" data-view="progression" data-i18n="btn.progression">All</button></div></div>
+              <div class="card-b tight"><div class="skl-rail scroll-list" id="todaySkills"></div></div>
+            </div>
+          </div>
+        </div>
+        <textarea class="in" id="edGoals" style="display:none" aria-hidden="true"></textarea>
+      </section>
 
+      <!-- ---------------------- 2 · DAILY LOG ---------------------- -->
+      <section class="view" id="v-log">
+        <div class="vhead">
+          <div>
+            <div class="eyebrow" data-i18n="eyebrow.log">TACTICAL · 02</div>
+            <h1 data-i18n="view.log">Daily Log</h1>
+          </div>
+          <div class="vhead-a"><button type="button" class="view-help-btn" data-act="viewHelp" data-view="log" title="Help / Ayuda" aria-label="Help / Ayuda">?</button>
+            <button class="btn ghost sm" data-act="export" data-i18n="log.exportData">Export data</button>
+            <button class="btn ghost sm" data-act="openImport" data-i18n="log.importData">Import data</button>
+          </div>
+        </div>
+        <div id="logBanner"></div>
+        <div class="section-block log-editor-block">
+          <div class="section-label"><b data-i18n="log.dayEditor">Day editor</b></div>
+          <div class="log-workspace eq-cols">
+            <div class="card">
+              <div class="card-h">
+                <h3 data-i18n="log.selected">Selected day</h3>
+                <div class="r" id="logDiaBadge"></div>
+              </div>
+              <div class="card-b disc-compact">
+                <div class="log-daybar scrub">
+                  <button class="icon-btn" data-act="logPrev" id="logPrev" title="Previous day"></button>
+                  <input type="date" class="in" id="logDate" style="max-width:170px">
+                  <button class="icon-btn" data-act="logNext" id="logNext" title="Next day"></button>
+                  <button class="btn ghost sm" data-act="logToday" data-i18n="log.current">Current day</button>
+                </div>
+                <div id="logChips"></div>
+              </div>
+            </div>
+            <div class="log-right">
+              <div class="card today-todo-card">
+                <div class="card-h"><h3 data-i18n="today.todo">To-do</h3></div>
+                <div class="card-b">
+                  <div class="todo-add-row"><input class="in" id="lgTodoNew" data-i18n-ph="ph.todo" placeholder="Add a task…"><button type="button" class="btn pri icon-add" data-act="addTodoLog" title="+" aria-label="+">+</button></div>
+                  <div id="lgTodoList"></div>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-h">
+                  <h3 data-i18n="today.pondering">Pondering</h3>
+                </div>
+                <div class="card-b tight">
+                  <div class="pond-wrap pond-wrap-ro">
+                    <div class="pond-cells" id="lgPondList"></div>
+                  </div>
+                  <textarea class="in" id="lgNotes" style="display:none" aria-hidden="true"></textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="section-block">
+          <div class="section-label"><b data-i18n="log.history">History</b></div>
+          <div class="card">
+            <div class="card-h">
+              <h3 data-i18n="log.history">History</h3>
+              <div class="r"><input class="in" id="histSearch" data-i18n-ph="log.searchPh" placeholder="Search notes and to-dos…" style="width:280px;max-width:100%"></div>
+            </div>
+            <div class="card-b flush"><div class="hist scroll-list tall" id="histList"></div></div>
+          </div>
+        </div>
+        <textarea class="in" id="lgGoals" style="display:none" aria-hidden="true"></textarea>
+      </section>
+
+      <!-- ---------------------- 3 · COMMAND ---------------------- -->
+      <section class="view" id="v-command">
+        <div class="vhead">
+          <div>
+            <div class="eyebrow" data-i18n="eyebrow.command">OPERATIONAL · 03</div>
+            <h1 data-i18n="view.command">Command</h1>
+          </div>
+          <div class="vhead-a"><button type="button" class="view-help-btn" data-act="viewHelp" data-view="command" title="Help / Ayuda" aria-label="Help / Ayuda">?</button>
+            <button class="btn ghost sm" data-act="genSteps" data-i18n="btn.genSteps">Generate steps</button>
+            <button class="btn ghost sm" data-act="copyAI" data-i18n="btn.copyAI">Copy AI</button>
+            <button class="btn ghost sm" data-act="openImport" data-i18n="btn.importPlan">Import plan</button>
+            <button class="btn sitrep sm" data-act="extractSitRep" data-i18n="btn.sitrep" title="Export a full situation report with analyst instructions">Extract SitRep</button>
+          </div>
+        </div>
+        <div class="metrics-ticker-bar">
+          <div class="metrics-ticker-label"><span class="pill st-building" data-i18n="cmd.auto">AUTO</span> <b data-i18n="cmd.metrics">Live metrics</b></div>
+          <div class="metrics-ticker-viewport">
+            <div class="metrics-ticker-track" id="cmdMetrics"></div>
+          </div>
+        </div>
+        <div class="cmd-overview-row">
+          <div class="card cmd-mo cmd-overview-card cmd-momentum-panel">
+            <div class="card-h"><h3 data-i18n="cmd.momentum">Momentum</h3><div class="r" id="moBand"></div></div>
+            <div class="card-b"><div class="mo-hero" id="moHero"></div><div id="moWeak"></div></div>
+          </div>
+          <div class="card cmd-pulse-card cmd-overview-card cmd-pulse-panel">
+            <div class="card-h"><h3 data-i18n="section.pulse">Pulse</h3><span class="note" data-i18n="cmd.pulseHint">Last 7 days · what is actually moving</span></div>
+            <div class="card-b"><div class="cmd-kpis" id="cmdStats"></div></div>
+          </div>
+        </div>
+        <div class="cmd-metrics-block">
+          <div class="section-label cmd-metrics-label"><b data-i18n="cmd.metricBoard">Metrics</b><span class="note" data-i18n="cmd.metricBoardHint">Numbers you can update quickly. Link one to a measurable goal and both stay in sync.</span><button class="btn ghost sm" data-act="addMetric" data-i18n="cmd.addMetric">Add metric</button></div>
+          <div class="card cmd-metrics-card"><div class="card-b"><div class="cmd-metric-board" id="cmdMetricBoard"></div></div></div>
+        </div>
+        <div class="cmd-layout">
+          <div class="cmd-main">
+            <div class="section-label"><b data-i18n="today.moves">Next moves</b><span class="note" id="cmdMoveCount" style="margin-left:auto;letter-spacing:0;text-transform:none"></span></div>
+            <div class="card cmd-moves-card">
+              <div class="card-b" style="padding-bottom:0">
+                <div class="inline-form">
+                  <input class="in" id="cmdMoveText" data-i18n-ph="ph.move" placeholder="Create a task">
+                  <select class="in" id="cmdMovePillar"></select>
+                  <select class="in" id="cmdMovePrio"><option value="1">NOW</option><option value="2" selected>NEXT</option><option value="3">SOON</option></select>
+                  <button class="btn pri" data-act="addMoveCmd" data-i18n="btn.add">Add</button>
+                </div>
+              </div>
+              <div class="card-b flush"><div class="scroll-list" id="cmdMoves"></div></div>
+            </div>
+          </div>
+          <div class="cmd-side">
+            <div class="section-label"><b data-i18n="cmd.snapshot">Needs attention</b><button class="btn ghost sm" data-act="go" data-view="pillars" data-i18n="btn.manage" style="margin-left:auto;text-transform:none;letter-spacing:0">Projects</button></div>
+            <div class="card cmd-snap-card">
+              <div class="card-b flush"><div class="scroll-list" id="cmdPillars"></div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- ---------------------- 4 · CALENDAR ---------------------- -->
+      <section class="view" id="v-calendar">
+        <div class="vhead">
+          <div>
+            <div class="eyebrow" data-i18n="eyebrow.calendar">OPERATIONAL · 04</div>
+            <h1 data-i18n="view.calendar">Calendar</h1>
+          </div>
+          <div class="vhead-a"><button type="button" class="view-help-btn" data-act="viewHelp" data-view="calendar" title="Help / Ayuda" aria-label="Help / Ayuda">?</button>
+            <button class="btn ghost sm" data-act="calendarToday" data-i18n="cal.currentWeek">Current week</button>
+            <button class="btn pri" data-act="addCalendarItem" data-i18n="cal.addItem">Add item</button>
+          </div>
+        </div>
+
+        <div class="section-block">
+          <div class="section-label">
+            <b class="cal-head-with-icon"><span class="cal-title-ico" id="calWeekTitleIco"></span><span data-i18n="cal.currentWeek">Current week</span></b>
+            <div class="ops-cal-toolbar" style="margin-left:auto">
+              <div class="ops-cal-nav">
+                <button class="icon-btn" id="calWeekPrev" data-act="calendarPrevWeek" title="Previous week"></button>
+                <span class="ops-cal-label" id="calWeekLabel"></span>
+                <button class="icon-btn" id="calWeekNext" data-act="calendarNextWeek" title="Next week"></button>
+              </div>
+            </div>
+          </div>
+          <div class="card ops-week-card">
+            <div class="card-b" id="calWeek"></div>
+          </div>
+        </div>
+
+        <div class="ops-cal-lower">
+          <div class="card">
+            <div class="card-h">
+              <h3 class="cal-head-with-icon"><span class="cal-title-ico" id="calMonthTitleIco"></span><span data-i18n="cal.currentMonth">Current month</span></h3>
+              <div class="ops-cal-nav">
+                <button class="icon-btn" id="calMonthPrev" data-act="calendarPrevMonth" title="Previous month"></button>
+                <span class="ops-cal-label" id="calMonthLabel"></span>
+                <button class="icon-btn" id="calMonthNext" data-act="calendarNextMonth" title="Next month"></button>
+              </div>
+            </div>
+            <div class="card-b" id="calMonth"></div>
+          </div>
+          <div class="card">
+            <div class="card-h"><h3 class="cal-head-with-icon"><span class="cal-title-ico" id="calAgendaTitleIco"></span><span data-i18n="cal.dayAgenda">Day agenda</span></h3><div class="r"><button class="btn sm pri" data-act="addCalendarItemSelected" data-i18n="btn.add">Add</button></div></div>
+            <div class="card-b" id="calAgenda"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ---------------------- 5 · PILLARS ---------------------- -->
+      <section class="view" id="v-pillars">
+        <div class="vhead">
+          <div>
+            <div class="eyebrow" data-i18n="eyebrow.pillars">OPERATIONAL · 05</div>
+            <h1 data-i18n="view.pillars">Projects</h1>
+          </div>
+          <div class="vhead-a"><button type="button" class="view-help-btn" data-act="viewHelp" data-view="pillars" title="Help / Ayuda" aria-label="Help / Ayuda">?</button>
+            <button class="btn ghost sm" data-act="genSteps" data-i18n="btn.genSteps">Generate steps</button>
+            <button class="btn ghost sm" data-act="copyAI" data-i18n="btn.copyAI">Copy AI</button>
+            <button class="btn ghost sm" data-act="projectPresets" data-i18n="btn.suggested">Suggested</button>
+            <button class="btn pri" data-act="addPillar" data-i18n="btn.addPillar">Add project</button>
+          </div>
+        </div>
+        <div class="section-block">
+          <div class="section-label"><b data-i18n="pillars.portfolio">Portfolio</b></div>
+          <div class="pillars-toolbar">
+            <div class="filter-groups" id="pillarFilter"></div>
+            <select class="in" id="pillarSort" style="width:auto;height:32px;padding-top:0;padding-bottom:0">
+              <option value="order" data-i18n="sort.manual">Manual</option>
+              <option value="status" data-i18n="sort.status">Status</option>
+              <option value="progress" data-i18n="sort.progress">Progress</option>
+              <option value="touched" data-i18n="sort.touched">Touched</option>
+              <option value="category" data-i18n="sort.category">Category</option>
+            </select>
+            <div class="pillar-cat-nav" id="pillarCatNav" style="display:none" aria-hidden="true"></div>
+          </div>
+          <div id="pillarGrid"></div>
+        </div>
+        <!-- hidden queue plumbing (moves only live on Today + Command) -->
+        <div style="display:none" aria-hidden="true">
+          <div class="seg" id="moveFilter"><button data-act="moveFilter" data-val="open" class="on" data-i18n="filter.open">OPEN</button><button data-act="moveFilter" data-val="all">ALL</button></div>
+          <span id="queueCount"></span>
+          <input class="in" id="qMoveText"><select class="in" id="qMovePillar"></select><select class="in" id="qMovePrio"><option value="1">NOW</option><option value="2" selected>NEXT</option><option value="3">SOON</option></select>
+          <div id="moveQueue"></div>
+        </div>
+      </section>
+
+      <!-- ---------------------- 5 · PROGRESSION ---------------------- -->
+      <section class="view" id="v-progression">
+        <div class="vhead">
+          <div>
+            <div class="eyebrow" data-i18n="eyebrow.progression">OPERATIONAL · 06</div>
+            <h1 data-i18n="view.progression">Progression</h1>
+          </div>
+          <div class="vhead-a"><button type="button" class="view-help-btn" data-act="viewHelp" data-view="progression" title="Help / Ayuda" aria-label="Help / Ayuda">?</button></div>
+        </div>
+        <div class="section-block">
+          <div class="section-label"><b data-i18n="prog.overview">Overview</b></div>
+          <div class="grid g4" id="progStats"></div>
+        </div>
+        <div class="section-block">
+          <div class="section-label"><b data-i18n="prog.strength">Strength</b></div>
+          <div class="prog-workspace">
+            <div class="card span2 prog-mastery"><div class="card-h"><h3 data-i18n="prog.mastery">Skill mastery</h3><div class="r" id="progIcoMastery"></div></div><div class="card-b" id="chSkillBars"></div></div>
+            <div class="card prog-radar"><div class="card-h"><h3 data-i18n="prog.radar">Relative strength</h3><div class="r" id="progIcoRadar"></div></div><div class="card-b" id="chRadar"></div></div>
+            <div class="card"><div class="card-h"><h3 data-i18n="prog.weekday">Weekday rhythm</h3><div class="r" id="progIcoWeek"></div></div><div class="card-b" id="chWeekday"></div></div>
+            <div class="card"><div class="card-h"><h3 data-i18n="prog.momentum30">Momentum · 30 days</h3><div class="r" id="progIcoMo"></div></div><div class="card-b" id="chMomentum30"></div></div>
+            <div class="card"><div class="card-h"><h3 data-i18n="prog.streakmap">Streak map</h3><div class="r" id="progIcoBal"></div></div><div class="card-b" id="chBalance"></div></div>
+            <div class="card span2"><div class="card-h"><h3 data-i18n="prog.consistency">Consistency calendar</h3><div class="r"><span class="note" data-i18n="prog.clickDay">Click a day → log</span></div></div><div class="card-b" id="chHeatmaps"></div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ---------------------- 7 · FINANZAS ---------------------- -->
+      <section class="view" id="v-finance">
+        <div class="vhead">
+          <div>
+            <div class="eyebrow" data-i18n="eyebrow.finance">STRATEGIC · 07</div>
+            <h1 data-i18n="view.finance">Finances</h1>
+          </div>
+          <div class="vhead-a"><button type="button" class="view-help-btn" data-act="viewHelp" data-view="finance" title="Help / Ayuda" aria-label="Help / Ayuda">?</button>
+            <button class="btn ghost sm" data-act="finImport" data-i18n="fin.importCsv">Import CSV</button>
+            <button class="btn ghost sm" data-act="finExport" data-i18n="fin.exportCsv">Export CSV</button>
+            <button class="btn pri" data-act="addDebt" data-i18n="fin.addDebt">Add debt</button>
+            <input type="file" id="finFullFile" accept=".csv,text/csv" hidden>
+          </div>
+        </div>
+
+        <div class="metrics-ticker-bar">
+          <div class="metrics-ticker-label"><span class="pill st-building" data-i18n="cmd.auto">AUTO</span> <b data-i18n="fin.overview">Where you stand</b></div>
+          <div class="metrics-ticker-viewport"><div class="metrics-ticker-track" id="finTicker"></div></div>
+        </div>
+
+        <div class="section-block">
+          <div class="fin-hero-row">
+            <div class="card fin-net-card"><div class="card-b" id="finNet"></div></div>
+            <div class="grid g2 fin-hero-stats" id="finStats"></div>
+          </div>
+        </div>
+
+        <div class="section-block">
+          <div class="section-label"><b data-i18n="fin.money">Money in, money kept</b></div>
+          <div class="fin-cards">
+            <div class="card fin-list-card" data-kind="income">
+              <div class="card-h"><h3><span class="fin-ico inc" id="finIcoInc"></span><span data-i18n="fin.income">Income</span></h3>
+                <div class="r"><button class="icon-btn fin-edit-total" id="finEditIncome" data-act="finEditTotal" data-kind="income" title="Edit total" aria-label="Edit total"></button><button class="btn sm ghost" data-act="finAdd" data-kind="income" data-i18n="fin.add">Add</button></div></div>
+              <div class="card-b"><div class="fin-total" id="finIncomeVal">-</div>
+                <div class="fin-sub" data-i18n="fin.incomeHint">What comes in every month</div>
+                <div class="fin-entries" id="finIncomeList"></div></div>
+            </div>
+            <div class="card fin-list-card" data-kind="expense">
+              <div class="card-h"><h3><span class="fin-ico exp" id="finIcoExp"></span><span data-i18n="fin.expenses">Expenses</span></h3>
+                <div class="r"><button class="icon-btn fin-edit-total" id="finEditExpense" data-act="finEditTotal" data-kind="expense" title="Edit total" aria-label="Edit total"></button><button class="btn sm ghost" data-act="finAdd" data-kind="expense" data-i18n="fin.add">Add</button></div></div>
+              <div class="card-b"><div class="fin-total" id="finExpenseVal">-</div>
+                <div class="fin-sub" data-i18n="fin.expensesHint">What goes out every month</div>
+                <div class="fin-entries" id="finExpenseList"></div></div>
+            </div>
+            <div class="card fin-list-card" data-kind="invest">
+              <div class="card-h"><h3><span class="fin-ico inv" id="finIcoInv"></span><span data-i18n="fin.invest">Investments</span></h3>
+                <div class="r"><button class="icon-btn fin-edit-total" id="finEditInvest" data-act="finEditTotal" data-kind="invest" title="Edit total" aria-label="Edit total"></button><button class="btn sm ghost" data-act="finAdd" data-kind="invest" data-i18n="fin.add">Add</button></div></div>
+              <div class="card-b"><div class="fin-total" id="finInvestVal">-</div>
+                <div class="fin-sub" data-i18n="fin.investHint">What is already working for you</div>
+                <div class="fin-entries" id="finInvestList"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-block">
+          <div class="section-label"><b data-i18n="fin.debts">Debts</b><span class="note" id="finDebtNote" style="margin-left:auto;letter-spacing:0;text-transform:none"></span></div>
+          <div class="card">
+            <div class="card-b flush"><div id="finDebts"></div></div>
+          </div>
+        </div>
+
+        <div class="section-block">
+          <div class="section-label"><b data-i18n="fin.sheet">Spreadsheet</b></div>
+          <div class="card">
+            <div class="card-b">
+              <div class="note" data-i18n="fin.sheetHint">Paste rows from Excel or Google Sheets, or drop a CSV. Columns: name, balance, rate, minimum payment.</div>
+              <div class="drop" id="finDrop" style="margin-top:10px" data-i18n="fin.drop">Drop a .csv here, or click to choose<input type="file" id="finFile" accept=".csv,text/csv" hidden></div>
+              <div class="fld" style="margin-top:10px"><label data-i18n="fin.paste">OR PASTE ROWS</label>
+                <textarea class="in" id="finPaste" rows="5" spellcheck="false" placeholder="Tarjeta Bancolombia, 5800000, 32, 320000"></textarea></div>
+              <div class="fin-sheet-actions" style="display:flex;gap:8px;flex-wrap:wrap">
+                <button class="btn sm pri" data-act="finParse" data-i18n="fin.load">Load rows</button>
+                <button class="btn sm ghost" data-act="finClear" data-i18n="fin.clearAll">Clear all debts</button>
+              </div>
+              <div id="finPreview" style="margin-top:10px"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ---------------------- 9 · WISDOM ---------------------- -->
+      <section class="view" id="v-wisdom">
+        <div class="vhead">
+          <div>
+            <div class="eyebrow" data-i18n="eyebrow.wisdom">STRATEGIC · 09</div>
+            <h1 data-i18n="view.wisdom">Wisdom</h1>
+          </div>
+          <div class="vhead-a"><button type="button" class="view-help-btn" data-act="viewHelp" data-view="wisdom" title="Help / Ayuda" aria-label="Help / Ayuda">?</button>
+            <button class="btn ghost sm" data-act="shuffleQuote" data-i18n="btn.shuffle">Shuffle</button>
+            <button class="btn ghost sm" data-act="copyQuote" data-i18n="btn.copy">Copy</button>
+          </div>
+        </div>
+        <div class="section-block">
+          <div class="section-label"><b data-i18n="wisdom.daily">Quote of the day</b></div>
+          <div id="wisdomDaily"></div>
+        </div>
+        <div class="section-block">
+          <div class="section-label"><b data-i18n="wisdom.library">Library</b><span class="note" id="quoteCount" style="margin-left:auto;letter-spacing:0;text-transform:none"></span></div>
+          <div class="card">
+            <div class="card-h"><div class="r wisdom-filter-row"><div class="seg" id="quoteTags"></div></div></div>
+            <div class="card-b"><div class="qgrid" id="quoteGrid"></div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ---------------------- 8 · GOALS ---------------------- -->
+      <section class="view" id="v-goals">
+        <div class="vhead">
+          <div>
+            <div class="eyebrow" data-i18n="eyebrow.goals">STRATEGIC · 08</div>
+            <h1 data-i18n="view.goals">Goals</h1>
+          </div>
+          <div class="vhead-a"><button type="button" class="view-help-btn" data-act="viewHelp" data-view="goals" title="Help / Ayuda" aria-label="Help / Ayuda">?</button><button class="btn ghost sm" data-act="goalPresets" data-i18n="btn.suggested">Suggested</button><button class="btn pri" data-act="addGoal" data-i18n="btn.addGoal">Add goal</button></div>
+        </div>
+        <div class="goals-workspace">
+          <div class="goal-section goal-section-id">
+            <div class="section-label"><b data-i18n="goals.identity">Values &amp; principles</b><span class="note" id="goalIdCount" style="margin-left:auto;letter-spacing:0;text-transform:none"></span></div>
+            <div class="goal-titles identity-strip" id="goalsIdentityTitles"></div>
+            <div class="goal-list goal-list-id" id="goalsIdentity"></div>
+          </div>
+          <div class="goal-section goal-section-out">
+            <div class="section-label"><b data-i18n="goals.outcomes">Measurable goals</b><span class="note" id="goalOutCount" style="margin-left:auto;letter-spacing:0;text-transform:none"></span></div>
+            <div class="goal-titles" id="goalsOutcomeTitles"></div>
+            <div class="goal-list" id="goalsOutcome"></div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
 </div>
-</main>
 
-<nav class="tabs" id="navMob" aria-label="Sections"></nav>
-
-<!-- Desktop-only ids the engine still writes to. Kept as inert stubs so no
-     render function ever hits a null node; none of them are displayed. -->
-<div class="hidden-stub" aria-hidden="true">
-  <span id="brandMark"></span>
-  <div id="langToggle">
-    <button type="button" data-act="setLang" data-lang="es"><span class="lang-glyph" data-flag="es"></span></button>
-    <button type="button" data-act="setLang" data-lang="en" class="on"><span class="lang-glyph" data-flag="en"></span></button>
-  </div>
-  <button id="sidePulse" data-act="go" data-view="command"></button>
-  <div id="sideDia"></div>
-  <button id="sideMo" data-act="go" data-view="command" tabindex="-1"></button>
-  <nav id="navDesk"></nav>
-  <button id="btnBackup" data-act="export"></button>
-  <button id="btnHelp" data-act="help">?</button>
-  <button id="btnTheme" data-act="theme"></button>
-  <button id="btnSettings" data-act="settings"></button>
-  <span id="discMeta"></span>
-  <textarea id="edNotes"></textarea>
-  <textarea id="lgNotes"></textarea>
-  <textarea id="edGoals"></textarea>
-  <textarea id="lgGoals"></textarea>
-  <div class="seg" id="moveFilter"><button data-act="moveFilter" data-val="open" class="on">OPEN</button><button data-act="moveFilter" data-val="all">ALL</button></div>
-  <span id="queueCount"></span>
-  <input id="qMoveText"><select id="qMovePillar"></select>
-  <select id="qMovePrio"><option value="1">NOW</option><option value="2" selected>NEXT</option><option value="3">SOON</option></select>
-  <div id="moveQueue"></div>
-</div>
-
-<!-- ======================= SHEETS ======================= -->
+<!-- ======================= OVERLAYS ======================= -->
 
 <div class="ov" id="ovOnboard">
   <div class="modal wiz">
@@ -6063,42 +5322,42 @@ html[data-theme="light"] .w-chip-ico{background:rgba(16,24,40,.06)}
 </div>
 
 <div class="ov" id="ovSettings">
-  <div class="modal">
-    <div class="modal-h"><div><h2 data-i18n="settings.title">Settings</h2><p data-i18n="settings.sub">Engine, disciplines, data.</p></div><button class="iconbtn" data-act="closeTop" id="setClose"></button></div>
+  <div class="modal wide">
+    <div class="modal-h"><div><h2 data-i18n="settings.title">Settings</h2><p data-i18n="settings.sub">Engine, disciplines, data.</p></div><button class="icon-btn" data-act="closeTop" id="setClose"></button></div>
     <div class="modal-b" id="settingsBody"></div>
     <div class="modal-f"><button class="btn ghost" data-act="closeTop" data-i18n="btn.close">Close</button></div>
   </div>
 </div>
 
 <div class="ov" id="ovHelp">
-  <div class="modal">
-    <div class="modal-h"><div><h2>How Tungsten works</h2><p>The essentials, without jargon.</p></div><button class="iconbtn" data-act="closeTop" id="helpClose" aria-label="Close"></button></div>
+  <div class="modal wide">
+    <div class="modal-h"><div><h2>How Tungsten works</h2><p>The essentials, without jargon.</p></div><button class="help-done-btn" data-act="closeTop" id="helpClose" title="Close" aria-label="Close"></button></div>
     <div class="modal-b" id="helpBody"></div>
   </div>
 </div>
 
 <div class="ov" id="ovConfirm">
-  <div class="modal">
+  <div class="modal" style="max-width:440px">
     <div class="modal-h"><div><h2 id="cfTitle" data-i18n="confirm.title">Confirm</h2><p id="cfSub"></p></div></div>
-    <div class="modal-b"><div id="cfBody" class="note"></div></div>
+    <div class="modal-b"><div id="cfBody" class="note" style="font-size:13px;color:var(--dim)"></div></div>
     <div class="modal-f"><button class="btn ghost" data-act="cfCancel" data-i18n="btn.cancel">Cancel</button><button class="btn danger" id="cfOk" data-act="cfOk" data-i18n="btn.confirm">Confirm</button></div>
   </div>
 </div>
 
 <div class="ov" id="ovEditor">
   <div class="modal">
-    <div class="modal-h"><div><h2 id="edTitle">Edit</h2><p id="edSub"></p></div><button class="iconbtn" data-act="closeEditor" id="edClose"></button></div>
+    <div class="modal-h"><div><h2 id="edTitle">Edit</h2><p id="edSub"></p></div><button class="icon-btn" data-act="closeEditor" id="edClose"></button></div>
     <div class="modal-b" id="edBody"></div>
     <div class="modal-f" id="edFoot"></div>
   </div>
 </div>
 
 <div class="ov" id="ovImport">
-  <div class="modal">
-    <div class="modal-h"><div><h2 data-i18n="import.title">Import</h2><p data-i18n-html="import.sub">Full backups or <span class="kbd">tungsten-plan</span> JSON from any AI.</p></div><button class="iconbtn" data-act="closeTop" id="impClose"></button></div>
+  <div class="modal wide">
+    <div class="modal-h"><div><h2 data-i18n="import.title">Import</h2><p data-i18n-html="import.sub">Full backups or <span class="kbd">tungsten-plan</span> JSON from any AI.</p></div><button class="icon-btn" data-act="closeTop" id="impClose"></button></div>
     <div class="modal-b">
       <div class="drop" id="impDrop" data-i18n-html="import.drop">Drop a <b>.json</b> file here, or click to choose<input type="file" id="impFile" accept=".json,application/json" hidden></div>
-      <div class="fld"><label data-i18n="import.paste">OR PASTE JSON</label><textarea class="in" id="impText" rows="6" spellcheck="false"></textarea></div>
+      <div class="fld"><label data-i18n="import.paste">OR PASTE JSON</label><textarea class="in" id="impText" rows="8" placeholder='{ "format": "tungsten-plan", "version": 1, "mode": "append", "moves": [ … ] }' spellcheck="false"></textarea></div>
       <div class="fld">
         <label data-i18n="import.mode">MODE OVERRIDE</label>
         <select class="in" id="impMode">
@@ -6119,23 +5378,17 @@ html[data-theme="light"] .w-chip-ico{background:rgba(16,24,40,.06)}
   </div>
 </div>
 
-<div class="ov" id="ovMore">
-  <div class="modal">
-    <div class="modal-h"><div><h2 data-i18n="more.title">More</h2></div><button class="iconbtn" data-act="closeTop" aria-label="Close">&times;</button></div>
-    <div class="modal-b" id="moreBody"></div>
-  </div>
-</div>
-
 <div class="lvup" id="lvUp"><div class="in" data-act="hideLvUp"><div class="n" id="lvN">2</div><div class="t"><b data-i18n="level.up">LEVEL UP</b><span id="lvT"></span></div></div></div>
 
 <div class="tip" id="tipCard" role="status"></div>
 <div class="toasts" id="toasts"></div>
 <div class="toasts toasts-top" id="toastsTop"></div>
+
 <script>
 /* ============================================================================
    TUNGSTEN OS v2 · SINGLE-FILE APP
    Personal command OS · tactical / operational / strategic
-   Browser data is stored locally under the tungsten-ios-* namespace.
+   Browser data is stored locally under the tungsten-work-* namespace.
    ========================================================================= */
 (function () {
 'use strict';
@@ -6143,12 +5396,12 @@ html[data-theme="light"] .w-chip-ico{background:rgba(16,24,40,.06)}
 /* ------------------------------------------------------------------ 0. CONST */
 /* Dedicated localStorage namespace for this build. */
 const LS = {
-  STATE: 'tungsten-ios-state',
-  THEME: 'tungsten-ios-theme',
-  LANG:  'tungsten-ios-lang',
-  ACCENT:'tungsten-ios-accent',
-  SNAP:  'tungsten-ios-snapshot',
-  PRE:   'tungsten-ios-pre-replace'
+  STATE: 'tungsten-work-state',
+  THEME: 'tungsten-work-theme',
+  LANG:  'tungsten-work-lang',
+  ACCENT:'tungsten-work-accent',
+  SNAP:  'tungsten-work-snapshot',
+  PRE:   'tungsten-work-pre-replace'
 };
 /* Classy non-earthy accents, trendy 2024–25 saturated hues */
 /* Ember es el color de fábrica. Onyx es monocromo: se invierte según el tema
@@ -6168,9 +5421,9 @@ const ACCENT_PRESETS = {
 const LEGACY_LEVEL_SCALE = 30; // preserves progress made in the previous build
 const TO_LEVEL     = 25;
 const RELATIVE_STRENGTH_CYCLE = 100;
-const APP_NAME     = 'tungsten-os-ios';
+const APP_NAME     = 'tungsten-os-work';
 const EXPORT_VER   = 5;
-const APP_VERSION  = '1.0-ios';
+const APP_VERSION  = '3.2-work';
 const LITE_VER     = 2;
 const MAX_PASTE    = 20 * 1024 * 1024; // 20 MB, enough for long-running full backups
 const AUTOSAVE_MS  = 700;
@@ -6550,7 +5803,7 @@ const I18N = {
     'help.gotit':'Got it','btn.cancel':'Cancel','btn.confirm':'Confirm','btn.preview':'Preview','btn.apply':'Apply',
     'section.pulse':'Pulse','sort.manual':'Manual','sort.status':'Status','sort.progress':'Progress','sort.touched':'Touched','sort.category':'Category','filter.open':'OPEN',
     'onboard.title':'Set Day 001','onboard.sub':'The anchor date the whole record counts from.','onboard.start':'START DATE',
-    'onboard.note':'This can be changed later in Settings; days renumber automatically. Your data stays in this browser under <span class="kbd">tungsten-ios-state</span> unless you export a backup.','onboard.begin':'Begin',
+    'onboard.note':'This can be changed later in Settings; days renumber automatically. Your data stays in this browser under <span class="kbd">tungsten-work-state</span> unless you export a backup.','onboard.begin':'Begin',
     'settings.title':'Settings','settings.sub':'Engine, disciplines, data.','confirm.title':'Confirm',
     'import.title':'Import','import.sub':'Full backups or <span class="kbd">tungsten-plan</span> JSON from any AI.','import.drop':'Drop a <b>.json</b> file here, or click to choose',
     'import.paste':'OR PASTE JSON','import.mode':'MODE OVERRIDE','import.modeFile':'Use mode from file (default: append)',
@@ -6625,7 +5878,7 @@ const I18N = {
     'help.gotit':'Entendido','btn.cancel':'Cancelar','btn.confirm':'Confirmar','btn.preview':'Vista previa','btn.apply':'Aplicar',
     'section.pulse':'Pulso','sort.manual':'Manual','sort.status':'Estado','sort.progress':'Progreso','sort.touched':'Último toque','sort.category':'Categoría','filter.open':'ABIERTOS',
     'onboard.title':'Definir Día 001','onboard.sub':'La fecha base desde la que cuenta todo el registro.','onboard.start':'FECHA DE INICIO',
-    'onboard.note':'Puedes cambiarla después en Ajustes; los días se renumeran automáticamente. Tus datos quedan en este navegador bajo <span class="kbd">tungsten-ios-state</span> salvo que exportes una copia.','onboard.begin':'Comenzar',
+    'onboard.note':'Puedes cambiarla después en Ajustes; los días se renumeran automáticamente. Tus datos quedan en este navegador bajo <span class="kbd">tungsten-work-state</span> salvo que exportes una copia.','onboard.begin':'Comenzar',
     'settings.title':'Ajustes','settings.sub':'Motor, disciplinas y datos.','confirm.title':'Confirmar',
     'import.title':'Importar','import.sub':'Backups completos o JSON <span class="kbd">tungsten-plan</span> desde cualquier IA.','import.drop':'Suelta un archivo <b>.json</b> aquí o haz clic para elegirlo',
     'import.paste':'O PEGA EL JSON','import.mode':'SOBRESCRIBIR MODO','import.modeFile':'Usar el modo del archivo (predeterminado: append)',
@@ -6676,9 +5929,6 @@ function statusLabel(s) {
 
 const STATUSES = ['active','building','incubating','stalled','done'];
 const STATUS_LABEL = { active:'Active', building:'Building', incubating:'Incubating', stalled:'Stalled', done:'Done' };
-
-/* the five screens that earn a permanent tab on a phone */
-const PHONE_TABS = ['today', 'log', 'command', 'calendar', 'progression'];
 
 const VIEWS = [
   { id:'today',       label:'Today',       group:'TACTICAL',    ico:'sun'    },
@@ -6868,7 +6118,6 @@ const GEN_META = 'Revisar las próximas tareas de cada proyecto y escoger las tr
 
 /* --------------------------------------------------------------- 1. ICONS */
 const ICO = {
-  dots:'<circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/>',
   sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
   book:'<path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H19v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 1 6.5 18H19v3H6.5A2.5 2.5 0 0 1 4 20.5z"/>',
   grid:'<rect x="3" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.5"/>',
@@ -6978,18 +6227,7 @@ function flag(code) {
     '<path d="M12 0v16M0 8h24" stroke="#C8102E" stroke-width="3"/></svg>';
 }
 function ico(n, cls) {
-  /* width/height are emitted as ATTRIBUTES on purpose. Without an intrinsic
-     size, iOS Safari falls back to its own default box whenever a CSS rule
-     does not happen to match the icon's context — which is what made icons sit
-     wrong inside their tiles. CSS still overrides these freely. */
-  return '<svg class="' + (cls || '') + '" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (ICO[n] || '') + '</svg>';
-}
-
-/* color-mix() needs Safari 16.2+; below that the whole declaration is dropped
-   and the tile loses its background. 8-digit hex alpha works everywhere. */
-function tint(c, aa) {
-  c = String(c || '');
-  return /^#[0-9a-fA-F]{6}$/.test(c) ? c + aa : 'rgba(255,255,255,.07)';
+  return '<svg class="' + (cls || '') + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (ICO[n] || '') + '</svg>';
 }
 
 /* -------------------------------------------------------------- 2. HELPERS */
@@ -7828,17 +7066,9 @@ function renderNav() {
             (v.id === 'wisdom' ? '' : '<span class="nav-count" data-nav-count="' + v.id + '">0</span>') + '</button>';
   });
   $('navDesk').innerHTML = html;
-  /* Phone nav: five tabs, iOS convention. Nine put 43% of the rail off-screen.
-     The remaining screens live behind "Más", which opens a grouped sheet. */
-  $('navMob').innerHTML =
-    PHONE_TABS.map(function (id) {
-      const v = VIEWS.filter(function (x) { return x.id === id; })[0];
-      if (!v) return '';
-      return '<button data-act="go" data-view="' + v.id + '">' + ico(v.ico) +
-        '<span>' + esc(viewLabel(v)) + '</span></button>';
-    }).join('') +
-    '<button data-act="moreMenu" class="tab-more">' + ico('dots') +
-      '<span>' + tr('More', 'Más') + '</span></button>';
+  $('navMob').innerHTML = VIEWS.map(function (v) {
+    return '<button data-act="go" data-view="' + v.id + '">' + ico(v.ico) + '<span>' + esc(viewLabel(v)) + '</span></button>';
+  }).join('');
   document.querySelectorAll('.lang-glyph[data-flag]').forEach(function (e) { if (!e.firstChild) e.innerHTML = flag(e.dataset.flag); });
   $('brandMark').innerHTML = ico('tungsten');
   $('brandMarkM').innerHTML = ico('tungsten');
@@ -7977,76 +7207,86 @@ function statTile(label, value, sub, cls) {
     (sub ? '<div class="s">' + sub + '</div>' : '') + '</div>';
 }
 
-/* ----------------------------------------------------------------------------
-   renderToday · the daily loop.
-   The ring answers "where am I today", the checklist is the thing you tap, and
-   everything read-only lives below it. Same state and same actions as desktop.
-   -------------------------------------------------------------------------- */
-function habitRow(k, date) {
-  const s = SKILL_MAP[k]; if (!s) return '';
-  const L = getLog(date), on = !!(L && L.completed.indexOf(k) >= 0);
-  const col = SKILL_COLORS[k] || 'var(--hot)';
-  const ticks = skillTickCount(k);
-  return '<button type="button" class="row' + (on ? ' on' : '') + '" style="--sk-c:' + col + '"' +
-    ' data-act="toggleSkill" data-key="' + k + '" data-date="' + esc(date) + '">' +
-    '<span class="w-in">' +
-      '<span class="row-ico">' + ico(s.ico) + '</span>' +
-      '<span class="row-c"><b>' + esc(s.name) + '</b>' +
-        (s.desc ? '<span>' + esc(s.desc) + '</span>' : '') + '</span>' +
-      '<span class="row-t">' + ticks + '</span>' +
-      '<span class="row-tick">' + ico('check') + '</span>' +
-    '</span></button>';
-}
-
 function renderToday() {
   const a = anchorDate(), L = getLog(a), ck = coreKeys(), cd = coreDone(a);
   const pct = ck.length ? Math.round(cd / ck.length * 100) : 0;
   const sealed = isSealed(a), streak = calcStreak();
   const bk = bonusKeys();
-  const bonusDone = (L ? L.completed : []).filter(function (k) { return ck.indexOf(k) < 0; }).length;
-  const bonusPct = bk.length ? Math.round(bonusDone / bk.length * 100) : 0;
+  const bonusDoneN = (L ? L.completed : []).filter(function (k) { return ck.indexOf(k) < 0; }).length;
+  const bonusPct = bk.length ? Math.round(bonusDoneN / bk.length * 100) : 0;
 
-  /* header: the day number carries the identity, not a tile */
-  if ($('todayEyebrow')) $('todayEyebrow').textContent = dayWord() + ' ' + diaLabel(a) + ' · ' + fmtDate(a, { weekday:'long', day:'numeric', month:'long' });
-
-  /* hero */
-  $('coreRing').innerHTML = dualRingSVG(pct, bonusPct, sealed) +
-    '<span class="hero-n"><b>' + pct + '%</b><span>' + esc(t('core')) + '</span></span>';
-  $('ringMeta').textContent = sealed
-    ? tr('Day complete.', 'Día completo.')
-    : cd + ' ' + tr('of', 'de') + ' ' + ck.length + ' ' + esc(t('core')).toLowerCase();
-  $('todayStatus').textContent = sealed
-    ? tr('Every essential is in. Extras compound the record.', 'Marcaste todos los esenciales. Los extras suman aparte.')
-    : cd === 0
-      ? tr('Start with the one you least want to do.', 'Empieza por el que menos quieres.')
-      : (ck.length - cd) + tr(' left to close the day.', ' para cerrar el día.');
-  if ($('ringSealedBadge')) {
-    $('ringSealedBadge').innerHTML = sealed ? '<span class="pill">' + esc(t('sealed')) + '</span>' : '';
-  }
-
-  /* the checklist — the reason the screen exists */
-  $('todayCore').innerHTML = ck.length
-    ? ck.map(function (k) { return habitRow(k, a); }).join('')
-    : '<div class="empty">' + tr('No essentials yet.', 'Aún no hay esenciales.') + '</div>';
-  if ($('todayBonus')) {
-    $('todayBonus').innerHTML = bk.map(function (k) { return habitRow(k, a); }).join('');
-  }
-  if ($('todayBonusSect')) $('todayBonusSect').style.display = bk.length ? '' : 'none';
-
-  /* supporting cast, below the fold */
+  /* Day box: only day number. Date box: calendar date. */
   $('todayStats').innerHTML =
-    statTile(tr('Streak', 'Racha'), streak, streak ? (tr('best ', 'mejor ') + bestStreak()) : tr('start today', 'empieza hoy')) +
-    statTile(tr('Level', 'Nivel'), fmtNum(globalLevel()), fmtNum(totalActs()) + tr(' done', ' hechos')) +
-    statTile(tr('Logged', 'Registrados'), logDates().length, tr('days', 'días'));
+    statTile(t('day'), diaLabel(a), sealed ? t('sealed') : cd + '/' + ck.length, 'accent') +
+    statTile(t('date'), esc(fmtDate(a, { month:'short', day:'numeric' })), esc(fmtDate(a, { weekday:'long' }))) +
+    statTile(t('levels'), fmtNum(globalLevel()), lang() === 'es' ? 'sube 1 nivel cada ' + TO_LEVEL + ' hábitos completados' : 'gains 1 level every ' + TO_LEVEL + ' habit completions') +
+    statTile(t('streak'), streak, streak ? (lang() === 'es' ? 'mejor ' : 'best ') + bestStreak() : (lang() === 'es' ? 'empieza hoy' : 'start one today')) +
+    statTile(t('logged'), logDates().length, fmtNum(totalActs()) + (lang() === 'es' ? ' hábitos completados' : ' habit completions'));
+
+  /* Sealed badge always rendered (invisible when open) so header height never changes */
+  if ($('ringSealedBadge')) {
+    $('ringSealedBadge').innerHTML =
+      '<span class="pill st-active ring-sealed-pill' + (sealed ? '' : ' is-off') + '">' + esc(t('sealed')) + '</span>';
+  }
+  $('ringMeta').innerHTML =
+    '<span class="pill">' + cd + '/' + ck.length + ' ' + esc(t('core')) + '</span>' +
+    (bk.length ? '<span class="pill st-building">' + bonusDoneN + '/' + bk.length + ' ' + esc(t('bonus')) + '</span>' : '');
+  const completed = (L && L.completed) || [];
+  const statusTitle = sealed
+    ? (lang() === 'es' ? 'Día completo.' : 'Day complete.')
+    : cd === 0
+      ? (lang() === 'es' ? 'Nada registrado aún.' : 'Nothing logged yet.')
+      : ((ck.length - cd) + (lang() === 'es' ? ' esenciales por completar.' : ' essentials left.'));
+  /* one fixed slot per bonus skill, off slots keep space so nothing moves when ticking */
+  const sparkRail = (bk.length ? bk : []).map(function (k) {
+    const on = completed.indexOf(k) >= 0;
+    const col = SKILL_COLORS[k] || 'var(--ok)';
+    const sk = SKILL_MAP[k] || { ico:'check', name:k };
+    return '<span class="spark' + (on ? '' : ' is-off') + '" style="color:' + col + ';border-color:' + col + '44;background:' + col + '18" title="' + esc(skillLabel(k)) + '">' +
+      (on ? ico(sk.ico) : '') + '</span>';
+  }).join('');
+  $('coreRing').innerHTML =
+    '<div class="dual-rings">' +
+      '<div class="ring' + (sealed ? ' sealed' : '') + '">' + dualRingSVG(pct, bonusPct, sealed) +
+        '<div class="lbl"><b>' + pct + '%</b></div></div>' +
+      '<div class="ring-txt"><h4>' + statusTitle + '</h4>' +
+        '<p>' + esc(sealed
+          ? (lang() === 'es' ? 'Marcaste todos los esenciales. Los extras suman aparte.' : 'Every core discipline is in. Bonus work compounds the record.')
+          : cd === 0
+            ? (lang() === 'es' ? 'Los no negociables sostienen el piso. Empieza por el que menos quieres.' : 'Four non-negotiables hold the floor. Start with the one you least want to do.')
+            : (lang() === 'es' ? 'Vas ' + cd + ' de ' + ck.length + ' en el piso.' : 'You are ' + cd + ' of ' + ck.length + ' through the floor.')) + '</p>' +
+        '<div class="sparks">' + sparkRail + '</div>' +
+      '</div>' +
+    '</div>';
+
+  if ($('discMeta')) $('discMeta').textContent = '';
+  $('todayChips').innerHTML =
+    '<div class="dgroup"><div class="lab">' + esc(t('core')) + '</div><div class="chips">' + ck.map(function (k) { return chipHTML(k, a); }).join('') + '</div></div>' +
+    (bk.length ? '<div class="dgroup"><div class="lab">' + esc(t('bonus')) + '</div><div class="chips">' + bk.map(function (k) { return chipHTML(k, a); }).join('') + '</div></div>' : '');
+
+  $('todaySkills').innerHTML = visibleSkills().map(function (s) {
+    const rec = state.skills[s.key], pctp = Math.round(rec.progress / TO_LEVEL * 100);
+    const on = !!(L && L.completed.indexOf(s.key) >= 0);
+    const col = SKILL_COLORS[s.key] || 'var(--hot)';
+    const ticks = skillTickCount(s.key);
+    return '<div class="skl' + (on ? '' : ' dimmed') + '" style="--sk:' + col + '">' +
+      '<div class="skl-h"><div class="g">' + ico(s.ico) + '</div><b>' + esc(s.name) + ' (' + ticks + ')</b><span class="lvl">' + tr('Level','Nivel') + ' ' + rec.level + '</span></div>' +
+      '<div class="bar slim"><i style="width:' + pctp + '%"></i></div>' +
+      '<div class="skl-f"><span>' + rec.progress.toFixed(1) + '/' + TO_LEVEL + '</span><span>' + tr('Best level','Mejor nivel') + ' ' + peakLevel(rec) + '</span></div></div>';
+  }).join('');
 
   fillTodayMoveFilter();
-  const top = filterTodayMoves(openMovesSorted()).slice(0, 5);
+  const all = openMovesSorted();
+  const top = filterTodayMoves(all);
+  const narrowed = ui.todayMoveFilter !== 'all';
   $('todayMoves').innerHTML = top.length
-    ? top.map(function (m) { return moveRowHTML(m, true); }).join('')
-    : '<div class="empty">' + tr('No open next moves.', 'No tienes tareas pendientes.') + '</div>';
+    ? '<div class="rows">' + top.map(function (m) { return moveRowHTML(m, true); }).join('') + '</div>'
+    : narrowed
+      ? emptyState('inbox', lang() === 'es' ? 'Ninguna tarea con este filtro.' : 'No moves match this filter.', lang() === 'es' ? 'Ver todos' : 'Show all', 'clearTodayMoveFilter')
+      : emptyState('inbox', lang() === 'es' ? 'No tienes tareas pendientes.' : 'No open next moves.', lang() === 'es' ? 'Generar pasos' : 'Generate next steps', 'genSteps');
 
   const q = dailyQuote();
-  if ($('todayQuote')) $('todayQuote').innerHTML = '<q>' + esc(qTxt(q)) + '</q><div class="who">' + esc(qWho(q)) + '</div>';
+  if ($('todayQuote')) $('todayQuote').innerHTML = '<q>' + esc(qTxt(q)) + '</q><div class="who">' + esc(qWho(q)) + (qMeta(q) ? '<i>' + esc(qMeta(q)) + '</i>' : '') + '</div>';
 
   renderTodos('edTodoList', a);
 }
@@ -9393,7 +8633,7 @@ function renderProgression() {
       return '<div class="skill-bar-row">' +
         '<div class="meta">' +
           '<span style="display:flex;align-items:center;gap:7px;min-width:0">' +
-            '<span style="width:20px;height:20px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex:none;color:' + SKILL_COLORS[r.s.key] + ';background:' + tint(SKILL_COLORS[r.s.key], '24') + ';border:1px solid ' + tint(SKILL_COLORS[r.s.key], '4D') + '">' + ico(r.s.ico) + '</span>' +
+            '<span style="width:20px;height:20px;border-radius:6px;display:grid;place-items:center;flex:none;color:' + SKILL_COLORS[r.s.key] + ';background:color-mix(in srgb,' + SKILL_COLORS[r.s.key] + ' 14%,transparent);border:1px solid color-mix(in srgb,' + SKILL_COLORS[r.s.key] + ' 30%,transparent)">' + ico(r.s.ico) + '</span>' +
             '<span style="overflow:hidden;text-overflow:ellipsis">' + esc(r.s.name) + ' <span style="color:var(--dim);font-weight:500">(' + ticks + ')</span></span>' +
             '<span class="skill-role ' + (isCoreKey(r.s.key) ? 'core' : 'bonus') + '">' + (isCoreKey(r.s.key) ? tr('Essential','Esencial') : tr('Extra','Extra')) + '</span></span>' +
           '<span style="font-size:11.5px;color:var(--label);font-weight:600;flex:none">' + tr('Level','Nivel') + ' ' + rec.level + '</span></div>' +
@@ -10269,7 +9509,7 @@ function exportJSON() {
   const blob = new Blob([JSON.stringify(payload, null, 2)], { type:'application/json' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
-  a.href = url; a.download = 'tungsten-ios-backup-v' + EXPORT_VER + '-' + todayISO() + '.json';
+  a.href = url; a.download = 'tungsten-work-backup-v' + EXPORT_VER + '-' + todayISO() + '.json';
   document.body.appendChild(a); a.click(); document.body.removeChild(a);
   setTimeout(function () { URL.revokeObjectURL(url); }, 1500);
   renderShell();
@@ -10557,7 +9797,7 @@ function buildSitRepText() {
 function extractSitRep() {
   flushPendingEdits();
   const text = buildSitRepText();
-  const name = 'tungsten-ios-sitrep-' + todayISO() + '.md';
+  const name = 'tungsten-work-sitrep-' + todayISO() + '.md';
   const blob = new Blob([text], { type:'text/markdown;charset=utf-8' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
@@ -10701,7 +9941,7 @@ function localizePopupHtml(html) {
     ['>Export<','>Exportar<'],['>Import<','>Importar<'],['>Copy AI context<','>Copiar contexto para IA<'],['>Copy<','>Copiar<'],
     ['>Restore<','>Restaurar<'],['>Reset all data<','>Restablecer todos los datos<'],
     ['>Reset<','>Restablecer<'],['>Start date · ','>Fecha de inicio · '],
-    ['Stored in this browser under tungsten-ios-theme.','Se guarda en este navegador bajo tungsten-ios-theme.'],
+    ['Stored in this browser under tungsten-work-theme.','Se guarda en este navegador bajo tungsten-work-theme.'],
     ['Everything an external model needs to write your next moves.','Todo lo que una IA necesita para proponerte las siguientes tareas.'],
     ['Projects, measurable goals, Values & principles, finances and next tasks, with instructions for the AI.','Proyectos, metas medibles, Valores y principios, finanzas y próximas tareas, con instrucciones para la IA.'],
     ["Deletes this browser's Tungsten state and starts fresh.",'Borra los datos de Tungsten de este navegador y empieza desde cero.'],
@@ -11489,7 +10729,7 @@ function finExportCSV() {
   const blob = new Blob(['\ufeff' + filas.join('\r\n')], { type:'text/csv;charset=utf-8' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
-  a.href = url; a.download = (es ? 'tungsten-ios-finanzas-' : 'tungsten-ios-finance-') + todayISO() + '.csv';
+  a.href = url; a.download = (es ? 'tungsten-work-finanzas-' : 'tungsten-work-finance-') + todayISO() + '.csv';
   document.body.appendChild(a); a.click(); document.body.removeChild(a);
   setTimeout(function () { URL.revokeObjectURL(url); }, 1500);
   toast(es ? 'CSV exportado.' : 'CSV exported.', 'ok');
@@ -11676,7 +10916,7 @@ function openSkillManager() {
   const rows = SKILLS.map(function (d) {
     const core = isCoreKey(d.key);
     return '<div class="sk-row">' +
-      '<span class="g" style="background:' + tint(d.color, '29') + ';color:' + esc(d.color) + ';border:1px solid ' + tint(d.color, '57') + '">' + ico(d.ico) + '</span>' +
+      '<span class="g" style="background:color-mix(in srgb,' + esc(d.color) + ' 16%,transparent);color:' + esc(d.color) + ';border:1px solid color-mix(in srgb,' + esc(d.color) + ' 34%,var(--line))">' + ico(d.ico) + '</span>' +
       '<span class="nm"><b>' + esc(d.name) + '</b><span>' + esc(d.desc || '-') + '</span></span>' +
       skillRoleToggleHTML(d.key, core) +
       '<button class="icon-btn sk-manager-edit" data-act="skillEdit" data-key="' + esc(d.key) + '" title="' + esc(es ? 'Editar hábito' : 'Edit habit') + '" aria-label="' + esc(es ? 'Editar hábito' : 'Edit habit') + '">' + ico('edit') + '</button>' +
@@ -11723,7 +10963,7 @@ function renderSkillEditor() {
                               'Ponle nombre, icono y color. Ese color lo vas a ver en toda la app.');
   $('edBody').innerHTML =
     '<div class="sk-preview" style="--sk-c:' + esc(d.color) + '">' +
-      '<span class="g" style="background:' + tint(d.color, '29') + ';color:' + esc(d.color) + ';border:1px solid ' + tint(d.color, '57') + '">' + ico(d.ico) + '</span>' +
+      '<span class="g" style="background:color-mix(in srgb,' + esc(d.color) + ' 16%,transparent);color:' + esc(d.color) + ';border:1px solid color-mix(in srgb,' + esc(d.color) + ' 34%,var(--line))">' + ico(d.ico) + '</span>' +
       '<span><b>' + esc(d.name || tr('New habit','Hábito nuevo')) + '</b><span>' + esc(d.desc || tr('No description yet','Sin descripción todavía')) + '</span></span>' +
     '</div>' +
     '<div class="fld"><label>' + tr('NAME','NOMBRE') + '</label><input class="in" id="skName" maxlength="28" value="' + esc(d.name) + '" placeholder="' + tr('Training','Entreno') + '"></div>' +
@@ -11905,312 +11145,433 @@ function wizHeadNav(opts) {
   return h;
 }
 function wizFootNav(opts) { return wizHeadNav(opts); }
-/* ============================================================================
-   renderWizard · rebuilt for the phone.
-   Same state (ui.wiz), same actions, same ids the engine listens to. What
-   changed is the markup: no circle math, no absolutely positioned slots, no
-   two-column split. Everything is a flex row that centres its own icon and
-   text, so nothing can drift out of its box at any width.
-   ========================================================================= */
 function renderWizard() {
   const w = ui.wiz, st = w.step;
+  $('obSteps').innerHTML = [1,2,3,4,5,6].map(function (i) { return '<i class="' + (i <= st ? 'done' : '') + '"></i>'; }).join('');
+  let title = '', subt = '', body = '', foot = '';
 
-  /* ---- small building blocks, shared by every step ---- */
-  const H = function (title, lead, extra) {
-    return '<div class="w-head">' +
-      '<h2 class="w-title">' + title + '</h2>' +
-      (lead ? '<p class="w-lead">' + lead + '</p>' : '') +
-      (extra || '') + '</div>';
-  };
-  /* the workhorse: [icon] [name + sub] [trailing] — one row, always centred */
-  const OPT = function (o) {
-    return '<button type="button" class="w-opt' + (o.on ? ' on' : '') + '"' +
-      (o.color ? ' style="--sk-c:' + esc(o.color) + '"' : '') +
-      ' data-act="' + o.act + '"' + (o.key ? ' data-key="' + esc(o.key) + '"' : '') +
-      (o.id ? ' data-id="' + esc(o.id) + '"' : '') +
-      (o.kind ? ' data-kind="' + esc(o.kind) + '"' : '') + '>' +
-      '<span class="w-in">' +
-        '<span class="w-opt-ico">' + ico(o.ico || 'check') + '</span>' +
-        '<span class="w-opt-c"><b>' + esc(o.name) + '</b>' +
-          (o.sub ? '<span>' + esc(o.sub) + '</span>' : '') + '</span>' +
-        (o.editId
-          ? '<span class="w-opt-edit" role="button" tabindex="0" data-act="' + o.editAct + '" data-id="' + esc(o.editId) + '">' + ico('edit') + '</span>'
-          : '') +
-        '<span class="w-opt-tick">' + ico(o.tickIco || 'check') + '</span>' +
-      '</span>' +
-      '</button>';
-  };
-  const NAV = function (opt) {
-    opt = opt || {};
-    let h = '';
-    if (opt.back) h += '<button type="button" class="w-nav-btn" data-act="wizBack" aria-label="' + esc(tr('Back', 'Atrás')) + '">' + ico('left') + '</button>';
-    if (opt.home) h += '<button type="button" class="w-nav-btn" data-act="wizHome" aria-label="' + esc(tr('Back', 'Atrás')) + '">' + ico('left') + '</button>';
-    if (opt.skip) h += '<button type="button" class="w-nav-skip" data-act="wizJump" data-step="6">' + tr('Skip', 'Saltar') + '</button>';
-    if (opt.next) h += '<button type="button" class="w-nav-btn pri" data-act="wizNext"' + (opt.nextDisabled ? ' disabled' : '') + '>' +
-      (opt.nextLabel || tr('Continue', 'Continuar')) + ico('right') + '</button>';
-    return h ? '<div class="w-nav">' + h + '</div>' : '';
-  };
-
-  let body = '', foot = '';
-
-  /* ------------------------------------------------------------ 1 · HOME */
   if (st === 1) {
-    const th = document.documentElement.dataset.theme === 'light' ? 'light' : 'dark';
+    title = ''; subt = '';
     const accDots = Object.keys(ACCENT_PRESETS).map(function (k) {
-      return '<button type="button" class="w-dot' + (currentAccent() === k ? ' on' : '') +
-        '" style="background:' + (ACCENT_PRESETS[k].swatch || ACCENT_PRESETS[k].hot) +
-        '" data-act="setAccent" data-accent="' + k + '" aria-label="' + esc(ACCENT_PRESETS[k].label) + '"></button>';
+      return '<button type="button" class="wiz-dot' + (currentAccent() === k ? ' on' : '') + '" style="background:' + (ACCENT_PRESETS[k].swatch || ACCENT_PRESETS[k].hot) + '" data-act="setAccent" data-accent="' + k + '" title="' + esc(ACCENT_PRESETS[k].label) + '" aria-label="' + esc(ACCENT_PRESETS[k].label) + '"></button>';
     }).join('');
-
-    const path = function (act, icon, name, sub, reco) {
-      return '<button type="button" class="w-path" data-act="' + act + '">' +
-        '<span class="w-in">' +
-          '<span class="w-path-ico">' + ico(icon) + '</span>' +
-          '<span class="w-opt-c"><b>' + name + (reco ? '<i class="w-reco">' + tr('Recommended', 'Recomendado') + '</i>' : '') + '</b>' +
-          '<span>' + sub + '</span></span>' +
-          '<span class="w-path-go">' + ico('right') + '</span>' +
-        '</span></button>';
-    };
-    const pack = function (k, icon, label) {
-      return '<button type="button" class="w-pack" data-act="wizPack" data-pack="' + k + '">' +
-        '<span class="w-in"><span class="w-pack-ico">' + ico(icon) + '</span>' +
-        '<span class="w-pack-l">' + label + '</span></span></button>';
-    };
-
-    body =
-      '<div class="w-hero">' +
-        '<span class="w-mark">' + ico('tungsten') + '</span>' +
-        '<span class="w-wm"><b>Tungsten</b><i>OS</i></span>' +
-      '</div>' +
-      '<p class="w-tag">' + tr(
-        'Choose a few habits.<br><b>Keep them.</b><br>Tungsten keeps the count for you.',
-        'Elige pocos hábitos.<br><b>Cúmplelos.</b><br>Tungsten lleva la cuenta por ti.') + '</p>' +
-
-      '<div class="w-field"><label for="wizDate">' + tr('START DATE', 'FECHA DE INICIO') + '</label>' +
-        '<input type="date" class="in" id="wizDate" value="' + esc(w.date) + '"></div>' +
-
-      '<div class="w-prefs">' +
-        '<span class="w-seg">' +
-          '<button type="button" class="' + (lang() === 'es' ? 'on' : '') + '" data-act="setLang" data-lang="es" aria-label="Español">' + flag('es') + '</button>' +
-          '<button type="button" class="' + (lang() === 'en' ? 'on' : '') + '" data-act="setLang" data-lang="en" aria-label="English">' + flag('en') + '</button>' +
-        '</span>' +
-        '<span class="w-seg">' +
-          '<button type="button" class="' + (th === 'light' ? 'on' : '') + '" data-act="setTheme" data-theme="light" aria-label="' + tr('Light', 'Claro') + '">' + ico('sun') + '</button>' +
-          '<button type="button" class="' + (th === 'dark' ? 'on' : '') + '" data-act="setTheme" data-theme="dark" aria-label="' + tr('Dark', 'Oscuro') + '">' + ico('moon') + '</button>' +
-        '</span>' +
-        '<span class="w-seg">' +
-          '<button type="button" class="' + (ui._accentOpen ? 'on' : '') + '" data-act="wizAccent" aria-label="' + tr('Accent colour', 'Color de acento') + '">' +
-            ico('palette') + '</button>' +
-        '</span>' +
-      '</div>' +
-      (ui._accentOpen ? '<div class="w-dots">' + accDots + '</div>' : '') +
-
-      '<div class="w-grp">' + tr('How do you want to set it up?', '¿Cómo quieres configurarlo?') + '</div>' +
-      '<div class="w-stack">' +
-        path('wizPathManual', 'check', tr('Set it up myself', 'Configurarlo yo'), tr('Habits first. Projects later.', 'Hábitos primero. Proyectos después.'), true) +
-        path('wizPathAI', 'bulb', tr('Let an AI set it up', 'Que una IA lo arme'), tr('Brief → JSON → load here.', 'Instrucciones → JSON → cárgalo aquí.')) +
-        path('wizPathSkip', 'right', tr('Just the date', 'Solo la fecha'), tr('Four basics. Add the rest later.', 'Cuatro básicos. El resto después.')) +
-      '</div>' +
-
-      '<div class="w-grp">' + tr('Quick start packs', 'Paquetes rápidos') + '</div>' +
-      '<div class="w-packs">' +
-        pack('student', 'cap', tr('Student', 'Estudiante')) +
-        pack('founder', 'bolt', tr('Founder', 'Emprendedor')) +
-        pack('fitness', 'dumbbell', tr('Fitness', 'Fitness')) +
-        pack('family', 'users', tr('Family', 'Familia')) +
-      '</div>' +
-
-      '<div class="w-foot-meta">' +
-        '<button type="button" class="w-link" data-act="openImport"><span class="w-in">' + ico('upload') + '<span>' + tr('I already have a backup', 'Ya tengo un backup') + '</span></span></button>' +
-        '<span class="w-ver">v' + APP_VERSION + '</span>' +
+    const th = document.documentElement.dataset.theme === 'light' ? 'light' : 'dark';
+    body = '<div class="wiz-split">' +
+        '<div class="wiz-left">' +
+          '<div class="wiz-left-top">' +
+            '<div class="wiz-lockup"><div class="mark">' + ico('tungsten') + '</div>' +
+              '<div class="wm"><b>Tungsten</b><i>OS</i></div></div>' +
+            '<p class="wiz-tagline">' + tr(
+              'Choose a few habits.<br><b>Keep them.</b><br>Tungsten keeps the count for you.',
+              'Elige pocos hábitos.<br><b>Cúmplelos.</b><br>Tungsten lleva la cuenta por ti.') + '</p>' +
+            '<span class="wiz-rule" aria-hidden="true"></span>' +
+          '</div>' +
+          '<div class="wiz-left-bot">' +
+            '<div class="fld wiz-date"><label>' + tr('START DATE','FECHA DE INICIO') + '</label>' +
+              '<input type="date" class="in" id="wizDate" value="' + esc(w.date) + '"></div>' +
+            '<div class="wiz-prefs">' +
+              '<div class="wiz-lang">' +
+                '<button type="button" class="' + (lang() === 'es' ? 'on' : '') + '" data-act="setLang" data-lang="es" title="Español">' + flag('es') + '</button>' +
+                '<button type="button" class="' + (lang() === 'en' ? 'on' : '') + '" data-act="setLang" data-lang="en" title="English">' + flag('en') + '</button>' +
+              '</div>' +
+              '<div class="theme-switch sm" role="group" aria-label="' + esc(tr('Theme','Tema')) + '">' +
+                '<button type="button" class="' + (th === 'light' ? 'on' : '') + '" data-act="setTheme" data-theme="light" title="' + tr('Light','Claro') + '">' + ico('sun') + '</button>' +
+                '<button type="button" class="' + (th === 'dark' ? 'on' : '') + '" data-act="setTheme" data-theme="dark" title="' + tr('Dark','Oscuro') + '">' + ico('moon') + '</button>' +
+              '</div>' +
+              '<span class="accent-slot">' +
+                '<button type="button" class="accent-btn' + (ui._accentOpen ? ' on' : '') + '" data-act="wizAccent" title="' + tr('Accent colour','Color de acento') + '">' +
+                  ico('palette') + '<i style="background:' + (ACCENT_PRESETS[currentAccent()].swatch || ACCENT_PRESETS[currentAccent()].hot) + '"></i></button>' +
+                (ui._accentOpen ? '<span class="accent-pop-inline" role="group">' + accDots + '</span>' : '') +
+              '</span>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="wiz-rule-v"></div>' +
+        '<div class="wiz-right">' +
+          '<div class="wiz-grp" style="margin-top:0">' + tr('How do you want to set it up?','¿Cómo quieres configurarlo?') + '</div>' +
+          '<div class="setup-paths">' +
+            '<div role="button" tabindex="0" class="setup-path reco" data-tag="' + tr('Recommended','Recomendado') + '" data-act="wizPathManual">' +
+              '<span class="g">' + ico('check') + '</span>' +
+              '<span class="sp-txt"><b>' + tr('Set it up myself','Configurarlo yo') + '</b>' +
+              '<p>' + tr('Habits first. Projects later.','Hábitos primero. Proyectos después.') + '</p></span>' +
+            '</div>' +
+            '<div role="button" tabindex="0" class="setup-path" data-act="wizPathAI">' +
+              '<span class="g">' + ico('bulb') + '</span>' +
+              '<span class="sp-txt"><b>' + tr('Let an AI set it up','Que una IA lo arme') + '</b>' +
+              '<p>' + tr('Brief → JSON → load here.','Instrucciones → JSON → cárgalo aquí.') + '</p></span>' +
+            '</div>' +
+            '<div role="button" tabindex="0" class="setup-path" data-act="wizPathSkip">' +
+              '<span class="g">' + ico('right') + '</span>' +
+              '<span class="sp-txt"><b>' + tr('Just the date','Solo la fecha') + '</b>' +
+              '<p>' + tr('Four basics. Add the rest later.','Cuatro básicos. El resto después.') + '</p></span>' +
+            '</div>' +
+          '</div>' +
+          '<div class="wiz-right-foot">' +
+            '<div class="wiz-grp">' + tr('Quick start packs','Paquetes rápidos') + '</div>' +
+            '<div class="wiz-pack-row">' +
+              '<button type="button" class="btn sm ghost wiz-pack" data-act="wizPack" data-pack="student">' + ico('cap') + ' ' + tr('Student','Estudiante') + '</button>' +
+              '<button type="button" class="btn sm ghost wiz-pack" data-act="wizPack" data-pack="founder">' + ico('bolt') + ' ' + tr('Founder','Emprendedor') + '</button>' +
+              '<button type="button" class="btn sm ghost wiz-pack" data-act="wizPack" data-pack="fitness">' + ico('dumbbell') + ' ' + tr('Fitness','Fitness') + '</button>' +
+              '<button type="button" class="btn sm ghost wiz-pack" data-act="wizPack" data-pack="family">' + ico('users') + ' ' + tr('Family','Familia') + '</button>' +
+            '</div>' +
+            '<div class="wiz-right-meta">' +
+              '<p class="wiz-hint">' + tr('Everything is editable later in Settings.','Todo se edita después en Ajustes.') + '</p>' +
+              '<span class="wiz-meta-act">' +
+                '<span class="wiz-ver">v' + APP_VERSION + '</span>' +
+                '<button type="button" class="btn ghost sm" data-act="openImport">' + ico('upload') + ' ' +
+                  tr('I already have a backup','Ya tengo un backup') + '</button>' +
+              '</span>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
       '</div>';
+    foot = '';
   }
 
-  /* -------------------------------------------------------------- AI PATH */
   if (st === 'ai') {
-    body =
-      H(tr('Let an AI <em>set it up</em>', 'Que una IA <em>lo arme</em>'),
-        tr('Three steps and you are done.', 'Tres pasos y listo.')) +
-      '<ol class="w-steps">' +
-        '<li>' + tr('Download the brief and open ChatGPT, Claude or any assistant.', 'Descarga las instrucciones y abre ChatGPT, Claude o el asistente que uses.') + '</li>' +
-        '<li>' + tr('Paste it. It will ask about your routine, projects and goals.', 'Pégalas. Te preguntará por tu rutina, proyectos y metas.') + '</li>' +
-        '<li>' + tr('Paste the JSON below, or load the .json file.', 'Pega el JSON abajo, o carga el archivo .json.') + '</li>' +
-      '</ol>' +
-      '<div class="w-stack">' +
-        '<button type="button" class="btn pri w-wide" data-act="wizBrief">' + ico('download') + tr('Download the brief', 'Descargar instrucciones') + '</button>' +
-        '<button type="button" class="btn w-wide" data-act="wizLoadJson">' + ico('upload') + tr('Load the file', 'Cargar el archivo') + '</button>' +
+    /* El encabezado vive dentro del cuerpo: la cabecera del modal solo lleva la flecha. */
+    body = '<div class="wiz-step-stack">' +
+      '<div class="wiz-title-row">' +
+        '<h2>' + tr('Let an AI set it up','Que una IA lo arme') + '</h2>' +
+        '<p class="wiz-title-sub">' + tr(
+          'Download the brief, get a JSON back, paste or load it here.',
+          'Descarga las instrucciones, recibe un JSON y pégalo o cárgalo aquí.') + '</p>' +
       '</div>' +
-      '<div class="w-field"><label>' + tr('OR PASTE JSON', 'O PEGA EL JSON') + '</label>' +
-        '<textarea class="in" id="wizPasteJson" rows="5" spellcheck="false"></textarea></div>' +
-      '<button type="button" class="btn pri w-wide" data-act="wizApplyPaste">' + tr('Apply pasted setup', 'Aplicar configuración pegada') + '</button>' +
-      '<input type="file" id="wizFile" accept=".json,application/json" hidden>';
-    foot = NAV({ home:true });
+      '<div class="wiz-ai-body">' +
+      '<div class="wiz-note"><b>' + tr('How it works','Cómo funciona') + '</b><p>' + tr(
+        'You download a brief with everything the AI needs to know. It interviews you, then hands you back a file or JSON block. Load it here and your Tungsten is ready.',
+        'Descargas unas instrucciones con todo lo que la IA necesita saber. Ella te entrevista y te devuelve un archivo o un bloque JSON. Cárgalo aquí y tu Tungsten queda listo.') + '</p></div>' +
+      '<ol class="setup-steps">' +
+        '<li>' + tr('Download the brief and open <b>ChatGPT</b>, <b>Claude</b> or any assistant.','Descarga las instrucciones y abre <b>ChatGPT</b>, <b>Claude</b> o el asistente que uses.') + '</li>' +
+        '<li>' + tr('Paste it. It will ask you about your routine, your projects and your goals.','Pégalas. Te va a preguntar por tu rutina, tus proyectos y tus metas.') + '</li>' +
+        '<li>' + tr('Paste the JSON below, or save a <b>.json</b> and load the file.','Pega el JSON abajo, o guarda un <b>.json</b> y carga el archivo.') + '</li>' +
+      '</ol>' +
+      '<div class="wiz-add">' +
+        '<button type="button" class="btn pri" data-act="wizBrief">' + ico('download') + ' ' + tr('Download the brief','Descargar instrucciones') + '</button>' +
+        '<button type="button" class="btn" data-act="wizLoadJson">' + ico('upload') + ' ' + tr('Load the file','Cargar el archivo') + '</button>' +
+      '</div>' +
+      '<div class="fld"><label>' + tr('OR PASTE JSON','O PEGA EL JSON') + '</label>' +
+        '<textarea class="in" id="wizPasteJson" rows="6" spellcheck="false" placeholder=\'{ "format": "tungsten-setup", ... }\'></textarea></div>' +
+      '<button type="button" class="btn pri" data-act="wizApplyPaste">' + tr('Apply pasted setup','Aplicar configuración pegada') + '</button>' +
+      '<input type="file" id="wizFile" accept=".json,application/json" hidden>' +
+      '</div></div>';
+    foot = '<button type="button" class="wiz-nav-btn" data-act="wizHome" title="' + esc(tr('Back','Atrás')) + '">' + ico('left') + '</button>';
   }
 
-  /* -------------------------------------------------- 2 · ESSENTIAL HABITS */
+  /* ---- 2 · esenciales, en anillo ---- */
   if (st === 2) {
-    const defs = wizAllDefs();
     const n = w.core.length, ok = n >= CORE_MIN && n <= CORE_MAX;
-    const byKey = function (k) { return defs.filter(function (d) { return d.key === k; })[0]; };
-    const chosen = w.core.map(byKey).filter(Boolean);
-    const used = w.core.concat(w.bonus);
-    const sug = defs.filter(function (d) { return used.indexOf(d.key) < 0; })
-      .sort(function (a, b) { return (b.common ? 1 : 0) - (a.common ? 1 : 0); }).slice(0, 8);
-
-    body =
-      H(tr('Your <em>essential</em> habits', 'Tus hábitos <em>esenciales</em>'),
-        tr('Between ' + CORE_MIN + ' and ' + CORE_MAX + ' small things you repeat <b class="em">every day</b>. The day only counts when all of them are done — keep them possible on your worst day.',
-           'De ' + CORE_MIN + ' a ' + CORE_MAX + ' cosas pequeñas que repites <b class="em">todos los días</b>. El día solo cuenta cuando cumples todas: que sean posibles hasta en tu peor día.'),
-        '<span id="wizCountLive" class="w-count' + (ok ? ' ok' : '') + '" data-word="' + esc(tr('chosen', 'elegidas')) + '">' + n + ' / ' + CORE_MAX + '</span>') +
-
-      (chosen.length
-        ? '<div class="w-grp">' + tr('Chosen', 'Elegidas') + '</div>' +
-          '<div class="w-stack">' + chosen.map(function (d) {
-            return OPT({ act:'wizDropCore', key:d.key, ico:d.ico, color:d.color, name:d.name,
-              sub:tr('Tap to remove', 'Toca para quitar'), on:true, tickIco:'x' });
-          }).join('') + '</div>'
-        : '<div class="w-empty">' + tr('Nothing chosen yet. Pick from below.', 'Nada elegido aún. Elige abajo.') + '</div>') +
-
-      '<div class="w-grp">' + tr('Suggestions', 'Sugerencias') + '</div>' +
-      '<div class="w-stack">' +
-        sug.map(function (d) {
-          return OPT({ act:'wizPick', key:d.key, ico:d.ico, color:d.color, name:d.name, sub:d.desc || '', tickIco:'plus' });
-        }).join('') +
-        '<button type="button" class="w-add" data-act="wizPickCore"><span class="w-in">' + ico('plus') + '<span>' + tr('Create my own', 'Crear el mío') + '</span></span></button>' +
-      '</div>';
-    foot = NAV({ back:true, next:true, nextDisabled:!ok });
-  }
-
-  /* ------------------------------------------------------ 3 · EXTRA HABITS */
-  if (st === 3) {
     const defs = wizAllDefs();
-    const n = w.bonus.length, ok = n <= BONUS_MAX;
-    const free = defs.filter(function (d) { return w.core.indexOf(d.key) < 0; });
-    body =
-      H(tr('Your <em>extra</em> habits', 'Tus hábitos <em>extra</em>'),
-        tr('They add points, but <b class="em">never block</b> a complete day.',
-           'Suman puntos, pero <b class="em">nunca bloquean</b> un día completo.'),
-        '<span id="wizCountLive" class="w-count' + (ok ? ' ok' : '') + '" data-word="' + esc(tr('chosen', 'elegidas')) + '">' + n + ' / ' + BONUS_MAX + '</span>') +
-      '<div class="w-stack">' +
-        free.map(function (d) {
-          return OPT({ act:'wizToggleBonus', key:d.key, ico:d.ico, color:d.color, name:d.name,
-            sub:d.desc || '', on:w.bonus.indexOf(d.key) >= 0 });
-        }).join('') +
-        '<button type="button" class="w-add" data-act="wizCustomBonus"><span class="w-in">' + ico('plus') + '<span>' + tr('Create my own', 'Crear el mío') + '</span></span></button>' +
+    /* arranca en 4 cupos y crece hasta 6 a medida que los llenas */
+    const cupos = Math.min(CORE_MAX, Math.max(4, n + 1));
+    const total = cupos + 1;
+    title = '';
+    subt = '';
+
+    const pos = function (i) {
+      const a = (-90 + (360 / total) * i) * Math.PI / 180;
+      return 'left:' + (50 + 37 * Math.cos(a)).toFixed(2) + '%;top:' + (50 + 37 * Math.sin(a)).toFixed(2) + '%';
+    };
+    let slots = '<button type="button" class="ring-slot ring-add" style="' + pos(0) + ';animation-delay:.03s" data-act="wizPickCore" title="' + tr('Add habit','Agregar hábito') + '" aria-label="' + tr('Create','Crear') + '">' +
+      '<span class="rs-crear">' + tr('Create','Crear') + '</span><span class="rs-in">' + ico('plus') + '</span></button>';
+    for (let i = 0; i < cupos; i++) {
+      const key = w.core[i];
+      const d = key ? defs.filter(function (x) { return x.key === key; })[0] : null;
+      const st2 = pos(i + 1) + ';animation-delay:' + (0.03 + 0.045 * (i + 1)).toFixed(3) + 's';
+      slots += d
+        ? '<button type="button" class="ring-slot filled" style="' + st2 + ';--sk-c:' + esc(d.color) + '" data-act="wizDropCore" data-key="' + esc(d.key) + '" title="' + esc(d.name) + ' · ' + tr('click to remove','clic para quitar') + '">' +
+            '<span class="rs-in">' + ico(d.ico) + '</span><span class="rs-lab">' + esc(d.name) + '</span></button>'
+        : '<button type="button" class="ring-slot empty" style="' + st2 + '" data-act="wizPickCore" title="' + tr('Empty slot','Cupo libre') + '"><span class="rs-in"></span></button>';
+    }
+
+    const usados = w.core.concat(w.bonus);
+    const sug = defs.filter(function (d) { return usados.indexOf(d.key) < 0; })
+      .sort(function (a, b) { return (b.common ? 1 : 0) - (a.common ? 1 : 0); }).slice(0, 6);
+
+    body = '<div class="ring-split">' +
+        '<div class="ring-copy">' +
+          '<div class="wiz-title-row">' +
+            '<h2>' + tr('Your <em>essential</em> habits','Tus hábitos <em>esenciales</em>') + '</h2>' +
+          '</div>' +
+          '<p class="ring-sub">' + tr(
+            'Between ' + CORE_MIN + ' and ' + CORE_MAX + ' small things you repeat <b class="em">every day</b>. ' +
+              'The day only counts as complete when all of them are done, so keep them possible on your worst day.',
+            'De ' + CORE_MIN + ' a ' + CORE_MAX + ' cosas pequeñas que repites <b class="em">todos los días</b>. ' +
+              'El día solo cuenta como completo cuando cumples todas: que sean posibles hasta en tu peor día.') + '</p>' +
+          (sug.length ? '<div class="ring-sug"><div class="ring-sug-t">' + tr('Quick add','Agregar rápido') + '</div>' +
+            '<div class="ring-sug-grid">' + sug.map(function (d) {
+              return '<button type="button" class="sug-chip" style="--sk-c:' + esc(d.color) + '" data-act="wizAddPicked" data-kind="core" data-key="' + esc(d.key) + '">' +
+                '<span class="g">' + ico(d.ico) + '</span>' +
+                '<span class="sc-c"><b>' + esc(d.name) + '</b><span>' + esc(d.desc || '') + '</span></span>' +
+                '<span class="sc-add">' + ico('plus') + '</span></button>';
+            }).join('') + '</div></div>' : '') +
+        '</div>' +
+        '<div class="ring-stage">' +
+          '<div class="ring-wheel">' + slots +
+            '<div class="ring-core"><b>' + n + '<span>/' + CORE_MAX + '</span></b><span>' + tr('essentials','esenciales') + '</span></div>' +
+          '</div>' +
+          '<div class="ring-status ' + (ok ? 'ok' : '') + '">' +
+            '<span class="dot"></span>' +
+            (ok ? tr('Ready. Add more or keep going.','Listo. Agrega más o sigue.')
+                : tr('Pick at least ' + CORE_MIN + '.','Elige al menos ' + CORE_MIN + '.')) +
+          '</div>' +
+        '</div>' +
       '</div>';
-    foot = NAV({ back:true, next:true, nextDisabled:!ok });
+    /* arrows: same global chrome as other steps */
+    foot = wizHeadNav({ back:true, next:true, nextDisabled:!ok });
   }
 
-  /* ---------------------------------------------------------- 4 · PROJECTS */
+  /* ---- 3 · extras, en cuadrícula ---- */
+  if (st === 3) {
+    const n = w.bonus.length, ok = n >= BONUS_MIN && n <= BONUS_MAX;
+    const defs = wizAllDefs();
+    const libresAll = defs.filter(function (d) { return w.core.indexOf(d.key) < 0; });
+    /* Keep the Extra Habits grid visually complete: never leave one orphan card on a final row. */
+    const libres = libresAll.length % 2 ? libresAll.slice(0, -1) : libresAll;
+    title = '';
+    subt = '';
+    body = '<div class="wiz-step-stack">' +
+      '<div class="wiz-title-row">' +
+        '<h2>' + tr('Your <em>extra</em> habits','Tus hábitos <em>extra</em>') + '</h2>' +
+        '<span id="wizCountLive" class="wiz-count-live' + (ok ? ' ok' : '') + '" data-word="' + esc(tr('chosen','elegidas')) + '">' + n + ' / ' + BONUS_MAX + '</span>' +
+        '<button type="button" class="wiz-new-mini" data-act="wizCustomBonus">' + ico('plus') +
+          tr('Create my own','Crear el mío') + '</button>' +
+      '</div>' +
+      '<div class="wiz-pick-bar">' +
+        '<p class="wiz-lead wiz-top">' + tr(
+          'They add points, but <b class="em">never block</b> a complete day.',
+          'Suman puntos, pero <b class="em">nunca bloquean</b> un día completo.') + '</p>' +
+      '</div>' +
+      '<div class="sk-grid wiz-fit-grid">' +
+        libres.map(function (d) {
+          const on = w.bonus.indexOf(d.key) >= 0;
+          return '<div role="button" tabindex="0" class="sk-pick' + (on ? ' on' : '') + '" style="--sk-c:' + esc(d.color) + '" data-act="wizToggleBonus" data-key="' + esc(d.key) + '">' +
+            '<span class="g">' + ico(d.ico) + '</span>' +
+            '<span class="c"><b>' + esc(d.name) + '</b><span>' + esc(d.desc || '') + '</span></span>' +
+            '<span class="tick">' + ico('check') + '</span></div>';
+        }).join('') +
+      '</div></div>';
+    foot = wizFootNav({ back:true, next:true, nextDisabled:!ok });
+  }
+
+  /* ---- 4 · proyectos ---- */
   if (st === 4) {
     const sel = w.pillars;
-    body =
-      H(tr('What are you <em>working</em> on?', '¿En qué estás <em>trabajando</em>?'),
-        tr('Work that takes <b class="em">months</b>: your daily tasks live inside them.',
-           'Trabajos de <b class="em">meses</b>: las tareas del día viven adentro.'),
-        '<span id="wizCountLive" class="w-count opt" data-word="' + esc(tr('chosen', 'elegidas')) + '">' + sel.length + ' ' + tr('chosen', 'elegidas') + '</span>') +
-      '<div class="w-stack">' +
+    title = '';
+    subt = '';
+    body = '<div class="wiz-step-stack">' +
+      '<div class="wiz-title-row">' +
+        '<h2>' + tr('What are you <em>working</em> on?','¿En qué estás <em>trabajando</em>?') + '</h2>' +
+        '<span id="wizCountLive" class="wiz-count-live opt" data-word="' + esc(tr('chosen','elegidas')) + '">' + sel.length + ' ' + tr('chosen','elegidas') + '</span>' +
+        '<button type="button" class="wiz-new-mini" data-act="wizNewPillar">' + ico('plus') +
+          tr('Create my own','Crear el mío') + '</button>' +
+      '</div>' +
+      '<div class="wiz-pick-bar">' +
+        '<p class="wiz-lead wiz-top">' + tr(
+          'Work that takes <b class="em">months</b>: your daily tasks live inside them.',
+          'Trabajos de <b class="em">meses</b>: las tareas del día viven adentro.') + '</p>' +
+        '<button type="button" class="wiz-skip-inline" data-act="wizJump" data-step="6">' +
+          tr('Skip this step','Saltar este paso') + '</button>' +
+      '</div>' +
+      '<div class="sk-grid wiz-fit-grid">' +
         wizPillarDefs().map(function (p) {
-          return OPT({ act:'wizPillar', id:p.id, ico:p.ico, name:p.name, sub:p.sub,
-            color:(PILLAR_CATS[p.cat] || {}).color || 'var(--hot)',
-            on:sel.indexOf(p.id) >= 0, editId:p.id, editAct:'wizEditPillar' });
+          const on = sel.indexOf(p.id) >= 0;
+          const c = (PILLAR_CATS[p.cat] || {}).color || 'var(--hot)';
+          return '<div role="button" tabindex="0" class="sk-pick' + (on ? ' on' : '') + '" style="--sk-c:' + c + '" data-act="wizPillar" data-id="' + esc(p.id) + '">' +
+            '<span class="g">' + ico(p.ico) + '</span>' +
+            '<span class="c"><b>' + esc(p.name) + '</b><span>' + esc(p.sub) + '</span></span>' +
+            '<button type="button" class="sk-edit" data-act="wizEditPillar" data-id="' + esc(p.id) + '" title="' + tr('Edit','Editar') + '">' + ico('edit') + '</button>' +
+            '<span class="tick">' + ico('check') + '</span></div>';
         }).join('') +
-        '<button type="button" class="w-add" data-act="wizNewPillar"><span class="w-in">' + ico('plus') + '<span>' + tr('Create my own', 'Crear el mío') + '</span></span></button>' +
-      '</div>';
-    foot = NAV({ back:true, skip:true, next:true });
+      '</div></div>';
+    foot = wizFootNav({ back:true, next:true });
   }
 
-  /* ------------------------------------------------------------- 5 · GOALS */
+  /* ---- 5 · metas medibles ---- */
   if (st === 5) {
     const sel = w.goals;
-    body =
-      H(tr('Choose your <em>direction</em>.', 'Elige tu <em>dirección</em>.'),
-        tr('<b class="em">Measurable goals</b> are results with numbers. <b>Values</b> are standards you want to live by.',
-           '<b class="em">Metas medibles</b> son resultados con números. <b>Valores</b> son reglas que quieres vivir.'),
-        '<span id="wizCountLive" class="w-count opt" data-word="' + esc(tr('chosen', 'elegidas')) + '">' + sel.length + ' ' + tr('chosen', 'elegidas') + '</span>');
-
-    [['outcome', tr('Measurable goals', 'Metas medibles'), 'target', 'var(--hot)'],
-     ['identity', tr('Values & principles', 'Valores y principios'), 'spa', 'var(--violet)']].forEach(function (par) {
-      const items = wizGoalDefs().filter(function (g) { return g.kind === par[0]; });
-      if (!items.length) return;
-      body += '<div class="w-grp">' + esc(par[1]) + '</div><div class="w-stack">' +
-        items.map(function (g) {
-          const sub = g.kind === 'identity'
-            ? (g.why || '')
-            : (g.metric + ': ' + fmtCompact(g.current) + ' → ' + fmtCompact(g.target) + (g.unit ? ' ' + g.unit : ''));
-          return OPT({ act:'wizGoal', id:g.id, ico:par[2], color:par[3], name:g.name, sub:sub,
-            on:sel.indexOf(g.id) >= 0, editId:g.id, editAct:'wizEditGoal' });
-        }).join('') +
-        '<button type="button" class="w-add" data-act="wizNewGoal" data-kind="' + par[0] + '"><span class="w-in">' + ico('plus') + '<span>' + tr('Create my own', 'Crear la mía') + '</span></span></button>' +
-        '</div>';
+    title = '';
+    subt = '';
+    body = '<div class="wiz-step-stack">' +
+      '<div class="wiz-title-row">' +
+        '<h2>' + tr('Choose your <em>direction</em>.','Elige tu <em>dirección</em>.') + '</h2>' +
+        '<span id="wizCountLive" class="wiz-count-live opt" data-word="' + esc(tr('chosen','elegidas')) + '">' + sel.length + ' ' + tr('chosen','elegidas') + '</span>' +
+      '</div>' +
+      '<div class="wiz-pick-bar"><p class="wiz-lead wiz-top">' + tr(
+        '<b class="em">Measurable goals</b> are results with numbers. <b>Values & principles</b> are standards you want to live by.',
+        '<b class="em">Metas medibles</b> son resultados con números. <b>Valores y principios</b> son reglas que quieres vivir.') + '</p>' +
+        '<button type="button" class="wiz-skip-inline" data-act="wizJump" data-step="6">' + tr('Skip this step','Saltar este paso') + '</button></div>' +
+      '<div class="goals-cols">';
+    [['outcome',tr('Measurable goals','Metas medibles')],['identity',tr('Values & principles','Valores y principios')]].forEach(function(par){
+      const items=wizGoalDefs().filter(function(g){return g.kind===par[0];}); if(!items.length)return;
+      body += '<div class="goals-col"><div class="wiz-grp">'+esc(par[1])+'</div><div class="sk-grid">' +
+        '<button type="button" class="sk-pick sk-new" data-act="wizNewGoal" data-kind="'+par[0]+'"><span class="nb">'+ico('plus')+'</span>'+tr('Create my own','Crear la mía')+'</button>' +
+        items.map(function(g){ const on=sel.indexOf(g.id)>=0, c=g.kind==='identity'?'var(--violet)':'var(--hot)';
+          const sub=g.kind==='identity'?g.why:(g.metric+': '+fmtCompact(g.current)+' → '+fmtCompact(g.target)+(g.unit?' '+g.unit:''));
+          return '<div role="button" tabindex="0" class="sk-pick'+(on?' on':'')+'" style="--sk-c:'+c+'" data-act="wizGoal" data-id="'+esc(g.id)+'"><span class="g">'+ico(g.kind==='identity'?'spa':'target')+'</span><span class="c"><b>'+esc(g.name)+'</b><span>'+esc(sub)+'</span></span><button type="button" class="sk-edit" data-act="wizEditGoal" data-id="'+esc(g.id)+'" title="'+tr('Edit','Editar')+'">'+ico('edit')+'</button><span class="tick">'+ico('check')+'</span></div>';
+        }).join('')+'</div></div>';
     });
-    foot = NAV({ back:true, skip:true, next:true });
+    body += '</div></div>';
+    foot = wizFootNav({ back:true, next:true });
   }
 
-  /* -------------------------------------------------------------- 6 · DONE */
   if (st === 6) {
     const defs = wizAllDefs();
     const coreD = defs.filter(function (d) { return w.core.indexOf(d.key) >= 0; });
-    const bonD = defs.filter(function (d) { return w.bonus.indexOf(d.key) >= 0; });
+    const bonD  = defs.filter(function (d) { return w.bonus.indexOf(d.key) >= 0; });
+    const pN = w.pillars.length, gN = w.goals.length;
     const chip = function (d) {
-      return '<span class="w-chip" style="--sk-c:' + esc(d.color || 'var(--hot)') + '">' +
-        '<span class="w-chip-ico">' + ico(d.ico || 'target') + '</span>' + esc(d.name) + '</span>';
-    };
-    const stat = function (v, l, step) {
-      return '<button type="button" class="w-stat" data-act="wizJump" data-step="' + step + '">' +
-        '<span class="w-in"><b>' + v + '</b><span>' + l + '</span></span></button>';
+      return '<span class="launch-chip" style="--sk-c:' + esc(d.color || 'var(--hot)') + '">' +
+        '<span class="g">' + ico(d.ico || 'target') + '</span>' +
+        '<span>' + esc(d.name) + '</span></span>';
     };
 
-    body =
-      '<div class="w-done">' +
-        '<span class="w-seal">' + ico('check') + '</span>' +
-        '<span class="w-grp">' + tr('SETUP COMPLETE', 'CONFIGURACIÓN LISTA') + '</span>' +
-        '<h2 class="w-title">' + tr('Your Tungsten is ready.', 'Tu Tungsten está listo.') + '</h2>' +
-        '<p class="w-lead">' + tr(
-          'Show up, mark what you did, and let the record build.',
-          'Aparece, marca lo que hiciste y deja que el registro se construya.') + '</p>' +
-        '<div class="w-day"><span>' + tr('DAY 001', 'DÍA 001') + '</span><b>' + esc(fmtDate(w.date)) + '</b></div>' +
-      '</div>' +
+    title = '';
+    subt = '';
 
-      '<div class="w-stats">' +
-        stat(coreD.length, tr('essentials', 'esenciales'), 2) +
-        stat(bonD.length, tr('extras', 'extras'), 3) +
-        stat(w.pillars.length, tr('projects', 'proyectos'), 4) +
-        stat(w.goals.length, tr('goals', 'metas'), 5) +
-      '</div>' +
+    body = '<div class="launch-stage">' +
 
-      (coreD.length ? '<div class="w-grp">' + tr('Essentials', 'Esenciales') + '</div><div class="w-chips">' + coreD.map(chip).join('') + '</div>' : '') +
-      (bonD.length ? '<div class="w-grp">' + tr('Extras', 'Extras') + '</div><div class="w-chips">' + bonD.map(chip).join('') + '</div>' : '') +
+        '<section class="launch-hero">' +
+          '<div class="launch-seal" aria-hidden="true">' + ico('check') + '</div>' +
+          '<div class="launch-kicker">' +
+            tr('SETUP COMPLETE','CONFIGURACIÓN LISTA') +
+          '</div>' +
 
-      '<button type="button" class="btn pri w-start" data-act="wizFinish">' +
-        tr('Start Tungsten', 'Comenzar Tungsten') + ico('right') + '</button>' +
-      '<p class="w-note">' + tr('Everything can be changed later in Settings.', 'Todo se puede cambiar después en Ajustes.') + '</p>';
-    foot = NAV({ back:true });
+          '<h2>' +
+            tr('Your Tungsten is ready.','Tu Tungsten está listo.') +
+          '</h2>' +
+
+          '<p>' +
+            tr(
+              'You have a simple system now: show up, mark what you did, and let the record build.',
+              'Ya tienes un sistema simple: aparece, marca lo que hiciste y deja que el registro se construya.'
+            ) +
+          '</p>' +
+
+          '<div class="launch-day">' +
+            '<span>' + tr('DAY 001','DÍA 001') + '</span>' +
+            '<b>' + esc(fmtDate(w.date)) + '</b>' +
+          '</div>' +
+
+          '<button type="button" class="btn pri launch-start" data-act="wizFinish">' +
+            tr('Start Tungsten','Comenzar Tungsten') +
+            ico('right') +
+          '</button>' +
+        '</section>' +
+
+        '<section class="launch-summary">' +
+
+          '<div class="launch-summary-head">' +
+            '<div>' +
+              '<span>' + tr('YOUR SYSTEM','TU SISTEMA') + '</span>' +
+              '<h3>' + tr('What you chose','Lo que elegiste') + '</h3>' +
+            '</div>' +
+          '</div>' +
+
+          '<div class="launch-stats">' +
+
+            '<button type="button" data-act="wizJump" data-step="2">' +
+              '<b>' + coreD.length + '</b>' +
+              '<span>' + tr('Essentials','Esenciales') + '</span>' +
+            '</button>' +
+
+            '<button type="button" data-act="wizJump" data-step="3">' +
+              '<b>' + bonD.length + '</b>' +
+              '<span>' + tr('Extras','Extras') + '</span>' +
+            '</button>' +
+
+            '<button type="button" data-act="wizJump" data-step="4">' +
+              '<b>' + pN + '</b>' +
+              '<span>' + tr('Projects','Proyectos') + '</span>' +
+            '</button>' +
+
+            '<button type="button" data-act="wizJump" data-step="5">' +
+              '<b>' + gN + '</b>' +
+              '<span>' + tr('Goals','Metas') + '</span>' +
+            '</button>' +
+
+          '</div>' +
+
+          ((coreD.length || bonD.length)
+            ? '<div class="launch-habits">' +
+
+                (coreD.length
+                  ? '<div class="launch-group">' +
+                      '<span class="launch-group-lab">' +
+                        tr('ESSENTIALS','ESENCIALES') +
+                      '</span>' +
+                      '<div class="launch-chip-row">' +
+                        coreD.map(chip).join('') +
+                      '</div>' +
+                    '</div>'
+                  : '') +
+
+                (bonD.length
+                  ? '<div class="launch-group">' +
+                      '<span class="launch-group-lab">' +
+                        tr('EXTRAS','EXTRAS') +
+                      '</span>' +
+                      '<div class="launch-chip-row">' +
+                        bonD.map(chip).join('') +
+                      '</div>' +
+                    '</div>'
+                  : '') +
+
+              '</div>'
+            : '') +
+
+          '<div class="launch-foot">' +
+            '<p class="launch-change-note">' +
+              tr(
+                'You can change any of this later.',
+                'Puedes cambiar cualquiera de estas cosas después.'
+              ) +
+            '</p>' +
+
+            '<div class="launch-edit-note">' +
+              ico('edit') +
+              '<span>' +
+                tr(
+                  'Click any number above to change that part.',
+                  'Haz clic en cualquier número de arriba para cambiar esa parte.'
+                ) +
+              '</span>' +
+            '</div>' +
+          '</div>' +
+
+        '</section>' +
+
+      '</div>';
+
+    foot = wizHeadNav({ back:true });
   }
-
-  /* ---- paint ---- */
-  $('obSteps').innerHTML = [1, 2, 3, 4, 5, 6].map(function (i) {
-    const done = (st === 'ai') ? i <= 1 : i <= st;
-    return '<i class="' + (done ? 'done' : '') + '"></i>';
-  }).join('');
 
   const wm = document.querySelector('.modal.wiz');
   if (wm) {
     wm.classList.toggle('is-home', st === 1);
-    wm.classList.toggle('is-ring', st === 2);
     wm.classList.toggle('is-done', st === 6);
+    wm.classList.toggle('is-ring', st === 2);
     wm.classList.toggle('is-ai', st === 'ai');
+    /* El botón Saltar ensancha el bloque de flechas: la cabecera reserva ese ancho. */
+    wm.classList.toggle('has-skip', foot.indexOf('wiz-skip') >= 0);
   }
-  if ($('obTitle')) $('obTitle').innerHTML = '';
-  if ($('obSub')) $('obSub').innerHTML = '';
+  $('obTitle').textContent = title;
+  $('obSub').textContent = '';
+  $('obSub').style.display = 'none';
   $('obBody').innerHTML = body;
+  /* Top-right nav chrome; keep bottom footer empty (no grey stripe) */
   if ($('obNav')) $('obNav').innerHTML = foot || '';
   if ($('obFoot')) { $('obFoot').innerHTML = ''; $('obFoot').hidden = true; }
-
+  /* la entrada escalonada corre una vez por paso, no en cada clic */
+  if (ui._wizPainted !== st) {
+    ui._wizPainted = st;
+    document.querySelectorAll('#obBody .sk-grid').forEach(function (g) {
+      g.setAttribute('data-anim', '1');
+      setTimeout(function () { g.removeAttribute('data-anim'); }, 700);
+    });
+  }
   const di = $('wizDate');
   if (di) di.addEventListener('change', function () { ui.wiz.date = di.value; });
-  const ob = $('obBody');
-  if (ob) ob.scrollTop = 0;
 }
 function wizAssign(key, kind) {
   const w = ui.wiz;
@@ -12574,7 +11935,7 @@ FENCE + '',
   const blob = new Blob([txt.join('\r\n')], { type:'text/markdown;charset=utf-8' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
-  a.href = url; a.download = es ? 'tungsten-ios-instrucciones.md' : 'tungsten-ios-brief.md';
+  a.href = url; a.download = es ? 'tungsten-work-instrucciones.md' : 'tungsten-work-brief.md';
   document.body.appendChild(a); a.click(); document.body.removeChild(a);
   setTimeout(function () { URL.revokeObjectURL(url); }, 1500);
   toast(es ? 'Instrucciones descargadas.' : 'Brief downloaded.', 'ok');
@@ -12778,7 +12139,7 @@ function renderSettings() {
         '<button class="btn sm" data-act="openImport">Import</button></div>' +
       '<div class="srow"><div class="t"><b>Copy AI context</b><span>Projects, measurable goals, Values & principles, finances and next tasks, with instructions for the AI.</span></div>' +
         '<button class="btn sm" data-act="copyAI">Copy</button></div>' +
-      '<div class="srow"><div class="t"><b>Reset all data</b><span>Deletes Tungsten data stored in this browser (tungsten-ios-state) and starts fresh.</span></div>' +
+      '<div class="srow"><div class="t"><b>Reset all data</b><span>Deletes Tungsten data stored in this browser (tungsten-work-state) and starts fresh.</span></div>' +
         '<button class="btn sm danger" data-act="resetAll">Reset</button></div>' +
     '</div>' +
     '<div><div class="sect-t">' + tr('AI PLANS','PLANES CON IA') + '</div>' +
@@ -12863,35 +12224,6 @@ const ACTIONS = {
     }
   },
   settings: function () { renderSettings(); openOverlay('ovSettings'); },
-  moreMenu: function () {
-    const rest = VIEWS.filter(function (v) { return PHONE_TABS.indexOf(v.id) < 0; });
-    $('moreBody').innerHTML =
-      '<div class="list">' +
-        rest.map(function (v) {
-          return '<button class="row" data-act="go" data-view="' + v.id + '" data-close="1">' +
-            '<span class="w-in">' +
-              '<span class="row-ico">' + ico(v.ico) + '</span>' +
-              '<span class="row-c"><b>' + esc(viewLabel(v)) + '</b></span>' +
-              '<span class="row-chev">' + ico('right') + '</span>' +
-            '</span></button>';
-        }).join('') +
-      '</div>' +
-      '<div class="list">' +
-        '<button class="row" data-act="settings" data-close="1"><span class="w-in">' +
-          '<span class="row-ico">' + ico('sliders') + '</span>' +
-          '<span class="row-c"><b>' + tr('Settings', 'Ajustes') + '</b></span>' +
-          '<span class="row-chev">' + ico('right') + '</span></span></button>' +
-        '<button class="row" data-act="help" data-close="1"><span class="w-in">' +
-          '<span class="row-ico">' + ico('info') + '</span>' +
-          '<span class="row-c"><b>' + tr('How it works', 'Cómo funciona') + '</b></span>' +
-          '<span class="row-chev">' + ico('right') + '</span></span></button>' +
-        '<button class="row" data-act="export" data-close="1"><span class="w-in">' +
-          '<span class="row-ico">' + ico('download') + '</span>' +
-          '<span class="row-c"><b>' + tr('Export backup', 'Exportar copia') + '</b></span>' +
-          '<span class="row-chev">' + ico('right') + '</span></span></button>' +
-      '</div>';
-    openOverlay('ovMore');
-  },
   help: openHelp,
   viewHelp: function (el) { openViewHelp(el.dataset.view || ui.view); },
   setHabitPresetKind: setHabitPresetKind,
@@ -13436,23 +12768,6 @@ function wireLogEditor(elId, field) {
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
 else init();
 
-})();
-</script>
-
-<script>
-/* Rows inside the "Más" sheet navigate and then dismiss it. Kept outside the
-   main IIFE so no app logic is touched; it only synthesises the close click. */
-(function () {
-  'use strict';
-  document.addEventListener('click', function (e) {
-    var el = e.target.closest && e.target.closest('[data-close]');
-    if (!el) return;
-    requestAnimationFrame(function () {
-      var b = document.createElement('button');
-      b.setAttribute('data-act', 'closeTop');
-      document.body.appendChild(b); b.click(); b.remove();
-    });
-  });
 })();
 </script>
 </body>
