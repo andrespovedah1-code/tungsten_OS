@@ -40,11 +40,13 @@ jobs:
           expected='53267ab31ecec1f7c16f5744cbee3324303fd00647a4350db7d33abcddf41c21'
           if digest != expected:
             raise SystemExit(f'Combined index hash mismatch: {digest} != {expected}')
-          scripts=re.findall(r'<script(?:\\s[^>]*)?>([\\s\\S]*?)</script>',s,flags=re.I)
+          scripts=re.findall(r'<script(?:\s[^>]*)?>([\s\S]*?)</script>',s,flags=re.I)
           if not scripts:
             raise SystemExit('No inline scripts found')
           for i,code in enumerate(scripts):
-            f=Path('/tmp')/f'tungsten-live-{i}.js'; f.write_text(code,encoding='utf-8'); subprocess.run(['node','--check',str(f)],check=True)
+            f=Path('/tmp')/f'tungsten-live-{i}.js'
+            f.write_text(code,encoding='utf-8')
+            subprocess.run(['node','--check',str(f)],check=True)
           print('Validated exact combined SHA-256:',digest)
           print('Inline scripts syntax-checked:',len(scripts))
           PY
