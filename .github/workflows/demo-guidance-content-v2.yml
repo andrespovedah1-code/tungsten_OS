@@ -1,0 +1,30 @@
+name: One-off guided demo content refresh
+'on':
+  push:
+    branches:
+      - demo-guidance-content-v2
+    paths:
+      - .github/workflows/demo-guidance-content-v2.yml
+permissions:
+  contents: write
+jobs:
+  refresh-demo:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: demo-guidance-content-v2
+          fetch-depth: 0
+      - name: Refresh and validate demo fixture
+        run: python3 _tools/update_demo_guidance_content.py
+      - name: Commit validated demo files
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          rm -f _tools/update_demo_guidance_content.py .github/workflows/demo-guidance-content-v2.yml
+          git add -- demo.html demo-fixture-1.js demo-fixture-2.js demo-fixture-3.js demo-fixture-4.js _tools/update_demo_guidance_content.py .github/workflows/demo-guidance-content-v2.yml
+          git diff --cached --check
+          git commit -m "Refresh guided 21-day demo content"
+          git push origin HEAD:demo-guidance-content-v2
