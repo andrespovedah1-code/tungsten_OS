@@ -8,8 +8,113 @@ name: One-off suggested goals repair
 permissions:
   contents: write
 jobs:
-  validate-runner:
+  patch-package:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: echo "workflow parser and runner are healthy"
+        with:
+          ref: goal-suggestions-fix
+          fetch-depth: 0
+      - name: Patch and validate
+        shell: bash
+        run: |
+          set -euo pipefail
+          cp index.html /tmp/index.before.html
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          from collections import Counter
+          p=Path('index.html'); s=p.read_text(encoding='utf-8'); before=s
+          def one(a,b,label):
+            global s
+            n=s.count(a)
+            if n!=1: raise SystemExit(f'{label}: expected 1 match, found {n}')
+            s=s.replace(a,b,1)
+          css='''\n/* ROUND DB · suggested Goals */
+.modal.wiz.is-goals .wiz-goal-board-card.is-suggested{transition:border-color .14s var(--ease),background .14s var(--ease)!important}
+.modal.wiz.is-goals .wiz-goal-board-card.is-suggested:hover{transform:none!important;box-shadow:none!important;border-color:color-mix(in srgb,var(--gc) 58%,var(--line2))!important;background:radial-gradient(112px 78px at 100% 0%,color-mix(in srgb,var(--gc) 15%,transparent),transparent 72%),linear-gradient(160deg,var(--raise),var(--panel))!important}
+.modal.wiz.is-goals .wiz-goal-board-card.is-suggested.on{border-color:var(--gc)!important;box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--gc) 34%,transparent)!important;background:radial-gradient(126px 88px at 100% 0%,color-mix(in srgb,var(--gc) 22%,transparent),transparent 72%),linear-gradient(160deg,color-mix(in srgb,var(--gc) 7%,var(--raise)),var(--panel))!important}
+.modal.wiz.is-goals .wiz-goal-board-card.is-suggested .wiz-goal-board-foot{justify-content:flex-start!important}
+.modal.wiz.is-goals .wiz-goal-board-card.is-suggested .wiz-goal-route-chip{max-width:100%!important}
+.modal.wiz.is-goals .wiz-goal-board-card.is-suggested .wiz-goal-board-metric strong{max-width:72%!important;white-space:normal!important;overflow:visible!important;text-overflow:clip!important;line-height:1.15!important;text-wrap:balance}
+.modal.wiz.is-goals .wiz-goal-board-grid:has(.wiz-goal-board-card.is-suggested:nth-child(11)){grid-auto-rows:minmax(148px,auto)!important}
+'''
+          one('</style>',css+'\n</style>','css')
+          old="      return '<div role=\"button\" tabindex=\"0\" class=\"wiz-goal-board-card' + (on ? ' on' : '') + (linkNames.length ? ' is-linked' : '') + '\" style=\"--gc:' + c + '\" data-act=\"wizGoal\" data-kind=\"outcome\" data-id=\"' + esc(g.id) + '\">' +"
+          new="      return '<div role=\"button\" tabindex=\"0\" class=\"wiz-goal-board-card' + (on ? ' on' : '') + (linkNames.length ? ' is-linked' : '') + (activeTab === 'linked' ? ' is-suggested' : '') + '\" style=\"--gc:' + c + '\" data-act=\"wizGoal\" data-kind=\"outcome\" data-id=\"' + esc(g.id) + '\">' +"
+          one(old,new,'suggested class')
+          old="          (linkNames.length ? '<span class=\"wiz-goal-route-chip\">' + ico('briefcase') + '<span>' + esc(linkLabel) + '</span></span>' : '<span class=\"wiz-goal-route-chip quiet\" aria-hidden=\"true\"></span>') +\n          '<span class=\"wiz-goal-board-check\">' + ico('check') + '</span></div></div>';"
+          new="          (linkNames.length ? '<span class=\"wiz-goal-route-chip\">' + ico('briefcase') + '<span>' + esc(linkLabel) + '</span></span>' : '<span class=\"wiz-goal-route-chip quiet\" aria-hidden=\"true\"></span>') +\n          (activeTab === 'linked' ? '' : '<span class=\"wiz-goal-board-check\">' + ico('check') + '</span>') + '</div></div>';"
+          one(old,new,'remove suggested check')
+          one("tr('suggested finish lines','destinos sugeridos')","tr('suggested goals','metas sugeridas')",'tab wording')
+          one("tr('Finish lines suggested by your Projects','Destinos sugeridos por tus Proyectos')","tr('Measurable Goals suggested for your Projects','Metas medibles sugeridas para tus Proyectos')",'title wording')
+          m=re.search(r"    const projectRoute = selectedProjects\.length\n      \? .*?\n      : .*?;\n",s,re.S)
+          if not m: raise SystemExit('Ruta actual block not found')
+          s=s[:m.start()]+"    const projectRoute = '';\n"+s[m.end():]
+          checkup="  { id:'gp_checkup', kind:'outcome', cat:'self', name:'Completar un chequeo preventivo', nameEn:'Complete a preventive health check', why:'Resolver pendientes básicos de salud con información real.', whyEn:'Resolve basic health unknowns with real information.', metric:'Chequeo completado', metricEn:'Checkup completed', unit:'%', unitEn:'%', current:0, target:100 },"
+          mobility="  { id:'gp_mobility', kind:'outcome', cat:'self', name:'Completar 24 sesiones de movilidad', nameEn:'Complete 24 mobility sessions', why:'Mejorar movimiento y recuperación con una práctica concreta.', whyEn:'Improve movement and recovery with a concrete practice.', metric:'Sesiones de movilidad', metricEn:'Mobility sessions', unit:'sesiones', unitEn:'sessions', current:0, target:24 },"
+          one(checkup,checkup+'\n'+mobility,'tenth Self goal')
+          one("salud:['gp_entrenos','gp_strength','gp_checkup']","salud:['gp_entrenos','gp_strength','gp_checkup','gp_mobility']",'health mapping')
+          one("deporte:['gp_carrera','gp_entrenos','gp_strength']","deporte:['gp_carrera','gp_entrenos','gp_strength','gp_mobility']",'sport mapping')
+          gb=s.split('const GOAL_PRESETS = [',1)[1].split('];',1)[0]
+          rows=[x for x in gb.splitlines() if "kind:'outcome'" in x]
+          counts=Counter(re.search(r"cat:'([^']+)'",x).group(1) for x in rows)
+          exp={'revenue':10,'capital':10,'craft':10,'self':10,'life':10}
+          if dict(counts)!=exp: raise SystemExit(f'category count regression: {dict(counts)}')
+          mb=s.split('const PROJECT_GOAL_PRESETS = Object.freeze({',1)[1].split('});',1)[0]
+          mapped=set(re.findall(r"'(gp_[^']+)'",mb)); defined=set(re.findall(r"id:'(gp_[^']+)'",gb))
+          if mapped-defined: raise SystemExit('dangling mapped ids: '+','.join(sorted(mapped-defined)))
+          nr=gb.split('/* ROUND CX',1)[1].split("{ id:'vp_disciplina'",1)[0]
+          newids=set(re.findall(r"id:'(gp_[^']+)'",nr))|{'gp_mobility'}
+          if newids-mapped: raise SystemExit('new presets without suggestions: '+','.join(sorted(newids-mapped)))
+          if s==before: raise SystemExit('no changes')
+          p.write_text(s,encoding='utf-8')
+          print('counts',dict(counts)); print('mapped new presets',len(newids))
+          PY
+          python3 - <<'PY'
+          from pathlib import Path
+          import re,subprocess
+          h=Path('index.html').read_text(encoding='utf-8'); ss=re.findall(r'<script(?:\s[^>]*)?>([\s\S]*?)</script>',h,re.I)
+          if not ss: raise SystemExit('no scripts')
+          for i,x in enumerate(ss):
+            q=Path(f'/tmp/i{i}.js'); q.write_text(x,encoding='utf-8'); subprocess.run(['node','--check',str(q)],check=True)
+          print('node checks',len(ss))
+          PY
+      - name: Build ZIP
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf /tmp/pkg && mkdir -p /tmp/pkg/backup
+          cp index.html /tmp/pkg/index.html
+          cp /tmp/index.before.html /tmp/pkg/backup/index.before.html
+          for f in demo.html demo-fixture-1.js demo-fixture-2.js demo-fixture-3.js demo-fixture-4.js; do [ -f "$f" ] && cp "$f" /tmp/pkg/; done
+          cat > /tmp/pkg/CHANGELOG.txt <<'EOF'
+Suggested Goals onboarding repair
+- No circular check on Project-suggested Goal cards; selected cards use their category border.
+- Stable hover with no lift/jump on Project-suggested cards.
+- More room for target values; linked boards use taller scrolling rows.
+- Removed Current route / Ruta actual.
+- Renamed linked board to Measurable Goals suggested for your Projects / Metas medibles sugeridas para tus Proyectos.
+- Added tenth Self / Yo goal: Complete 24 mobility sessions / Completar 24 sesiones de movilidad.
+- Connected that goal to Health and Sport suggestions.
+- Validated exactly 10 measurable presets per category and all newer preset suggestion mappings.
+EOF
+          (cd /tmp/pkg && sha256sum index.html backup/index.before.html > SHA256SUMS.txt)
+          (cd /tmp/pkg && zip -qr "$GITHUB_WORKSPACE/Tungsten_OS_suggested_goals_fix.zip" .)
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Tungsten_OS_suggested_goals_fix
+          path: Tungsten_OS_suggested_goals_fix.zip
+          if-no-files-found: error
+          retention-days: 7
+      - name: Commit feature branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          rm -f .github/workflows/goal-suggestions-fix.yml Tungsten_OS_suggested_goals_fix.zip
+          git add -- index.html .github/workflows/goal-suggestions-fix.yml
+          git diff --cached --check
+          git commit -m "Fix suggested goals onboarding cards"
+          git push origin HEAD:goal-suggestions-fix
