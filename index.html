@@ -2749,8 +2749,8 @@ html[data-theme="light"] #v-goals .goal-titles .gt{color:#070809}
 .modal.wiz .modal-h h2{font-size:22px}
 .modal.wiz .modal-h p{font-size:13px;margin-top:4px}
 .wiz-steps{display:flex;gap:6px;padding:14px 18px 0}
-.wiz-steps i{flex:1;height:3px;border-radius:99px;background:var(--line2);transition:background .3s var(--ease)}
-.wiz-steps i.done{background:var(--hot)}
+.wiz-steps .wiz-step-bar{flex:1;height:3px;min-width:0;border-radius:99px;background:var(--line2);transition:background .3s var(--ease);cursor:pointer}
+.wiz-steps .wiz-step-bar.done{background:var(--hot)}
 .wiz-lead{font-size:13.5px;line-height:1.55;color:var(--dim);margin:0 0 14px;max-width:62ch}
 .wiz-count{margin-left:auto;font-family:var(--sans);font-size:12px;font-weight:700;color:var(--dim)}
 .wiz-count.bad{color:var(--bad)}
@@ -8216,13 +8216,16 @@ html[data-theme="light"] #ovEditor.is-finance-archive .fin-archive-month-head sp
 html.theme-switching,html.theme-switching * ,html.theme-switching *::before,html.theme-switching *::after{transition:none!important}
 
 /* ROUND DB · Suggested Goals: no check circle, stable hover, selection via accent border. */
-.modal.wiz.is-goals .wiz-goal-board-card.is-suggested{transition:border-color .14s var(--ease),background .14s var(--ease)!important}
+.modal.wiz.is-goals .wiz-goal-board-grid:has(.wiz-goal-board-card.is-suggested){grid-template-columns:repeat(4,minmax(0,1fr))!important;grid-template-rows:none!important;grid-auto-rows:minmax(184px,auto)!important;align-content:start!important;overflow-y:auto!important}
+.modal.wiz.is-goals .wiz-goal-board-card.is-suggested{min-height:184px!important;transition:border-color .14s var(--ease),background .14s var(--ease)!important}
 .modal.wiz.is-goals .wiz-goal-board-card.is-suggested:hover{transform:none!important;box-shadow:none!important;border-color:color-mix(in srgb,var(--gc) 58%,var(--line2))!important;background:radial-gradient(112px 78px at 100% 0%,color-mix(in srgb,var(--gc) 15%,transparent),transparent 72%),linear-gradient(160deg,var(--raise),var(--panel))!important}
 .modal.wiz.is-goals .wiz-goal-board-card.is-suggested.on{border-color:var(--gc)!important;box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--gc) 34%,transparent)!important;background:radial-gradient(126px 88px at 100% 0%,color-mix(in srgb,var(--gc) 22%,transparent),transparent 72%),linear-gradient(160deg,color-mix(in srgb,var(--gc) 7%,var(--raise)),var(--panel))!important}
-.modal.wiz.is-goals .wiz-goal-board-card.is-suggested .wiz-goal-board-foot{justify-content:flex-start!important}
-.modal.wiz.is-goals .wiz-goal-board-card.is-suggested .wiz-goal-route-chip{max-width:100%!important}
+.modal.wiz.is-goals .wiz-goal-board-card.is-suggested .wiz-goal-board-foot{min-height:24px!important;margin-top:2px!important;align-items:flex-start!important;justify-content:flex-start!important;overflow:visible!important}
+.modal.wiz.is-goals .wiz-goal-board-card.is-suggested .wiz-goal-route-chip{max-width:100%!important;align-items:flex-start!important;line-height:1.2!important;overflow:visible!important}
+.modal.wiz.is-goals .wiz-goal-board-card.is-suggested .wiz-goal-route-chip>span{white-space:normal!important;overflow:visible!important;text-overflow:clip!important;line-height:1.2!important;display:block!important}
 .modal.wiz.is-goals .wiz-goal-board-card.is-suggested .wiz-goal-board-metric strong{max-width:72%!important;white-space:normal!important;overflow:visible!important;text-overflow:clip!important;line-height:1.15!important;text-wrap:balance}
-.modal.wiz.is-goals .wiz-goal-board-grid:has(.wiz-goal-board-card.is-suggested:nth-child(11)){grid-auto-rows:minmax(148px,auto)!important}
+@media(max-width:900px){.modal.wiz.is-goals .wiz-goal-board-grid:has(.wiz-goal-board-card.is-suggested){grid-template-columns:repeat(2,minmax(0,1fr))!important;grid-auto-rows:minmax(178px,auto)!important}.modal.wiz.is-goals .wiz-goal-board-card.is-suggested{min-height:178px!important}}
+@media(max-width:560px){.modal.wiz.is-goals .wiz-goal-board-grid:has(.wiz-goal-board-card.is-suggested){grid-template-columns:1fr!important;grid-auto-rows:minmax(172px,auto)!important}.modal.wiz.is-goals .wiz-goal-board-card.is-suggested{min-height:172px!important}}
 
 </style>
 </head>
@@ -16981,7 +16984,7 @@ function wizFootNav(opts) { return wizHeadNav(opts); }
 function renderWizard() {
   const w = ui.wiz, st = w.step;
   $('obSteps').style.display = (st === 'home' || st === 'ai') ? 'none' : 'flex';
-  $('obSteps').innerHTML = [1,2,3,4,5,6].map(function (i) { return '<i class="' + (typeof st === 'number' && i <= st ? 'done' : '') + '"></i>'; }).join('');
+  $('obSteps').innerHTML = [1,2,3,4,5,6].map(function (i) { return '<button type="button" class="wiz-step-bar' + (typeof st === 'number' && i <= st ? ' done' : '') + '" data-act="wizJump" data-step="' + i + '" aria-label="' + esc(tr('Go to setup section ','Ir a la sección ')) + i + '"></button>'; }).join('');
   let title = '', subt = '', body = '', foot = '';
 
   if (st === 'home') {
