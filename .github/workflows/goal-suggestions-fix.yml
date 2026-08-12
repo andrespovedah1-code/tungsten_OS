@@ -1,3 +1,4 @@
+# validation-pass: restore-gp-carrera
 name: One-off suggested goals repair
 'on':
   push:
