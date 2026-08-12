@@ -1,0 +1,61 @@
+name: Deploy combined onboarding fixes
+'on':
+  push:
+    branches:
+      - deploy-live-latest-fixes
+    paths:
+      - .github/workflows/deploy-live-latest-fixes.yml
+permissions:
+  contents: write
+jobs:
+  build-validated-index:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: deploy-live-latest-fixes
+          fetch-depth: 0
+      - name: Build exact combined index
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin goal-suggestions-fix:refs/remotes/origin/goal-suggestions-fix
+          git show origin/goal-suggestions-fix:index.html > index.html
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib, re, subprocess
+          p=Path('index.html')
+          s=p.read_text(encoding='utf-8')
+          replacements=[
+            ("? { id:'p_' + Math.random().toString(36).slice(2,7), ico:'briefcase', cat:'self', name:'', sub:'', next:'' }", "? { id:'p_' + Math.random().toString(36).slice(2,7), ico:'briefcase', cat:(ui.wiz && PILLAR_CATS[ui.wiz.projectTab] ? ui.wiz.projectTab : 'self'), name:'', sub:'', next:'' }"),
+            ("metric:'', next:p.next || '', notes:'', skillKey:linkedSkill, order:i, createdAt:w.date, lastTouched:w.date });", "metric:'', next:p.next || '', notes:'', category:p.cat || null, skillKey:linkedSkill, order:i, createdAt:w.date, lastTouched:w.date });")
+          ]
+          for old,new in replacements:
+            n=s.count(old)
+            if n != 1:
+              raise SystemExit(f'Expected exactly one source match, found {n}: {old[:80]}')
+            s=s.replace(old,new,1)
+          p.write_text(s,encoding='utf-8')
+          digest=hashlib.sha256(p.read_bytes()).hexdigest()
+          expected='53267ab31ecec1f7c16f5744cbee3324303fd00647a4350db7d33abcddf41c21'
+          if digest != expected:
+            raise SystemExit(f'Combined index hash mismatch: {digest} != {expected}')
+          scripts=re.findall(r'<script(?:\\s[^>]*)?>([\\s\\S]*?)</script>',s,flags=re.I)
+          if not scripts:
+            raise SystemExit('No inline scripts found')
+          for i,code in enumerate(scripts):
+            f=Path('/tmp')/f'tungsten-live-{i}.js'; f.write_text(code,encoding='utf-8'); subprocess.run(['node','--check',str(f)],check=True)
+          print('Validated exact combined SHA-256:',digest)
+          print('Inline scripts syntax-checked:',len(scripts))
+          PY
+      - name: Commit validated source
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          rm -f .github/workflows/deploy-live-latest-fixes.yml
+          git add -- index.html .github/workflows/deploy-live-latest-fixes.yml
+          git diff --cached --check
+          git commit -m "Deploy suggested goals and project category fixes"
+          git push origin HEAD:deploy-live-latest-fixes
