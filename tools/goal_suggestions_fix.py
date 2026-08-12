@@ -50,11 +50,11 @@ if not route:
     raise SystemExit('remove Ruta actual: block not found')
 src = src[:route.start()] + "    const projectRoute = '';\n" + src[route.end():]
 
+# gp_carrera was already referenced by the Sport project and Fitness quick-start,
+# but the canonical measurable Goal preset itself was missing. Restore it as Yo #10.
 checkup = "  { id:'gp_checkup', kind:'outcome', cat:'self', name:'Completar un chequeo preventivo', nameEn:'Complete a preventive health check', why:'Resolver pendientes básicos de salud con información real.', whyEn:'Resolve basic health unknowns with real information.', metric:'Chequeo completado', metricEn:'Checkup completed', unit:'%', unitEn:'%', current:0, target:100 },"
-mobility = "  { id:'gp_mobility', kind:'outcome', cat:'self', name:'Completar 24 sesiones de movilidad', nameEn:'Complete 24 mobility sessions', why:'Mejorar movimiento y recuperación con una práctica concreta.', whyEn:'Improve movement and recovery with a concrete practice.', metric:'Sesiones de movilidad', metricEn:'Mobility sessions', unit:'sesiones', unitEn:'sessions', current:0, target:24 },"
-one(checkup, checkup + '\n' + mobility, 'add tenth Self / Yo goal')
-one("salud:['gp_entrenos','gp_strength','gp_checkup']", "salud:['gp_entrenos','gp_strength','gp_checkup','gp_mobility']", 'connect mobility to Health')
-one("deporte:['gp_carrera','gp_entrenos','gp_strength']", "deporte:['gp_carrera','gp_entrenos','gp_strength','gp_mobility']", 'connect mobility to Sport')
+race = "  { id:'gp_carrera', kind:'outcome', cat:'self', name:'Completar una carrera de 10K', nameEn:'Complete a 10K race', why:'Convertir el entrenamiento en un resultado concreto y medible.', whyEn:'Turn training into a concrete, measurable result.', metric:'Distancia de carrera', metricEn:'Race distance', unit:'km', unitEn:'km', current:0, target:10 },"
+one(checkup, checkup + '\n' + race, 'restore missing tenth Self / Yo goal')
 
 # Goal catalog integrity.
 goals_block = src.split('const GOAL_PRESETS = [', 1)[1].split('];', 1)[0]
@@ -71,12 +71,21 @@ dangling = sorted(mapped_ids - defined_ids)
 if dangling:
     raise SystemExit('PROJECT_GOAL_PRESETS contains unknown goal ids: ' + ', '.join(dangling))
 
-# The batch added in the previous expansion round must all be reachable as project suggestions.
+# Every measurable Goal added in the recent expansion round must remain reachable
+# from at least one Project suggestion. gp_carrera is also included because it was
+# already part of the intended Project/quick-start relationship contract.
 new_round = goals_block.split('/* ROUND CX', 1)[1].split("{ id:'vp_disciplina'", 1)[0]
-new_ids = set(re.findall(r"id:'(gp_[^']+)'", new_round)) | {'gp_mobility'}
+new_ids = set(re.findall(r"id:'(gp_[^']+)'", new_round)) | {'gp_carrera'}
 orphan_new = sorted(new_ids - mapped_ids)
 if orphan_new:
     raise SystemExit('new measurable presets without Project suggestions: ' + ', '.join(orphan_new))
+
+# Quick-start references must also resolve to canonical presets.
+quick_block = src.split('const QUICK_START_PACKS = {', 1)[1].split('};', 1)[0]
+quick_goal_ids = set(re.findall(r"'(gp_[^']+)'", quick_block))
+dangling_quick = sorted(quick_goal_ids - defined_ids)
+if dangling_quick:
+    raise SystemExit('QUICK_START_PACKS contains unknown goal ids: ' + ', '.join(dangling_quick))
 
 if src == before:
     raise SystemExit('patch made no changes')
@@ -110,10 +119,11 @@ changelog = '''Suggested Goals onboarding repair
 - Long target values get more room and linked boards use taller scrolling rows.
 - Removed Current route / Ruta actual.
 - Renamed the linked board to Measurable Goals suggested for your Projects / Metas medibles sugeridas para tus Proyectos.
-- Added the tenth Self / Yo measurable Goal: Complete 24 mobility sessions / Completar 24 sesiones de movilidad.
-- Connected the new Goal to Health and Sport Project suggestions.
+- Restored the missing tenth Self / Yo measurable Goal: Complete a 10K race / Completar una carrera de 10K.
+- Repaired the existing gp_carrera Project + Fitness quick-start relationship by restoring its canonical Goal preset.
 - Validated exactly 10 measurable Goal presets in every category.
-- Validated every measurable preset from the previous expansion round is connected to at least one Project suggestion.
+- Validated every measurable preset from the recent expansion round is connected to at least one Project suggestion.
+- Validated Project suggestion and Quick-start Goal references resolve to canonical Goal presets.
 '''
 (pkg / 'CHANGELOG.txt').write_text(changelog, encoding='utf-8')
 
@@ -130,6 +140,6 @@ with zipfile.ZipFile(ZIP, 'w', compression=zipfile.ZIP_DEFLATED, compresslevel=9
             z.write(f, f.relative_to(pkg))
 
 print('Goal counts:', dict(counts))
-print('Validated new project-linked goal presets:', len(new_ids))
+print('Validated recent project-linked goal presets:', len(new_ids))
 print('Inline JS blocks syntax-checked:', len(scripts))
 print('ZIP:', ZIP)
