@@ -8214,6 +8214,16 @@ html[data-theme="light"] #ovEditor.is-finance-archive .fin-archive-month-head sp
 
 /* Theme changes are atomic: no component spends a frame transitioning through stale colors. */
 html.theme-switching,html.theme-switching * ,html.theme-switching *::before,html.theme-switching *::after{transition:none!important}
+
+/* ROUND DB · Suggested Goals: no check circle, stable hover, selection via accent border. */
+.modal.wiz.is-goals .wiz-goal-board-card.is-suggested{transition:border-color .14s var(--ease),background .14s var(--ease)!important}
+.modal.wiz.is-goals .wiz-goal-board-card.is-suggested:hover{transform:none!important;box-shadow:none!important;border-color:color-mix(in srgb,var(--gc) 58%,var(--line2))!important;background:radial-gradient(112px 78px at 100% 0%,color-mix(in srgb,var(--gc) 15%,transparent),transparent 72%),linear-gradient(160deg,var(--raise),var(--panel))!important}
+.modal.wiz.is-goals .wiz-goal-board-card.is-suggested.on{border-color:var(--gc)!important;box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--gc) 34%,transparent)!important;background:radial-gradient(126px 88px at 100% 0%,color-mix(in srgb,var(--gc) 22%,transparent),transparent 72%),linear-gradient(160deg,color-mix(in srgb,var(--gc) 7%,var(--raise)),var(--panel))!important}
+.modal.wiz.is-goals .wiz-goal-board-card.is-suggested .wiz-goal-board-foot{justify-content:flex-start!important}
+.modal.wiz.is-goals .wiz-goal-board-card.is-suggested .wiz-goal-route-chip{max-width:100%!important}
+.modal.wiz.is-goals .wiz-goal-board-card.is-suggested .wiz-goal-board-metric strong{max-width:72%!important;white-space:normal!important;overflow:visible!important;text-overflow:clip!important;line-height:1.15!important;text-wrap:balance}
+.modal.wiz.is-goals .wiz-goal-board-grid:has(.wiz-goal-board-card.is-suggested:nth-child(11)){grid-auto-rows:minmax(148px,auto)!important}
+
 </style>
 </head>
 <body>
@@ -9106,6 +9116,7 @@ const GOAL_PRESETS = [
   { id:'gp_ai_skill', kind:'outcome', cat:'self', name:'Construir 3 automatizaciones útiles con IA', nameEn:'Build 3 useful AI automations', why:'Aprender haciendo cosas que realmente ahorren tiempo.', whyEn:'Learn by building things that genuinely save time.', metric:'Automatizaciones funcionando', metricEn:'Working automations', unit:'automatizaciones', unitEn:'automations', current:0, target:3 },
   { id:'gp_english_interviews', kind:'outcome', cat:'self', name:'Completar 10 entrevistas simuladas en inglés', nameEn:'Complete 10 mock interviews in English', why:'Convertir vocabulario pasivo en desempeño bajo presión.', whyEn:'Turn passive vocabulary into performance under pressure.', metric:'Entrevistas simuladas', metricEn:'Mock interviews', unit:'entrevistas', unitEn:'interviews', current:0, target:10 },
   { id:'gp_checkup', kind:'outcome', cat:'self', name:'Completar un chequeo preventivo', nameEn:'Complete a preventive health check', why:'Resolver pendientes básicos de salud con información real.', whyEn:'Resolve basic health unknowns with real information.', metric:'Chequeo completado', metricEn:'Checkup completed', unit:'%', unitEn:'%', current:0, target:100 },
+  { id:'gp_carrera', kind:'outcome', cat:'self', name:'Completar una carrera de 10K', nameEn:'Complete a 10K race', why:'Convertir el entrenamiento en un resultado concreto y medible.', whyEn:'Turn training into a concrete, measurable result.', metric:'Distancia de carrera', metricEn:'Race distance', unit:'km', unitEn:'km', current:0, target:10 },
 
   { id:'gp_evento', kind:'outcome', cat:'life', name:'Cerrar una celebración dentro del presupuesto', nameEn:'Plan a major celebration within budget', why:'Disfrutar el evento sin convertirlo en desorden financiero.', whyEn:'Enjoy the event without turning it into financial chaos.', metric:'Plan completado', metricEn:'Plan completed', unit:'%', unitEn:'%', current:0, target:100 },
   { id:'gp_relocation', kind:'outcome', cat:'life', name:'Completar el expediente de reubicación', nameEn:'Complete a relocation file', why:'Tener documentos, fechas y presupuesto listos antes de moverte.', whyEn:'Have documents, dates, and budget ready before moving.', metric:'Expediente completado', metricEn:'File completed', unit:'%', unitEn:'%', current:0, target:100 },
@@ -17275,7 +17286,7 @@ function renderWizard() {
       const linkNames = links.map(function (id) { return selectedProjectById[id] ? selectedProjectById[id].name : ''; }).filter(Boolean);
       const linkLabel = linkNames.length ? (linkNames[0] + (linkNames.length > 1 ? ' +' + (linkNames.length - 1) : '')) : '';
       const current = fmtMeasuredValue(g.current,g.unit,true), target = fmtMeasuredValue(g.target,g.unit,true);
-      return '<div role="button" tabindex="0" class="wiz-goal-board-card' + (on ? ' on' : '') + (linkNames.length ? ' is-linked' : '') + '" style="--gc:' + c + '" data-act="wizGoal" data-kind="outcome" data-id="' + esc(g.id) + '">' +
+      return '<div role="button" tabindex="0" class="wiz-goal-board-card' + (on ? ' on' : '') + (linkNames.length ? ' is-linked' : '') + (activeTab === 'linked' ? ' is-suggested' : '') + '" style="--gc:' + c + '" data-act="wizGoal" data-kind="outcome" data-id="' + esc(g.id) + '">' +
         '<div class="wiz-goal-card-head"><span class="wiz-goal-board-ico">' + ico('target') + '</span>' +
           '<b class="wiz-goal-card-title">' + esc(g.name) + '</b>' +
           '<button type="button" class="wiz-goal-board-edit" data-act="wizEditGoal" data-id="' + esc(g.id) + '" title="' + tr('Edit','Editar') + '" aria-label="' + tr('Edit','Editar') + '">' + ico('edit') + '</button></div>' +
@@ -17283,20 +17294,18 @@ function renderWizard() {
         '<div class="wiz-goal-board-metric"><span>' + tr('Target','Objetivo') + '</span><strong>' + esc(target) + '</strong></div>' +
         '<div class="wiz-goal-board-foot">' +
           (linkNames.length ? '<span class="wiz-goal-route-chip">' + ico('briefcase') + '<span>' + esc(linkLabel) + '</span></span>' : '<span class="wiz-goal-route-chip quiet" aria-hidden="true"></span>') +
-          '<span class="wiz-goal-board-check">' + ico('check') + '</span></div></div>';
+          (activeTab === 'linked' ? '' : '<span class="wiz-goal-board-check">' + ico('check') + '</span>') + '</div></div>';
     };
-    const tabButtons = (linkedGoals.length ? '<button type="button" class="wiz-goal-tab special' + (activeTab === 'linked' ? ' on' : '') + '" data-act="wizGoalTab" data-filter="linked"><span class="g">' + ico('target') + '</span><span><b>' + tr('For your Projects','Para tus Proyectos') + '</b><small>' + linkedGoals.length + ' ' + tr('suggested finish lines','destinos sugeridos') + '</small></span></button>' : '') +
+    const tabButtons = (linkedGoals.length ? '<button type="button" class="wiz-goal-tab special' + (activeTab === 'linked' ? ' on' : '') + '" data-act="wizGoalTab" data-filter="linked"><span class="g">' + ico('target') + '</span><span><b>' + tr('For your Projects','Para tus Proyectos') + '</b><small>' + linkedGoals.length + ' ' + tr('suggested goals','metas sugeridas') + '</small></span></button>' : '') +
       catOrder.map(function (cat) {
         const items = allGoals.filter(function (g) { return g.cat === cat; });
         return '<button type="button" class="wiz-goal-tab' + (activeTab === cat ? ' on' : '') + '" style="--gc:' + goalCategoryAccent(cat) + '" data-act="wizGoalTab" data-filter="' + esc(cat) + '"><span class="g">' + ico(goalTabIcon[cat] || 'target') + '</span><span><b>' + esc(goalCategoryLabel(cat)) + '</b><small>' + items.length + ' ' + tr('goals','metas') + '</small></span></button>';
       }).join('');
-    const panelTitle = activeTab === 'linked' ? tr('Finish lines suggested by your Projects','Destinos sugeridos por tus Proyectos') : goalCategoryLabel(activeTab);
+    const panelTitle = activeTab === 'linked' ? tr('Measurable Goals suggested for your Projects','Metas medibles sugeridas para tus Proyectos') : goalCategoryLabel(activeTab);
     const panelSub = activeTab === 'linked'
       ? tr('These presets already know which selected Project they belong to.','Estos presets ya saben a cuál Proyecto elegido pertenecen.')
       : tr('Choose any measurable outcome here. Linked presets keep their Project connection.','Elige cualquier resultado medible. Los presets vinculados conservan su conexión con el Proyecto.');
-    const projectRoute = selectedProjects.length
-      ? '<div class="wiz-goal-route"><span>' + ico('target') + tr('Current route','Ruta actual') + '</span><div>' + selectedProjects.map(function (p) { return '<b style="--pc:' + ((PILLAR_CATS[p.cat] || {}).color || 'var(--cool)') + '">' + ico(p.ico || 'briefcase') + '<span>' + esc(p.name) + '</span></b>'; }).join('') + '</div></div>'
-      : '<div class="wiz-goal-route empty">' + ico('briefcase') + '<span>' + tr('No Projects selected. You can still choose independent Goals.','No elegiste Proyectos. Igual puedes escoger Metas independientes.') + '</span></div>';
+    const projectRoute = '';
     title = ''; subt = '';
     body = '<div class="wiz-step-stack wiz-goal-board-step">' +
       '<div class="wiz-title-row">' +
@@ -17496,7 +17505,7 @@ function openWizItemEditor(kind, id, goalKind) {
   const nuevo = !cur;
   const gKind = goalKind === 'identity' ? 'identity' : 'outcome';
   const v = cur || (esP
-    ? { id:'p_' + Math.random().toString(36).slice(2,7), ico:'briefcase', cat:'self', name:'', sub:'', next:'' }
+    ? { id:'p_' + Math.random().toString(36).slice(2,7), ico:'briefcase', cat:(ui.wiz && PILLAR_CATS[ui.wiz.projectTab] ? ui.wiz.projectTab : 'self'), name:'', sub:'', next:'' }
     : { id:'g_' + Math.random().toString(36).slice(2,7), kind:gKind, cat:'life', unit:'', metric:'', current:0, target:100, name:'', why:'', skillKeys:[] });
   ui.wizItem = { kind:kind, id:v.id, nuevo:nuevo, base:v };
   const editorTitle = esP ? (nuevo ? tr('New project','Nuevo proyecto') : tr('Edit project','Editar proyecto')) :
@@ -17939,7 +17948,7 @@ function wizFinish() {
     const suggestedSkills = packSkill ? [packSkill].concat(PROJECT_HABIT_PRESETS[id] || []) : (PROJECT_HABIT_PRESETS[id] || []);
     const linkedSkill = suggestedSkills.filter(function (k) { return selectedSkillSet.has(k); })[0] || null;
     return normalizePillarRecord({ id:p.id, ico:p.ico || 'briefcase', name:p.name, subtitle:p.sub, status:'building', progress:0,
-      metric:'', next:p.next || '', notes:'', skillKey:linkedSkill, order:i, createdAt:w.date, lastTouched:w.date });
+      metric:'', next:p.next || '', notes:'', category:p.cat || null, skillKey:linkedSkill, order:i, createdAt:w.date, lastTouched:w.date });
   }).filter(Boolean);
   const gdefs = wizGoalDefs();
   state.goals = w.goals.map(function (id) {
