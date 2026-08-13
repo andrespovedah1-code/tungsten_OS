@@ -13,26 +13,28 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
 <script>document.documentElement.classList.add('js')</script>
-<link rel="stylesheet" href="./assets/landing/css-1.css">
-<link rel="stylesheet" href="./assets/landing/css-2.css">
-<link rel="stylesheet" href="./assets/landing/css-3.css">
-<link rel="stylesheet" href="./assets/landing/css-4.css">
-<link rel="stylesheet" href="./assets/landing/css-5.css">
-<link rel="stylesheet" href="./assets/landing/css-6.css">
-<link rel="stylesheet" href="./assets/landing/css-7.css">
-<link rel="stylesheet" href="./assets/landing/css-8.css">
 </head>
 <body>
 <div id="landing-root" aria-live="polite"></div>
 <noscript><div style="padding:48px;color:#edf2f8;background:#06080c;font-family:Arial,sans-serif">Tungsten Pro necesita JavaScript para mostrar esta página.</div></noscript>
 <script>
 (async function(){
- const files=[1,2,3,4,5,6,7,8].map(i=>`./assets/landing/html-${i}.html`);
+ const cssFiles=[1,2,3,4,5,6,7,8].map(i=>`./assets/landing/css-${i}.css`);
+ const htmlFiles=[1,2,3,4,5,6,7,8].map(i=>`./assets/landing/html-${i}.html`);
  try{
-   const parts=await Promise.all(files.map(async f=>{const r=await fetch(f,{cache:"no-store"});if(!r.ok)throw new Error(f+" "+r.status);return r.text()}));
-   const root=document.getElementById("landing-root"); root.outerHTML=parts.join("");
-   const s=document.createElement("script");s.src="./assets/landing/landing.js";s.defer=true;document.body.appendChild(s);
- }catch(e){console.error(e);document.getElementById("landing-root").innerHTML="<div style='padding:48px;color:#edf2f8;background:#06080c;font-family:Arial,sans-serif'>No se pudo cargar Tungsten Pro.</div>"}
+   const [cssParts,htmlParts,imagePayload]=await Promise.all([
+     Promise.all(cssFiles.map(async f=>{const r=await fetch(f,{cache:'no-store'});if(!r.ok)throw new Error(f+' '+r.status);return r.text()})),
+     Promise.all(htmlFiles.map(async f=>{const r=await fetch(f,{cache:'no-store'});if(!r.ok)throw new Error(f+' '+r.status);return r.text()})),
+     fetch('./assets/landing/data/images.txt',{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('images '+r.status);return r.text()})
+   ]);
+   const style=document.createElement('style');style.textContent=cssParts.join('');document.head.appendChild(style);
+   let body=htmlParts.join('');
+   const parts=imagePayload.trim().split(/(?=UklG)/g).filter(Boolean);
+   if(parts.length<6) throw new Error('Landing image payload incomplete');
+   for(let i=1;i<=6;i++) body=body.split(`./assets/landing/tungsten-img-${i}.webp`).join(`data:image/webp;base64,${parts[i-1]}`);
+   const root=document.getElementById('landing-root');root.outerHTML=body;
+   const s=document.createElement('script');s.src='./assets/landing/landing.js';s.defer=true;document.body.appendChild(s);
+ }catch(e){console.error(e);const root=document.getElementById('landing-root');if(root)root.innerHTML="<div style='padding:48px;color:#edf2f8;background:#06080c;font-family:Arial,sans-serif'>No se pudo cargar Tungsten Pro.</div>"}
 })();
 </script>
 </body>
