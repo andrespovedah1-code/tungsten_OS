@@ -1,0 +1,2125 @@
+{
+  "format": "tungsten-backup",
+  "version": 5,
+  "app": "tungsten-os-core",
+  "exportedAt": "2026-08-12T17:30:00.000Z",
+  "state": {
+    "schemaVersion": 16,
+    "startDate": "2026-07-23",
+    "currentDate": "2026-08-12",
+    "skills": {
+      "foco": {
+        "level": 2,
+        "progress": 1.8,
+        "peak": 2
+      },
+      "planear": {
+        "level": 2,
+        "progress": 1.7,
+        "peak": 2
+      },
+      "mover": {
+        "level": 2,
+        "progress": 0.4,
+        "peak": 2
+      },
+      "gastos": {
+        "level": 2,
+        "progress": 1.6,
+        "peak": 2
+      },
+      "ingles": {
+        "level": 1,
+        "progress": 14.7,
+        "peak": 1
+      },
+      "lectura": {
+        "level": 1,
+        "progress": 21.3,
+        "peak": 1
+      },
+      "fuerza": {
+        "level": 1,
+        "progress": 10.9,
+        "peak": 1
+      },
+      "sueno": {
+        "level": 1,
+        "progress": 20.1,
+        "peak": 1
+      },
+      "cocinar": {
+        "level": 1,
+        "progress": 13.2,
+        "peak": 1
+      },
+      "familia": {
+        "level": 1,
+        "progress": 10.7,
+        "peak": 1
+      },
+      "diario": {
+        "level": 1,
+        "progress": 13.5,
+        "peak": 1
+      }
+    },
+    "skillDefs": [
+      {
+        "key": "foco",
+        "grp": "mente",
+        "ico": "bolt",
+        "color": "#0F52BA",
+        "name": "Trabajo profundo",
+        "desc": "Sesenta minutos sin correo, chat ni teléfono."
+      },
+      {
+        "key": "planear",
+        "grp": "mente",
+        "ico": "clockin",
+        "color": "#A3A3A3",
+        "name": "Planear el día",
+        "desc": "Definir tres prioridades antes de empezar."
+      },
+      {
+        "key": "mover",
+        "grp": "cuerpo",
+        "ico": "walk",
+        "color": "#228B22",
+        "name": "Caminar 30 min",
+        "desc": "Salir a caminar o hacer movilidad durante media hora."
+      },
+      {
+        "key": "gastos",
+        "grp": "plata",
+        "ico": "dollar",
+        "color": "#DAA520",
+        "name": "Registrar gastos",
+        "desc": "Anotar los gastos del día antes de dormir."
+      },
+      {
+        "key": "ingles",
+        "grp": "mente",
+        "ico": "language",
+        "color": "#4ADE80",
+        "name": "Inglés 20 min",
+        "desc": "Escucha, vocabulario o conversación enfocada en situaciones reales."
+      },
+      {
+        "key": "lectura",
+        "grp": "mente",
+        "ico": "book",
+        "color": "#5B9CFF",
+        "name": "Leer 20 min",
+        "desc": "Leer sin saltar entre aplicaciones."
+      },
+      {
+        "key": "fuerza",
+        "grp": "cuerpo",
+        "ico": "dumbbell",
+        "color": "#2FD492",
+        "name": "Fuerza o carrera",
+        "desc": "Sesión de fuerza, trote suave o trabajo de movilidad."
+      },
+      {
+        "key": "sueno",
+        "grp": "cuerpo",
+        "ico": "bed",
+        "color": "#7C8BA1",
+        "name": "Dormir 7+ horas",
+        "desc": "Proteger una noche completa de sueño."
+      },
+      {
+        "key": "cocinar",
+        "grp": "vida",
+        "ico": "cook",
+        "color": "#FB923C",
+        "name": "Cocinar en casa",
+        "desc": "Preparar al menos una comida en casa."
+      },
+      {
+        "key": "familia",
+        "grp": "vida",
+        "ico": "users",
+        "color": "#F472B6",
+        "name": "Tiempo con los míos",
+        "desc": "Una conversación o rato presente sin multitarea."
+      },
+      {
+        "key": "diario",
+        "grp": "mente",
+        "ico": "pen",
+        "color": "#4B0082",
+        "name": "Escribir 5 min",
+        "desc": "Dejar unas líneas sobre el día sin convertirlo en otra tarea perfecta."
+      }
+    ],
+    "logs": {
+      "2026-07-23": {
+        "date": "2026-07-23",
+        "completed": [
+          "foco",
+          "planear",
+          "mover",
+          "gastos",
+          "lectura",
+          "cocinar",
+          "sueno"
+        ],
+        "notes": "Arranqué el día queriendo responder todo a la vez. Las tres prioridades me ayudaron a no convertir la mañana en puro chat.",
+        "goals": "",
+        "todos": [
+          {
+            "t": "Comprar extensión para el escritorio",
+            "done": true
+          },
+          {
+            "t": "Responder correo de la administración",
+            "done": true
+          },
+          {
+            "t": "Pedir cita de optometría",
+            "done": false
+          }
+        ],
+        "goalCompletions": [],
+        "earned": {
+          "foco": 1.03,
+          "planear": 1.03,
+          "mover": 1.03,
+          "gastos": 1.03,
+          "lectura": 1.03,
+          "cocinar": 1.03,
+          "sueno": 1.03
+        }
+      },
+      "2026-07-24": {
+        "date": "2026-07-24",
+        "completed": [
+          "foco",
+          "planear",
+          "mover",
+          "gastos",
+          "ingles",
+          "lectura",
+          "sueno",
+          "diario"
+        ],
+        "notes": "Dejé el celular en la sala durante el bloque de foco y terminé el análisis antes de la reunión.\r\n···············\r\nCaminé después de almuerzo; volví con mejor cabeza para la tarde.",
+        "goals": "",
+        "todos": [
+          {
+            "t": "Enviar soporte del arriendo",
+            "done": true
+          },
+          {
+            "t": "Comprar fruta y avena",
+            "done": true
+          }
+        ],
+        "goalCompletions": [],
+        "earned": {
+          "foco": 1.06,
+          "planear": 1.06,
+          "mover": 1.06,
+          "gastos": 1.06,
+          "ingles": 1.06,
+          "lectura": 1.06,
+          "sueno": 1.06,
+          "diario": 1.06
+        }
+      },
+      "2026-07-25": {
+        "date": "2026-07-25",
+        "completed": [
+          "foco",
+          "planear",
+          "gastos",
+          "ingles",
+          "fuerza",
+          "cocinar",
+          "familia"
+        ],
+        "notes": "La lluvia me cambió el plan de salir a correr, así que hice una sesión corta en casa. No fue lo planeado, pero sí suficiente.",
+        "goals": "",
+        "todos": [
+          {
+            "t": "Revisar extracto de la tarjeta",
+            "done": true
+          },
+          {
+            "t": "Cambiar el filtro de agua",
+            "done": false
+          }
+        ],
+        "goalCompletions": [],
+        "earned": {
+          "foco": 1.09,
+          "planear": 1.09,
+          "gastos": 1.09,
+          "ingles": 1.09,
+          "fuerza": 1.09,
+          "cocinar": 1.09,
+          "familia": 1.09
+        }
+      },
+      "2026-07-26": {
+        "date": "2026-07-26",
+        "completed": [
+          "foco",
+          "planear",
+          "mover",
+          "gastos",
+          "lectura",
+          "sueno",
+          "diario"
+        ],
+        "notes": "",
+        "goals": "",
+        "todos": [
+          {
+            "t": "Lavar sábanas",
+            "done": true
+          },
+          {
+            "t": "Confirmar conversación de inglés",
+            "done": true
+          },
+          {
+            "t": "Descargar certificado laboral",
+            "done": true
+          }
+        ],
+        "goalCompletions": [],
+        "earned": {
+          "foco": 1.12,
+          "planear": 1.12,
+          "mover": 1.12,
+          "gastos": 1.12,
+          "lectura": 1.12,
+          "sueno": 1.12,
+          "diario": 1.12
+        }
+      },
+      "2026-07-27": {
+        "date": "2026-07-27",
+        "completed": [
+          "planear",
+          "mover",
+          "gastos",
+          "ingles",
+          "lectura",
+          "cocinar",
+          "familia",
+          "sueno"
+        ],
+        "notes": "Hoy no hice trabajo profundo. Entre vueltas de la casa y mensajes pendientes, sentí que hice muchas cosas pequeñas pero ninguna importante.\r\n···············\r\nDejar comida lista para mañana sí me quitó una preocupación.",
+        "goals": "",
+        "todos": [
+          {
+            "t": "Hacer mercado",
+            "done": true
+          },
+          {
+            "t": "Llamar a mi papá",
+            "done": true
+          }
+        ],
+        "goalCompletions": [],
+        "earned": {
+          "planear": 1.15,
+          "mover": 1.15,
+          "gastos": 1.15,
+          "ingles": 1.15,
+          "lectura": 1.15,
+          "cocinar": 1.15,
+          "familia": 1.15,
+          "sueno": 1.15
+        }
+      },
+      "2026-07-28": {
+        "date": "2026-07-28",
+        "completed": [
+          "foco",
+          "planear",
+          "mover",
+          "gastos",
+          "fuerza",
+          "lectura",
+          "diario"
+        ],
+        "notes": "",
+        "goals": "",
+        "todos": [
+          {
+            "t": "Separar reciclaje",
+            "done": true
+          },
+          {
+            "t": "Enviar avance del tablero a Laura",
+            "done": true
+          },
+          {
+            "t": "Comprar jabón para la ropa",
+            "done": true
+          }
+        ],
+        "goalCompletions": [],
+        "earned": {
+          "foco": 1.18,
+          "planear": 1.18,
+          "mover": 1.18,
+          "gastos": 1.18,
+          "fuerza": 1.18,
+          "lectura": 1.18,
+          "diario": 1.18
+        }
+      },
+      "2026-07-29": {
+        "date": "2026-07-29",
+        "completed": [
+          "foco",
+          "mover",
+          "gastos",
+          "ingles",
+          "cocinar",
+          "familia",
+          "sueno"
+        ],
+        "notes": "Empecé sin revisar el día y terminé aceptando dos reuniones que podía mover. Mañana Tungsten antes de abrir el correo.",
+        "goals": "",
+        "todos": [
+          {
+            "t": "Pagar internet",
+            "done": true
+          },
+          {
+            "t": "Agendar mantenimiento de la bici",
+            "done": false
+          }
+        ],
+        "goalCompletions": [],
+        "earned": {
+          "foco": 1.21,
+          "mover": 1.21,
+          "gastos": 1.21,
+          "ingles": 1.21,
+          "cocinar": 1.21,
+          "familia": 1.21,
+          "sueno": 1.21
+        }
+      },
+      "2026-07-30": {
+        "date": "2026-07-30",
+        "completed": [
+          "foco",
+          "planear",
+          "mover",
+          "gastos",
+          "lectura",
+          "fuerza",
+          "sueno"
+        ],
+        "notes": "",
+        "goals": "",
+        "todos": [
+          {
+            "t": "Cambiar clave del banco",
+            "done": true
+          },
+          {
+            "t": "Recargar la Cívica",
+            "done": true
+          }
+        ],
+        "goalCompletions": [],
+        "earned": {
+          "foco": 1.24,
+          "planear": 1.24,
+          "mover": 1.24,
+          "gastos": 1.24,
+          "lectura": 1.24,
+          "fuerza": 1.24,
+          "sueno": 1.24
+        }
+      },
+      "2026-07-31": {
+        "date": "2026-07-31",
+        "completed": [
+          "foco",
+          "planear",
+          "mover",
+          "gastos",
+          "ingles",
+          "lectura",
+          "diario",
+          "cocinar"
+        ],
+        "notes": "La llamada con mi papá fue corta, pero sin mirar el computador al mismo tiempo. Mucho mejor así.",
+        "goals": "",
+        "todos": [
+          {
+            "t": "Enviar formulario de vacaciones",
+            "done": true
+          },
+          {
+            "t": "Sacar cables viejos para reciclar",
+            "done": true
+          }
+        ],
+        "goalCompletions": [],
+        "earned": {
+          "foco": 1.27,
+          "planear": 1.27,
+          "mover": 1.27,
+          "gastos": 1.27,
+          "ingles": 1.27,
+          "lectura": 1.27,
+          "diario": 1.27,
+          "cocinar": 1.27
+        }
+      },
+      "2026-08-01": {
+        "date": "2026-08-01",
+        "completed": [
+          "foco",
+          "planear",
+          "mover",
+          "gastos",
+          "lectura",
+          "familia",
+          "sueno"
+        ],
+        "notes": "",
+        "goals": "",
+        "todos": [
+          {
+            "t": "Reservar almuerzo del domingo",
+            "done": true
+          },
+          {
+            "t": "Comprar regalo de cumpleaños",
+            "done": false
+          }
+        ],
+        "goalCompletions": [],
+        "earned": {
+          "foco": 1.3,
+          "planear": 1.3,
+          "mover": 1.3,
+          "gastos": 1.3,
+          "lectura": 1.3,
+          "familia": 1.3,
+          "sueno": 1.3
+        }
+      },
+      "2026-08-02": {
+        "date": "2026-08-02",
+        "completed": [
+          "foco",
+          "planear",
+          "mover",
+          "ingles",
+          "fuerza",
+          "diario",
+          "sueno"
+        ],
+        "notes": "No registré los gastos al momento y en la noche tuve que reconstruir dos pagos. La memoria no es un sistema.\r\n···············\r\nTrotar temprano me funcionó mejor que intentar hacerlo a las siete de la noche.",
+        "goals": "",
+        "todos": [
+          {
+            "t": "Pagar tarjeta de crédito",
+            "done": true
+          },
+          {
+            "t": "Imprimir documento para el banco",
+            "done": true
+          }
+        ],
+        "goalCompletions": [],
+        "earned": {
+          "foco": 1.33,
+          "planear": 1.33,
+          "mover": 1.33,
+          "ingles": 1.33,
+          "fuerza": 1.33,
+          "diario": 1.33,
+          "sueno": 1.33
+        }
+      },
+      "2026-08-03": {
+        "date": "2026-08-03",
+        "completed": [
+          "foco",
+          "planear",
+          "mover",
+          "gastos",
+          "lectura",
+          "cocinar",
+          "familia"
+        ],
+        "notes": "La revisión del tablero salió bien porque llevé una recomendación, no solo una lista de problemas.\r\n···············\r\nTodavía reviso Slack demasiado durante los bloques de foco.",
+        "goals": "",
+        "todos": [
+          {
+            "t": "Enviar minuta de la reunión",
+            "done": true
+          },
+          {
+            "t": "Comprar gotas para los ojos",
+            "done": true
+          }
+        ],
+        "goalCompletions": [],
+        "earned": {
+          "foco": 1.36,
+          "planear": 1.36,
+          "mover": 1.36,
+          "gastos": 1.36,
+          "lectura": 1.36,
+          "cocinar": 1.36,
+          "familia": 1.36
+        }
+      },
+      "2026-08-04": {
+        "date": "2026-08-04",
+        "completed": [
+          "foco",
+          "planear",
+          "mover",
+          "gastos",
+          "ingles",
+          "lectura",
+          "sueno",
+          "diario"
+        ],
+        "notes": "",
+        "goals": "",
+        "todos": [
+          {
+            "t": "Llevar camisa a la lavandería",
+            "done": true
+          },
+          {
+            "t": "Revisar presupuesto de agosto",
+            "done": true
+          }
+        ],
+        "goalCompletions": [],
+        "earned": {
+          "foco": 1.39,
+          "planear": 1.39,
+          "mover": 1.39,
+          "gastos": 1.39,
+          "ingles": 1.39,
+          "lectura": 1.39,
+          "sueno": 1.39,
+          "diario": 1.39
+        }
+      },
+      "2026-08-05": {
+        "date": "2026-08-05",
+        "completed": [
+          "foco",
+          "planear",
+          "gastos",
+          "fuerza",
+          "cocinar",
+          "sueno"
+        ],
+        "notes": "Las piernas estaban pesadas, así que bajé el ritmo y caminé. Mantener la rutina sin forzarla fue mejor decisión.\r\n···············\r\nCocinar de una vez me dejó dos almuerzos resueltos.",
+        "goals": "",
+        "todos": [
+          {
+            "t": "Comprar verduras",
+            "done": true
+          },
+          {
+            "t": "Responder mensaje de la inmobiliaria",
+            "done": false
+          }
+        ],
+        "goalCompletions": [],
+        "earned": {
+          "foco": 1.42,
+          "planear": 1.42,
+          "gastos": 1.42,
+          "fuerza": 1.42,
+          "cocinar": 1.42,
+          "sueno": 1.42
+        }
+      },
+      "2026-08-06": {
+        "date": "2026-08-06",
+        "completed": [
+          "foco",
+          "planear",
+          "mover",
+          "gastos",
+          "ingles",
+          "lectura",
+          "familia",
+          "diario"
+        ],
+        "notes": "Veinte minutos de inglés casi todos los días están dando más resultado que una clase larga que termino aplazando.",
+        "goals": "",
+        "todos": [
+          {
+            "t": "Confirmar optometría",
+            "done": true
+          },
+          {
+            "t": "Hacer copia de seguridad del celular",
+            "done": true
+          }
+        ],
+        "goalCompletions": [
+          {
+            "id": "g_sql",
+            "title": "Terminar curso práctico de SQL",
+            "current": 10,
+            "target": 10,
+            "unit": "lecciones"
+          }
+        ],
+        "earned": {
+          "foco": 1.45,
+          "planear": 1.45,
+          "mover": 1.45,
+          "gastos": 1.45,
+          "ingles": 1.45,
+          "lectura": 1.45,
+          "familia": 1.45,
+          "diario": 1.45
+        }
+      },
+      "2026-08-07": {
+        "date": "2026-08-07",
+        "completed": [
+          "foco",
+          "planear",
+          "mover",
+          "gastos",
+          "lectura",
+          "fuerza",
+          "cocinar",
+          "sueno"
+        ],
+        "notes": "Hoy sí quedó un bloque limpio entre reuniones. Al principio sentí que debía llenarlo; después fue el tramo más productivo del día.",
+        "goals": "",
+        "todos": [
+          {
+            "t": "Transferir aporte al fondo de emergencia",
+            "done": true
+          },
+          {
+            "t": "Pedir factura del gimnasio",
+            "done": true
+          }
+        ],
+        "goalCompletions": [],
+        "earned": {
+          "foco": 1.48,
+          "planear": 1.48,
+          "mover": 1.48,
+          "gastos": 1.48,
+          "lectura": 1.48,
+          "fuerza": 1.48,
+          "cocinar": 1.48,
+          "sueno": 1.48
+        }
+      },
+      "2026-08-08": {
+        "date": "2026-08-08",
+        "completed": [
+          "foco",
+          "planear",
+          "mover",
+          "gastos",
+          "ingles",
+          "lectura",
+          "diario"
+        ],
+        "notes": "",
+        "goals": "",
+        "todos": [
+          {
+            "t": "Comprar detergente",
+            "done": true
+          },
+          {
+            "t": "Revisar fecha de mantenimiento de la bici",
+            "done": true
+          }
+        ],
+        "goalCompletions": [],
+        "earned": {
+          "foco": 1.51,
+          "planear": 1.51,
+          "mover": 1.51,
+          "gastos": 1.51,
+          "ingles": 1.51,
+          "lectura": 1.51,
+          "diario": 1.51
+        }
+      },
+      "2026-08-09": {
+        "date": "2026-08-09",
+        "completed": [
+          "foco",
+          "planear",
+          "mover",
+          "gastos",
+          "fuerza",
+          "familia",
+          "sueno"
+        ],
+        "notes": "Estoy gastando más de lo que pensaba en almuerzos por fuera. No es grave, pero ya aparece como patrón y no como excepción.",
+        "goals": "",
+        "todos": [
+          {
+            "t": "Actualizar gastos compartidos del viaje",
+            "done": true
+          },
+          {
+            "t": "Comprar café para la casa",
+            "done": true
+          }
+        ],
+        "goalCompletions": [],
+        "earned": {
+          "foco": 1.54,
+          "planear": 1.54,
+          "mover": 1.54,
+          "gastos": 1.54,
+          "fuerza": 1.54,
+          "familia": 1.54,
+          "sueno": 1.54
+        }
+      },
+      "2026-08-10": {
+        "date": "2026-08-10",
+        "completed": [
+          "foco",
+          "planear",
+          "mover",
+          "gastos",
+          "ingles",
+          "lectura",
+          "cocinar",
+          "diario",
+          "sueno"
+        ],
+        "notes": "Dormí mejor dejando el portátil fuera de la cama.\r\n···············\r\nAvancé con las fotos familiares sin intentar organizar veinte años en una sola tarde.",
+        "goals": "",
+        "todos": [
+          {
+            "t": "Escanear 30 fotos familiares",
+            "done": true
+          },
+          {
+            "t": "Devolver libro a Mateo",
+            "done": false
+          }
+        ],
+        "goalCompletions": [],
+        "earned": {
+          "foco": 1.57,
+          "planear": 1.57,
+          "mover": 1.57,
+          "gastos": 1.57,
+          "ingles": 1.57,
+          "lectura": 1.57,
+          "cocinar": 1.57,
+          "diario": 1.57,
+          "sueno": 1.57
+        }
+      },
+      "2026-08-11": {
+        "date": "2026-08-11",
+        "completed": [
+          "foco",
+          "planear",
+          "mover",
+          "gastos",
+          "lectura",
+          "fuerza",
+          "familia",
+          "sueno"
+        ],
+        "notes": "Buen día sin nada espectacular: trabajo terminado, trote suave y comida con mi hermana. No todo progreso necesita sentirse intenso.",
+        "goals": "",
+        "todos": [
+          {
+            "t": "Llamar a mi hermana",
+            "done": true
+          },
+          {
+            "t": "Dejar ropa para correr lista",
+            "done": true
+          }
+        ],
+        "goalCompletions": [],
+        "earned": {
+          "foco": 1.6,
+          "planear": 1.6,
+          "mover": 1.6,
+          "gastos": 1.6,
+          "lectura": 1.6,
+          "fuerza": 1.6,
+          "familia": 1.6,
+          "sueno": 1.6
+        }
+      },
+      "2026-08-12": {
+        "date": "2026-08-12",
+        "completed": [
+          "foco",
+          "planear",
+          "mover",
+          "gastos",
+          "ingles",
+          "lectura",
+          "cocinar",
+          "sueno",
+          "diario"
+        ],
+        "notes": "El tablero está casi listo. Hoy toca dejar de mover tarjetas y validar los números.\r\n···············\r\nSeparé el ahorro apenas entró el pago extra; si se queda mezclado en la cuenta corriente, se va gastando sin darme cuenta.",
+        "goals": "",
+        "todos": [
+          {
+            "t": "Enviar acuerdo firmado",
+            "done": true
+          },
+          {
+            "t": "Comprar bombillos para la sala",
+            "done": false
+          },
+          {
+            "t": "Pedir cita de limpieza dental",
+            "done": false
+          },
+          {
+            "t": "Separar pago extra al ahorro",
+            "done": true
+          }
+        ],
+        "goalCompletions": [],
+        "earned": {
+          "foco": 1.63,
+          "planear": 1.63,
+          "mover": 1.63,
+          "gastos": 1.63,
+          "ingles": 1.63,
+          "lectura": 1.63,
+          "cocinar": 1.63,
+          "sueno": 1.63,
+          "diario": 1.63
+        }
+      }
+    },
+    "hidden": [],
+    "core": [
+      "foco",
+      "planear",
+      "mover",
+      "gastos"
+    ],
+    "lastExport": null,
+    "pillars": [
+      {
+        "id": "activacion",
+        "name": "Tablero de activación de producto",
+        "ico": "briefcase",
+        "subtitle": "Dejar en una sola vista las señales importantes del onboarding",
+        "status": "active",
+        "progress": 68,
+        "metric": "4 de 6 métricas validadas",
+        "next": "Validar la cohorte de la última semana y cerrar definiciones",
+        "notes": "El diseño ya está acordado. Falta revisar dos cálculos con datos reales y limpiar el estado vacío.",
+        "category": "craft",
+        "skillKey": "foco",
+        "goalId": "g_tablero",
+        "lastTouched": "2026-08-12",
+        "createdAt": "2026-07-09",
+        "order": 0,
+        "sessions": [
+          {
+            "id": "ss_a1",
+            "date": "2026-07-30",
+            "note": "Definí la estructura y saqué dos métricas que nadie estaba usando.",
+            "mins": 90
+          },
+          {
+            "id": "ss_a2",
+            "date": "2026-08-06",
+            "note": "Revisión de cohortes con Laura y ajuste del embudo.",
+            "mins": 75
+          },
+          {
+            "id": "ss_a3",
+            "date": "2026-08-12",
+            "note": "Cerré activación por canal y validé eventos faltantes.",
+            "mins": 85
+          }
+        ]
+      },
+      {
+        "id": "ingles_p",
+        "name": "Inglés para reuniones",
+        "ico": "language",
+        "subtitle": "Hablar con más soltura sin preparar cada frase",
+        "status": "building",
+        "progress": 35,
+        "metric": "7 de 20 conversaciones",
+        "next": "Preparar tres temas para la práctica del jueves",
+        "notes": "Los audios cortos ayudan, pero lo que más mueve la aguja es hablar aunque cometa errores.",
+        "category": "self",
+        "skillKey": "ingles",
+        "goalId": "g_ingles",
+        "lastTouched": "2026-08-12",
+        "createdAt": "2026-06-24",
+        "order": 1,
+        "sessions": [
+          {
+            "id": "ss_i1",
+            "date": "2026-07-29",
+            "note": "Conversación de 25 min: trabajo remoto y viajes.",
+            "mins": 25
+          },
+          {
+            "id": "ss_i2",
+            "date": "2026-08-05",
+            "note": "Práctica de presentar resultados y responder preguntas.",
+            "mins": 45
+          },
+          {
+            "id": "ss_i3",
+            "date": "2026-08-10",
+            "note": "Audio + conversación corta sobre decisiones de producto.",
+            "mins": 30
+          }
+        ]
+      },
+      {
+        "id": "correr",
+        "name": "Volver a correr 10K",
+        "ico": "dumbbell",
+        "subtitle": "Recuperar base sin convertir cada salida en una prueba",
+        "status": "active",
+        "progress": 44,
+        "metric": "8 de 18 sesiones",
+        "next": "Trote suave de 6 km el sábado",
+        "notes": "Sin molestias. Mantener un ritmo cómodo y una sesión de fuerza a la semana.",
+        "category": "self",
+        "skillKey": "fuerza",
+        "goalId": "g_correr",
+        "lastTouched": "2026-08-11",
+        "createdAt": "2026-07-03",
+        "order": 2,
+        "sessions": [
+          {
+            "id": "ss_c1",
+            "date": "2026-07-26",
+            "note": "4 km suaves + movilidad.",
+            "mins": 38
+          },
+          {
+            "id": "ss_c2",
+            "date": "2026-08-03",
+            "note": "5 km tranquilos, sin mirar el ritmo todo el tiempo.",
+            "mins": 46
+          },
+          {
+            "id": "ss_c3",
+            "date": "2026-08-11",
+            "note": "Fuerza corta + 20 min suaves.",
+            "mins": 55
+          }
+        ]
+      },
+      {
+        "id": "archivo",
+        "name": "Ordenar el archivo familiar",
+        "ico": "home",
+        "subtitle": "Escanear, nombrar y respaldar fotos y documentos viejos",
+        "status": "building",
+        "progress": 45,
+        "metric": "180 de 400 archivos listos",
+        "next": "Escanear el siguiente lote y hacer copia en disco externo",
+        "notes": "Ya quedó organizada la caja de fotos de los 2000. Mejor avanzar por lotes pequeños.",
+        "category": "side",
+        "skillKey": "planear",
+        "goalId": "g_archivo",
+        "lastTouched": "2026-08-10",
+        "createdAt": "2026-07-20",
+        "order": 3,
+        "sessions": [
+          {
+            "id": "ss_f1",
+            "date": "2026-07-27",
+            "note": "Clasifiqué 70 fotos y descarté duplicados.",
+            "mins": 80
+          },
+          {
+            "id": "ss_f2",
+            "date": "2026-08-10",
+            "note": "Escaneé 55 fotos y dejé nombres consistentes.",
+            "mins": 70
+          }
+        ]
+      },
+      {
+        "id": "finanzas_p",
+        "name": "Fondo de emergencia",
+        "ico": "piggy",
+        "subtitle": "Llegar a dos meses de gastos sin dejar el ahorro para lo que sobre",
+        "status": "building",
+        "progress": 41,
+        "metric": "6,2M de 15M COP",
+        "next": "Mantener el aporte automático y separar ingresos extra",
+        "notes": "Aporte de agosto hecho. El pago extra de esta semana también fue directo al fondo.",
+        "category": "capital",
+        "skillKey": "gastos",
+        "goalId": "g_fondo",
+        "lastTouched": "2026-08-12",
+        "createdAt": "2026-05-10",
+        "order": 4,
+        "sessions": []
+      },
+      {
+        "id": "curso_sql",
+        "name": "Curso práctico de SQL",
+        "ico": "book",
+        "subtitle": "Resolver consultas de producto sin depender siempre del equipo de datos",
+        "status": "done",
+        "progress": 100,
+        "metric": "10 de 10 lecciones",
+        "next": "Usar una consulta del curso en el tablero de activación",
+        "notes": "Terminado el 6 de agosto. Dejé una hoja con consultas que sí voy a reutilizar.",
+        "category": "craft",
+        "skillKey": "lectura",
+        "goalId": "g_sql",
+        "lastTouched": "2026-08-06",
+        "createdAt": "2026-07-01",
+        "order": 5,
+        "sessions": [
+          {
+            "id": "ss_q1",
+            "date": "2026-07-25",
+            "note": "Lecciones 6 y 7 + ejercicios de joins.",
+            "mins": 75
+          },
+          {
+            "id": "ss_q2",
+            "date": "2026-08-06",
+            "note": "Lecciones 9 y 10 + ejercicio final.",
+            "mins": 100
+          }
+        ]
+      },
+      {
+        "id": "portafolio",
+        "name": "Actualizar portafolio profesional",
+        "ico": "briefcase",
+        "subtitle": "Convertir trabajo reciente en algo claro que pueda compartir sin explicar demasiado",
+        "status": "building",
+        "progress": 40,
+        "metric": "2 de 5 secciones listas",
+        "next": "Escribir el caso corto del tablero de activación",
+        "notes": "La estructura ya existe. Falta bajar dos proyectos a casos cortos y pedir una revisión externa.",
+        "category": "craft",
+        "skillKey": "foco",
+        "goalId": "g_portafolio",
+        "lastTouched": "2026-08-09",
+        "createdAt": "2026-08-01",
+        "order": 6,
+        "sessions": [
+          {
+            "id": "ss_p1",
+            "date": "2026-08-04",
+            "note": "Elegí trabajos que sí muestran criterio y eliminé ejemplos viejos.",
+            "mins": 55
+          },
+          {
+            "id": "ss_p2",
+            "date": "2026-08-09",
+            "note": "Armé la estructura del caso de activación y seleccioné capturas.",
+            "mins": 70
+          }
+        ]
+      },
+      {
+        "id": "almuerzos",
+        "name": "Almuerzos de semana",
+        "ico": "home",
+        "subtitle": "Resolver parte de la comida de oficina sin depender de comprar algo a última hora",
+        "status": "active",
+        "progress": 50,
+        "metric": "2 de 4 semanas cumplidas",
+        "next": "Dejar dos almuerzos listos el domingo",
+        "notes": "No busca cocinar perfecto: dos preparaciones simples y una opción de respaldo son suficientes.",
+        "category": "self",
+        "skillKey": "cocinar",
+        "goalId": "g_almuerzos",
+        "lastTouched": "2026-08-10",
+        "createdAt": "2026-07-28",
+        "order": 7,
+        "sessions": [
+          {
+            "id": "ss_m1",
+            "date": "2026-08-02",
+            "note": "Probé una base de arroz, verduras y pollo que aguantó bien dos días.",
+            "mins": 65
+          },
+          {
+            "id": "ss_m2",
+            "date": "2026-08-10",
+            "note": "Ajusté cantidades y dejé una lista corta de compras recurrentes.",
+            "mins": 50
+          }
+        ]
+      }
+    ],
+    "moves": [
+      {
+        "id": "mv_01",
+        "text": "Validar la cohorte de activación de la última semana",
+        "pillarId": "activacion",
+        "goalId": "g_tablero",
+        "skillKey": "foco",
+        "prio": 1,
+        "done": false,
+        "createdAt": "2026-08-11",
+        "dueDate": "2026-08-13"
+      },
+      {
+        "id": "mv_02",
+        "text": "Enviar tablero v1 a Laura para revisión final",
+        "pillarId": "activacion",
+        "goalId": "g_tablero",
+        "skillKey": "foco",
+        "prio": 1,
+        "done": false,
+        "createdAt": "2026-08-08",
+        "dueDate": "2026-08-14"
+      },
+      {
+        "id": "mv_03",
+        "text": "Preparar tres temas para la conversación en inglés",
+        "pillarId": "ingles_p",
+        "goalId": "g_ingles",
+        "skillKey": "ingles",
+        "prio": 2,
+        "done": false,
+        "createdAt": "2026-08-10",
+        "dueDate": "2026-08-13"
+      },
+      {
+        "id": "mv_04",
+        "text": "Hacer trote suave de 6 km",
+        "pillarId": "correr",
+        "goalId": "g_correr",
+        "skillKey": "fuerza",
+        "prio": 1,
+        "done": false,
+        "createdAt": "2026-08-11",
+        "dueDate": "2026-08-15"
+      },
+      {
+        "id": "mv_05",
+        "text": "Escanear el siguiente lote de 40 fotos",
+        "pillarId": "archivo",
+        "goalId": "g_archivo",
+        "skillKey": "planear",
+        "prio": 2,
+        "done": false,
+        "createdAt": "2026-08-11",
+        "dueDate": "2026-08-16"
+      },
+      {
+        "id": "mv_06",
+        "text": "Hacer copia del archivo familiar en el disco externo",
+        "pillarId": "archivo",
+        "goalId": "g_archivo",
+        "skillKey": "planear",
+        "prio": 2,
+        "done": false,
+        "createdAt": "2026-08-10",
+        "dueDate": "2026-08-17"
+      },
+      {
+        "id": "mv_07",
+        "text": "Programar transferencia automática de 500.000 COP",
+        "pillarId": "finanzas_p",
+        "goalId": "g_fondo",
+        "skillKey": "gastos",
+        "prio": 2,
+        "done": false,
+        "createdAt": "2026-08-09",
+        "dueDate": "2026-08-18"
+      },
+      {
+        "id": "mv_08",
+        "text": "Aplicar la consulta de cohortes del curso al tablero",
+        "pillarId": "curso_sql",
+        "goalId": null,
+        "skillKey": "foco",
+        "prio": 3,
+        "done": false,
+        "createdAt": "2026-08-06",
+        "dueDate": "2026-08-21"
+      },
+      {
+        "id": "mv_09",
+        "text": "Pedir cita de limpieza dental",
+        "pillarId": null,
+        "goalId": null,
+        "skillKey": "planear",
+        "prio": 2,
+        "done": false,
+        "createdAt": "2026-08-12",
+        "dueDate": "2026-08-17"
+      },
+      {
+        "id": "mv_10",
+        "text": "Agendar mantenimiento preventivo de la bicicleta",
+        "pillarId": null,
+        "goalId": null,
+        "skillKey": "gastos",
+        "prio": 2,
+        "done": false,
+        "createdAt": "2026-08-11",
+        "dueDate": "2026-08-22"
+      },
+      {
+        "id": "mv_11",
+        "text": "Cerrar lecciones 9 y 10 del curso",
+        "pillarId": "curso_sql",
+        "goalId": "g_sql",
+        "skillKey": "lectura",
+        "prio": 1,
+        "done": true,
+        "doneAt": "2026-08-06",
+        "createdAt": "2026-08-02",
+        "dueDate": "2026-08-06"
+      },
+      {
+        "id": "mv_12",
+        "text": "Revisar el extracto de la tarjeta y pagar",
+        "pillarId": "finanzas_p",
+        "goalId": "g_fondo",
+        "skillKey": "gastos",
+        "prio": 1,
+        "done": true,
+        "doneAt": "2026-08-02",
+        "createdAt": "2026-07-29",
+        "dueDate": "2026-08-02"
+      },
+      {
+        "id": "mv_13",
+        "text": "Definir el estado vacío del tablero",
+        "pillarId": "activacion",
+        "goalId": "g_tablero",
+        "skillKey": "foco",
+        "prio": 2,
+        "done": true,
+        "doneAt": "2026-07-31",
+        "createdAt": "2026-07-24",
+        "dueDate": "2026-07-31"
+      },
+      {
+        "id": "mv_14",
+        "text": "Escanear las primeras 100 fotos",
+        "pillarId": "archivo",
+        "goalId": "g_archivo",
+        "skillKey": "planear",
+        "prio": 2,
+        "done": true,
+        "doneAt": "2026-08-08",
+        "createdAt": "2026-07-28",
+        "dueDate": "2026-08-09"
+      },
+      {
+        "id": "mv_15",
+        "text": "Separar el aporte de agosto al fondo",
+        "pillarId": "finanzas_p",
+        "goalId": "g_fondo",
+        "skillKey": "gastos",
+        "prio": 1,
+        "done": true,
+        "doneAt": "2026-08-07",
+        "createdAt": "2026-08-03",
+        "dueDate": "2026-08-07"
+      },
+      {
+        "id": "mv_16",
+        "text": "Hacer conversación de 25 minutos sobre trabajo remoto",
+        "pillarId": "ingles_p",
+        "goalId": "g_ingles",
+        "skillKey": "ingles",
+        "prio": 2,
+        "done": true,
+        "doneAt": "2026-08-05",
+        "createdAt": "2026-08-01",
+        "dueDate": "2026-08-05"
+      },
+      {
+        "id": "mv_17",
+        "text": "Escribir el caso corto del tablero para el portafolio",
+        "pillarId": "portafolio",
+        "goalId": "g_portafolio",
+        "skillKey": "foco",
+        "prio": 1,
+        "done": false,
+        "createdAt": "2026-08-12",
+        "dueDate": "2026-08-19"
+      },
+      {
+        "id": "mv_18",
+        "text": "Pedir una revisión del portafolio a Daniel",
+        "pillarId": "portafolio",
+        "goalId": "g_portafolio",
+        "skillKey": "planear",
+        "prio": 2,
+        "done": false,
+        "createdAt": "2026-08-12",
+        "dueDate": "2026-08-21"
+      },
+      {
+        "id": "mv_19",
+        "text": "Elegir tres almuerzos que aguanten bien en oficina",
+        "pillarId": "almuerzos",
+        "goalId": "g_almuerzos",
+        "skillKey": "cocinar",
+        "prio": 2,
+        "done": false,
+        "createdAt": "2026-08-11",
+        "dueDate": "2026-08-16"
+      },
+      {
+        "id": "mv_20",
+        "text": "Dejar dos almuerzos listos el domingo",
+        "pillarId": "almuerzos",
+        "goalId": "g_almuerzos",
+        "skillKey": "cocinar",
+        "prio": 1,
+        "done": false,
+        "createdAt": "2026-08-12",
+        "dueDate": "2026-08-16"
+      }
+    ],
+    "goals": [
+      {
+        "id": "g_tablero",
+        "title": "Entregar el tablero de activación v1",
+        "why": "Reducir tiempo buscando datos y detectar más rápido dónde se atascan los usuarios nuevos.",
+        "kind": "outcome",
+        "category": "craft",
+        "metrics": [
+          {
+            "id": "gm1",
+            "label": "Métricas validadas",
+            "current": 4,
+            "target": 6,
+            "unit": "métricas"
+          }
+        ],
+        "pillarIds": [
+          "activacion"
+        ],
+        "createdAt": "2026-07-09"
+      },
+      {
+        "id": "g_ingles",
+        "title": "Completar 20 conversaciones en inglés",
+        "why": "Participar en reuniones sin ensayar mentalmente cada intervención antes de hablar.",
+        "kind": "outcome",
+        "category": "self",
+        "metrics": [
+          {
+            "id": "gm1",
+            "label": "Conversaciones",
+            "current": 7,
+            "target": 20,
+            "unit": "conversaciones"
+          }
+        ],
+        "pillarIds": [
+          "ingles_p"
+        ],
+        "createdAt": "2026-06-24"
+      },
+      {
+        "id": "g_correr",
+        "title": "Completar 18 sesiones de carrera o fuerza",
+        "why": "Volver a una rutina física estable y llegar a 10 km sin perseguir tiempos.",
+        "kind": "outcome",
+        "category": "self",
+        "metrics": [
+          {
+            "id": "gm1",
+            "label": "Sesiones",
+            "current": 8,
+            "target": 18,
+            "unit": "sesiones"
+          }
+        ],
+        "pillarIds": [
+          "correr"
+        ],
+        "createdAt": "2026-07-03"
+      },
+      {
+        "id": "g_archivo",
+        "title": "Ordenar y respaldar 400 fotos familiares",
+        "why": "Tener las fotos importantes localizables y con una copia segura, no repartidas en cajas y celulares viejos.",
+        "kind": "outcome",
+        "category": "life",
+        "metrics": [
+          {
+            "id": "gm1",
+            "label": "Archivos listos",
+            "current": 180,
+            "target": 400,
+            "unit": "archivos"
+          }
+        ],
+        "pillarIds": [
+          "archivo"
+        ],
+        "createdAt": "2026-07-20"
+      },
+      {
+        "id": "g_fondo",
+        "title": "Llegar a 15M COP de fondo de emergencia",
+        "why": "Cubrir aproximadamente dos meses de gastos sin depender de la tarjeta.",
+        "kind": "outcome",
+        "category": "capital",
+        "metrics": [
+          {
+            "id": "gm1",
+            "label": "Fondo acumulado",
+            "current": 6200000,
+            "target": 15000000,
+            "unit": "COP"
+          }
+        ],
+        "pillarIds": [
+          "finanzas_p"
+        ],
+        "createdAt": "2026-05-10"
+      },
+      {
+        "id": "g_sql",
+        "title": "Terminar curso práctico de SQL",
+        "why": "Poder explorar preguntas sencillas de producto sin esperar siempre una extracción de datos.",
+        "kind": "outcome",
+        "category": "craft",
+        "metrics": [
+          {
+            "id": "gm1",
+            "label": "Lecciones",
+            "current": 10,
+            "target": 10,
+            "unit": "lecciones"
+          }
+        ],
+        "pillarIds": [
+          "curso_sql"
+        ],
+        "createdAt": "2026-07-01",
+        "doneAt": "2026-08-06"
+      },
+      {
+        "id": "v_presencia",
+        "title": "Estar presente",
+        "why": "Cuando quedo con alguien, no dividir la atención entre la conversación y el teléfono.",
+        "kind": "identity",
+        "category": "self",
+        "skillKeys": [
+          "familia",
+          "diario"
+        ],
+        "createdAt": "2026-07-23"
+      },
+      {
+        "id": "v_criterio",
+        "title": "Hacer lo importante antes de lo urgente",
+        "why": "Reservar energía para lo que mueve el trabajo y la vida, no solo para lo que hace ruido.",
+        "kind": "identity",
+        "category": "self",
+        "skillKeys": [
+          "planear",
+          "foco"
+        ],
+        "createdAt": "2026-07-23"
+      },
+      {
+        "id": "g_portafolio",
+        "title": "Dejar el portafolio listo para compartir",
+        "why": "Tener una versión breve y actual que muestre cómo pienso y qué he construido, sin armarla de afán cuando aparezca una oportunidad.",
+        "kind": "outcome",
+        "category": "craft",
+        "metrics": [
+          {
+            "id": "gm1",
+            "label": "Secciones listas",
+            "current": 2,
+            "target": 5,
+            "unit": "secciones"
+          }
+        ],
+        "pillarIds": [
+          "portafolio"
+        ],
+        "createdAt": "2026-08-01"
+      },
+      {
+        "id": "g_almuerzos",
+        "title": "Preparar almuerzo en casa 3 días por semana durante 4 semanas",
+        "why": "Comer más consistente entre semana y dejar de decidir el almuerzo con hambre y poco tiempo.",
+        "kind": "outcome",
+        "category": "self",
+        "metrics": [
+          {
+            "id": "gm1",
+            "label": "Semanas completas",
+            "current": 2,
+            "target": 4,
+            "unit": "semanas"
+          }
+        ],
+        "pillarIds": [
+          "almuerzos"
+        ],
+        "createdAt": "2026-07-28"
+      }
+    ],
+    "calendar": {
+      "items": [
+        {
+          "id": "cal_revision",
+          "title": "Revisión semanal",
+          "type": "routine",
+          "date": "2026-07-26",
+          "time": "18:30",
+          "endTime": "19:00",
+          "notes": "Revisar proyectos, pendientes, calendario y gastos antes de cerrar la semana.",
+          "pillarId": null,
+          "goalId": null,
+          "repeat": "weekly",
+          "repeatUntil": "2026-10-31",
+          "doneDates": [
+            "2026-07-26",
+            "2026-08-02",
+            "2026-08-09"
+          ],
+          "createdAt": "2026-07-23"
+        },
+        {
+          "id": "cal_correr",
+          "title": "Carrera suave",
+          "type": "activity",
+          "date": "2026-07-25",
+          "time": "07:00",
+          "endTime": "07:50",
+          "notes": "Ritmo conversacional. Si llueve fuerte, cambiar por fuerza en casa.",
+          "pillarId": "correr",
+          "goalId": "g_correr",
+          "repeat": "weekly",
+          "repeatUntil": "2026-10-31",
+          "doneDates": [
+            "2026-07-25",
+            "2026-08-01",
+            "2026-08-08"
+          ],
+          "createdAt": "2026-07-23"
+        },
+        {
+          "id": "cal_fuerza",
+          "title": "Fuerza + movilidad",
+          "type": "activity",
+          "date": "2026-07-29",
+          "time": "18:15",
+          "endTime": "19:10",
+          "notes": "Sesión corta, sin buscar máximos.",
+          "pillarId": "correr",
+          "goalId": "g_correr",
+          "repeat": "weekly",
+          "repeatUntil": "2026-10-31",
+          "doneDates": [
+            "2026-07-29",
+            "2026-08-05",
+            "2026-08-12"
+          ],
+          "createdAt": "2026-07-23"
+        },
+        {
+          "id": "cal_ingles",
+          "title": "Conversación en inglés",
+          "type": "routine",
+          "date": "2026-07-30",
+          "time": "19:00",
+          "endTime": "19:45",
+          "notes": "Conversación, pronunciación y repaso de errores frecuentes.",
+          "pillarId": "ingles_p",
+          "goalId": "g_ingles",
+          "repeat": "weekly",
+          "repeatUntil": "2026-10-31",
+          "doneDates": [
+            "2026-07-30",
+            "2026-08-06"
+          ],
+          "createdAt": "2026-07-23"
+        },
+        {
+          "id": "cal_arriendo",
+          "title": "Pagar arriendo",
+          "type": "deadline",
+          "date": "2026-08-03",
+          "time": "08:30",
+          "endTime": "",
+          "notes": "Transferencia y guardar comprobante.",
+          "pillarId": "finanzas_p",
+          "goalId": "g_fondo",
+          "repeat": "none",
+          "repeatUntil": null,
+          "doneDates": [
+            "2026-08-03"
+          ],
+          "createdAt": "2026-07-26"
+        },
+        {
+          "id": "cal_tablero",
+          "title": "Demo del tablero de activación",
+          "type": "deadline",
+          "date": "2026-08-14",
+          "time": "11:00",
+          "endTime": "",
+          "notes": "Mostrar métricas validadas y dejar documentadas las definiciones.",
+          "pillarId": "activacion",
+          "goalId": "g_tablero",
+          "repeat": "none",
+          "repeatUntil": null,
+          "doneDates": [],
+          "createdAt": "2026-08-04"
+        },
+        {
+          "id": "cal_optometria",
+          "title": "Optometría",
+          "type": "activity",
+          "date": "2026-08-17",
+          "time": "09:00",
+          "endTime": "09:40",
+          "notes": "Control general. Llevar fórmula anterior.",
+          "pillarId": null,
+          "goalId": null,
+          "repeat": "none",
+          "repeatUntil": null,
+          "doneDates": [],
+          "createdAt": "2026-08-07"
+        },
+        {
+          "id": "cal_papa",
+          "title": "Cumpleaños de papá",
+          "type": "reminder",
+          "date": "2026-08-16",
+          "time": "09:30",
+          "endTime": "",
+          "notes": "Llamar temprano. Almuerzo familiar en la tarde.",
+          "pillarId": null,
+          "goalId": null,
+          "repeat": "none",
+          "repeatUntil": null,
+          "doneDates": [],
+          "createdAt": "2026-08-02"
+        },
+        {
+          "id": "cal_bici",
+          "title": "Mantenimiento de la bicicleta",
+          "type": "reminder",
+          "date": "2026-08-22",
+          "time": "10:00",
+          "endTime": "",
+          "notes": "Frenos, cadena y presión de llantas.",
+          "pillarId": null,
+          "goalId": null,
+          "repeat": "none",
+          "repeatUntil": null,
+          "doneDates": [],
+          "createdAt": "2026-08-11"
+        },
+        {
+          "id": "cal_contador",
+          "title": "Cita con el contador",
+          "type": "deadline",
+          "date": "2026-09-03",
+          "time": "16:30",
+          "endTime": "",
+          "notes": "Llevar certificados de ingresos, retenciones y extractos necesarios.",
+          "pillarId": null,
+          "goalId": null,
+          "repeat": "none",
+          "repeatUntil": null,
+          "doneDates": [],
+          "createdAt": "2026-07-31"
+        },
+        {
+          "id": "cal_portafolio",
+          "title": "Revisión de portafolio",
+          "type": "reminder",
+          "date": "2026-08-21",
+          "time": "17:30",
+          "endTime": "",
+          "notes": "Enviar enlace antes y llegar con dos preguntas concretas.",
+          "pillarId": "portafolio",
+          "goalId": "g_portafolio",
+          "repeat": "none",
+          "repeatUntil": null,
+          "doneDates": [],
+          "createdAt": "2026-08-12"
+        },
+        {
+          "id": "cal_almuerzos",
+          "title": "Preparar almuerzos",
+          "type": "routine",
+          "date": "2026-08-16",
+          "time": "18:00",
+          "endTime": "19:00",
+          "notes": "Dos preparaciones simples para lunes a miércoles.",
+          "pillarId": "almuerzos",
+          "goalId": "g_almuerzos",
+          "repeat": "weekly",
+          "repeatUntil": "2026-09-06",
+          "doneDates": [],
+          "createdAt": "2026-08-12"
+        }
+      ]
+    },
+    "metrics": {
+      "incomeMTD": 0,
+      "investments": 0,
+      "clientsClosed": 0,
+      "deepWorkWeek": 7.0,
+      "expenses": 0,
+      "custom": [
+        {
+          "id": "mx_fondo",
+          "label": "Fondo de emergencia",
+          "value": 6200000,
+          "unit": "COP",
+          "target": 15000000,
+          "goalId": "g_fondo",
+          "category": "capital",
+          "archivedAt": null,
+          "color": "#DAA520",
+          "sourceKey": "finance:savings"
+        },
+        {
+          "id": "mx_ingles",
+          "label": "Conversaciones en inglés",
+          "value": 7,
+          "unit": "conversaciones",
+          "target": 20,
+          "goalId": "g_ingles",
+          "category": "self",
+          "archivedAt": null,
+          "color": "#228B22"
+        },
+        {
+          "id": "mx_foco",
+          "label": "Horas de foco esta semana",
+          "value": 7.0,
+          "unit": "h",
+          "target": 9,
+          "goalId": null,
+          "category": "self",
+          "archivedAt": null,
+          "color": "#0F52BA"
+        },
+        {
+          "id": "mx_archivo",
+          "label": "Fotos familiares organizadas",
+          "value": 180,
+          "unit": "archivos",
+          "target": 400,
+          "goalId": "g_archivo",
+          "category": "life",
+          "archivedAt": null,
+          "color": "#A52A2A"
+        }
+      ]
+    },
+    "debts": [
+      {
+        "id": "db_tarjeta",
+        "name": "Tarjeta de crédito",
+        "balance": 1350000,
+        "original": 2800000,
+        "rate": 26.8,
+        "minPay": 200000,
+        "createdAt": "2026-03-15",
+        "archivedAt": null,
+        "archiveReason": null
+      }
+    ],
+    "finEntries": [
+      {
+        "id": "inc_salario",
+        "kind": "income",
+        "name": "Salario",
+        "amount": 8400000,
+        "frequency": "monthly",
+        "date": "2026-08-01",
+        "createdAt": "2026-08-01"
+      },
+      {
+        "id": "inc_extra",
+        "kind": "income",
+        "name": "Apoyo de análisis freelance",
+        "amount": 780000,
+        "frequency": "once",
+        "date": "2026-08-11",
+        "createdAt": "2026-08-11"
+      },
+      {
+        "id": "ex_arriendo",
+        "kind": "expense",
+        "name": "Arriendo",
+        "amount": 2300000,
+        "frequency": "monthly",
+        "date": "2026-08-01",
+        "createdAt": "2026-08-01",
+        "category": "living"
+      },
+      {
+        "id": "ex_mercado",
+        "kind": "expense",
+        "name": "Mercado",
+        "amount": 900000,
+        "frequency": "monthly",
+        "date": "2026-08-01",
+        "createdAt": "2026-08-01",
+        "category": "food"
+      },
+      {
+        "id": "ex_servicios",
+        "kind": "expense",
+        "name": "Servicios e internet",
+        "amount": 455000,
+        "frequency": "monthly",
+        "date": "2026-08-01",
+        "createdAt": "2026-08-01",
+        "category": "living"
+      },
+      {
+        "id": "ex_transporte",
+        "kind": "expense",
+        "name": "Transporte",
+        "amount": 420000,
+        "frequency": "monthly",
+        "date": "2026-08-01",
+        "createdAt": "2026-08-01",
+        "category": "vehicle"
+      },
+      {
+        "id": "ex_salud",
+        "kind": "expense",
+        "name": "Medicina prepagada",
+        "amount": 340000,
+        "frequency": "monthly",
+        "date": "2026-08-01",
+        "createdAt": "2026-08-01",
+        "category": "health"
+      },
+      {
+        "id": "ex_gimnasio",
+        "kind": "expense",
+        "name": "Gimnasio",
+        "amount": 150000,
+        "frequency": "monthly",
+        "date": "2026-08-01",
+        "createdAt": "2026-08-01",
+        "category": "health"
+      },
+      {
+        "id": "ex_suscripciones",
+        "kind": "expense",
+        "name": "Suscripciones digitales",
+        "amount": 125000,
+        "frequency": "monthly",
+        "date": "2026-08-01",
+        "createdAt": "2026-08-01",
+        "category": "subscriptions"
+      },
+      {
+        "id": "ex_ingles",
+        "kind": "expense",
+        "name": "Conversación de inglés",
+        "amount": 280000,
+        "frequency": "monthly",
+        "date": "2026-08-01",
+        "createdAt": "2026-08-01",
+        "category": "education"
+      },
+      {
+        "id": "ex_celular",
+        "kind": "expense",
+        "name": "Plan celular",
+        "amount": 78000,
+        "frequency": "monthly",
+        "date": "2026-08-01",
+        "createdAt": "2026-08-01",
+        "category": "subscriptions"
+      },
+      {
+        "id": "ex_fuera",
+        "kind": "expense",
+        "name": "Almuerzos y cafés por fuera",
+        "amount": 340000,
+        "frequency": "monthly",
+        "date": "2026-08-01",
+        "createdAt": "2026-08-01",
+        "category": "food"
+      },
+      {
+        "id": "dx_regalo",
+        "kind": "expense",
+        "name": "Regalo de cumpleaños",
+        "amount": 210000,
+        "frequency": "once",
+        "date": "2026-08-09",
+        "createdAt": "2026-08-09",
+        "category": "other",
+        "discreet": true,
+        "discreetCategory": "personal"
+      },
+      {
+        "id": "dx_personal",
+        "kind": "expense",
+        "name": "Compra personal",
+        "amount": 120000,
+        "frequency": "once",
+        "date": "2026-08-02",
+        "createdAt": "2026-08-02",
+        "category": "other",
+        "discreet": true,
+        "discreetCategory": "personal"
+      },
+      {
+        "id": "sv_ahorros",
+        "kind": "invest",
+        "name": "Cuenta de ahorros",
+        "amount": 6200000,
+        "frequency": "once",
+        "date": "2026-08-12",
+        "createdAt": "2026-08-12",
+        "category": "savings"
+      },
+      {
+        "id": "iv_cdt",
+        "kind": "invest",
+        "name": "CDT",
+        "amount": 3000000,
+        "frequency": "once",
+        "date": "2026-06-15",
+        "createdAt": "2026-06-15",
+        "category": "fixed-income"
+      },
+      {
+        "id": "iv_etf",
+        "kind": "invest",
+        "name": "ETF global",
+        "amount": 2100000,
+        "frequency": "once",
+        "date": "2026-07-18",
+        "createdAt": "2026-07-18",
+        "category": "funds",
+        "entryPrice": 105000,
+        "ticker": "VT",
+        "assetId": "asset_vt_demo",
+        "units": 20
+      }
+    ],
+    "portfolio": {
+      "quotes": {
+        "asset_vt_demo": {
+          "assetId": "asset_vt_demo",
+          "name": "ETF global",
+          "ticker": "VT",
+          "price": 109500,
+          "asOf": "2026-08-11",
+          "updatedAt": "2026-08-11T21:00:00.000Z"
+        }
+      },
+      "snapshots": [
+        {
+          "id": "ps_0801",
+          "asOf": "2026-08-01",
+          "updatedAt": "2026-08-01T21:00:00.000Z",
+          "signature": "demo-male-0801",
+          "quotes": [
+            {
+              "assetId": "asset_vt_demo",
+              "price": 107200
+            }
+          ]
+        },
+        {
+          "id": "ps_0811",
+          "asOf": "2026-08-11",
+          "updatedAt": "2026-08-11T21:00:00.000Z",
+          "signature": "demo-male-0811",
+          "quotes": [
+            {
+              "assetId": "asset_vt_demo",
+              "price": 109500
+            }
+          ]
+        }
+      ]
+    },
+    "taxProfile": {
+      "country": "CO",
+      "taxYear": 2025,
+      "taxId": "",
+      "incomeThreshold": 69719000,
+      "patrimonyThreshold": 224096000,
+      "filingStart": "2026-08-12",
+      "filingEnd": "2026-10-26",
+      "notes": "Empleado con un ingreso extra puntual. Reunir certificados de ingresos, retenciones y saldos antes de la cita con el contador."
+    },
+    "osMeta": {
+      "seeded": true,
+      "onboarded": true,
+      "skillScale": 25,
+      "financeTotalsItemizedV1": true,
+      "financeReminderDismissed": {},
+      "tipsOff": false,
+      "tips": {}
+    }
+  },
+  "preferences": {
+    "theme": "dark",
+    "language": "es",
+    "accent": "azure"
+  },
+  "ui": {
+    "view": "today",
+    "logDate": "2026-08-12",
+    "pillarFilter": "all",
+    "pillarSort": "order",
+    "pillarCat": "all",
+    "moveFilter": "open",
+    "todayMoveFilter": "all",
+    "quoteTag": "ALL",
+    "quoteOverride": null,
+    "histQuery": "",
+    "calendarWeek": "2026-08-10",
+    "calendarMonth": "2026-08",
+    "calendarSelectedDate": "2026-08-12",
+    "scrollY": 0
+  },
+  "restoreScope": "complete-state-preferences-and-ui"
+}
