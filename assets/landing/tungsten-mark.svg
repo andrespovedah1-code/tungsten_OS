@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Tungsten">
+  <rect width="64" height="64" rx="14" fill="#ffffff"/>
+  <path d="M10 17l9.2 30.7L32 24.8l12.8 22.9L54 17" fill="none" stroke="#0F52BA" stroke-width="6" stroke-linecap="round" stroke-linejoin="miter"/>
+  <path d="M24.4 17L32 30.6 39.6 17" fill="none" stroke="#0F52BA" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity=".72"/>
+</svg>
