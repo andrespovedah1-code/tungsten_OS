@@ -1814,7 +1814,8 @@
           "category": "capital",
           "archivedAt": null,
           "color": "#DAA520",
-          "sourceKey": "finance:savings"
+          "sourceKey": "finance:savings",
+          "sourceOffset": 0
         },
         {
           "id": "mx_ingles",
@@ -2098,7 +2099,8 @@
       "financeReminderDismissed": {},
       "tipsOff": false,
       "tips": {}
-    }
+    },
+    "baseCurrency": "COP"
   },
   "preferences": {
     "theme": "dark",
