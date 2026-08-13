@@ -1,0 +1,26 @@
+/*
+DESIGN NOTES — R14
+Base: R4's clean editorial composition; R7's content order retained.
+Narrative: promise -> connection -> setup -> system map -> daily execution -> command -> finances -> criterion -> demo.
+Typography: DM Sans for interface/copy, IBM Plex Mono for technical labels, Helvetica Neue for the brand lockup.
+Screenshots: original high-resolution PNG captures, never upscaled; only the outer Command scrollbar is removed at source level.
+Motion: low-amplitude reveal, header-state and CTA micro-interactions; no motion on screenshots themselves and reduced-motion is respected.
+Color: restrained semantic accents in headings and markers, never whole-section saturation.
+*/
+:root{
+  --bg:#06080c;--bg2:#090d13;--panel:#0f141c;--panel2:#141b25;--panel3:#182130;
+  --line:#202b3a;--line2:#314157;--text:#edf2f8;--dim:#b8c1cf;--faint:#7f8b9d;
+  --blue:#1f6feb;--blue2:#61a0ff;--green:#2fd492;--amber:#e6b84f;--red:#ff6178;--violet:#a78bfa;
+  --sans:"DM Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
+  --mono:"IBM Plex Mono","SFMono-Regular",Consolas,monospace;
+  --max:1240px;--wide:1360px;--r:16px;--r-lg:22px;--shadow:0 34px 100px -52px rgba(0,0,0,.98);
+}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:86px}body{position:relative;margin:0;min-height:100vh;color:var(--text);font-family:var(--sans);background:radial-gradient(980px 560px at 9% -4%,rgba(31,111,235,.115),transparent 64%),radial-gradient(760px 460px at 96% 18%,rgba(47,212,146,.045),transparent 66%),radial-gradient(700px 420px at 72% 78%,rgba(167,139,250,.035),transparent 70%),linear-gradient(rgba(255,255,255,.013) 1px,transparent 1px),var(--bg);background-size:auto,auto,auto,100% 32px,auto;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow-x:hidden}body:before,body:after{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1}body:before{opacity:.28;background:radial-gradient(680px 380px at 15% 20%,rgba(31,111,235,.08),transparent 72%),radial-gradient(560px 320px at 82% 30%,rgba(47,212,146,.05),transparent 70%),radial-gradient(520px 320px at 54% 88%,rgba(167,139,250,.04),transparent 72%);filter:blur(10px);animation:ambientShift 18s ease-in-out infinite alternate}body:after{opacity:.08;background-image:radial-gradient(rgba(255,255,255,.55) .55px,transparent .7px);background-size:15px 15px;mask-image:linear-gradient(to bottom,rgba(0,0,0,.7),rgba(0,0,0,.28) 46%,transparent 88%)}
+a{color:inherit;text-decoration:none}img{display:block;max-width:100%;height:auto}button,a{-webkit-tap-highlight-color:transparent}::selection{background:var(--blue);color:#fff}
+.shell{width:min(calc(100% - 44px),var(--max));margin:0 auto}.shell.wide{width:min(calc(100% - 44px),var(--wide));margin:0 auto}
+.kicker,.eyebrow{color:var(--blue2);font:600 9.5px/1 var(--mono);letter-spacing:.11em;text-transform:uppercase}.eyebrow{display:flex;align-items:center;gap:10px;margin:0 0 14px}.eyebrow:before{content:"";width:24px;height:1px;background:currentColor}.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.accent-blue{color:var(--blue2)}.accent-green{color:var(--green)}.accent-amber{color:var(--amber)}.accent-violet{color:var(--violet)}
+
+/* Header — inherited proportions from R4. */
+.site-header{position:sticky;top:0;z-index:50;border-bottom:1px solid rgba(49,65,87,.45);background:rgba(6,8,12,.84);backdrop-filter:blur(18px) saturate(125%)}
+.header-inner{position:relative;height:68px;display:flex;align-items:center;justify-content:space-between;gap:28px}.brand{display:flex;align-items:center;gap:10px;min-width:0}.brand-mark{width:34px;height:34px;display:grid;place-items:center;border-radius:10px;background:#fff;overflow:hidden;box-shadow:inset 0 0 0 1px rgba(0,0,0,.10),0 4px 16px -10px rgba(0,0,0,.9)}.brand-mark img{display:block;width:100%;height:100%;object-fit:contain}
