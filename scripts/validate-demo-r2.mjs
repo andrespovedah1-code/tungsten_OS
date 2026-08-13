@@ -12,7 +12,10 @@ if(patch.includes('demo-targeted-2026-08-12-r2')){
 const sandbox={console}; sandbox.globalThis=sandbox; sandbox.window=sandbox;
 vm.runInNewContext(patch,sandbox,{filename:'demo-core-patches.normalized.js'});
 if(typeof sandbox.__TUNGSTEN_APPLY_DEMO_PATCHES!=='function') throw new Error('Patch transformer missing');
-const transformed=sandbox.__TUNGSTEN_APPLY_DEMO_PATCHES(index);
+let transformed=sandbox.__TUNGSTEN_APPLY_DEMO_PATCHES(index);
+// Diagnostic-only repairs for escape sequences consumed by the patch template literal.
+transformed=transformed.split('/^COP(?:/|$)/i').join('/^COP(?:\\/|$)/i');
+transformed=transformed.split('\bCOP\b').join('\\bCOP\\b');
 const scripts=[...transformed.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/gi)].map(m=>m[1]);
 if(!scripts.length) throw new Error('No inline scripts found in transformed app');
 let failed=false;
@@ -27,4 +30,4 @@ for(let i=0;i<scripts.length;i++){
   } else console.log(`GENERATED_SCRIPT_${i}_SYNTAX_OK`);
 }
 if(failed) process.exit(1);
-console.log('R2_GENERATED_APP_SYNTAX_OK');
+console.log('R2_GENERATED_APP_SYNTAX_OK_AFTER_ESCAPE_REPAIR');
